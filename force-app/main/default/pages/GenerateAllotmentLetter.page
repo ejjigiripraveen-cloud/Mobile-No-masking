@@ -1,0 +1,93 @@
+<apex:page sidebar="false"  showHeader="false" applyBodyTag="false" standardController="Opportunity"  renderAs="pdf"  extensions="HeadOfAgreementLetterHandler" >
+<head>
+                <style type="text/css" media="print">
+                       @page{
+                margin-bottom: 5cm;
+                margin-top: 5cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+                @top-center {
+                  content: element(header);
+               }
+               @bottom-center {
+                     content: element(footer);
+               }
+            }
+               div.header {
+                 padding: 10px;
+                 position: running(header);
+            }
+            div.footer {
+                padding: 10px;
+                position: running(footer);
+            }
+                      
+                                    
+                    </style>
+              </head>
+
+<div class="header" style="width:830; background-color:white; height:80px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+    <apex:image url="{!URLFOR($Resource.OrgLogo)}" width="75" height="150 "/>  
+    
+</div>
+
+
+<div  style="font-family:calibry; font-size:10pt;text-align:justify">
+<apex:PageBlock >
+<div  style="font-family:calibry; font-size:10pt">
+<div style="margin-left:480px;">
+    <table  width="80%">
+        <tr>
+            <td>Date:</td>
+             <td><apex:outputText value="{0,date,MMMMM dd, yyyy}"> <apex:param value="{!Today()}" /> </apex:outputText></td>
+        </tr>
+        <tr>
+            <td>Ref #:</td>
+            <td>{!Opportunity.Booking_Reference_Number__c}</td>
+        </tr>
+    </table>
+    </div>
+    <table>
+        <tr>
+            <td>{!Opportunity.Contact__r.Name}</td>
+        </tr>
+        <tr rendered="{!Opportunity.Contact__r.Co_Applicant_Name__c != null}" >  
+            <td>{!Opportunity.Contact__r.Co_Applicant_Name__c}</td>
+        </tr>
+        <tr>
+            <td>{!Opportunity.Contact__r.MobilePhone}</td>
+        </tr>
+    </table><br/>
+    
+    <p>Subject:Allotment of <b>{!Opportunity.Apartment__r.Apartment_Type__c}</b> Flat/Unit bearing no:- <b>{!Opportunity.Apartment__r.Unit_Number__c}.</b></p>  
+    
+    <p>Dear Sir/Madam,</p>
+    
+    <apex:outputText >Greetings from {!Opportunity.Apartment__r.Block__r.Project__r.Name}!</apex:outputText><br/>
+    <p>We are pleased to inform you that we have allotted a <b>{!Opportunity.Apartment__r.Apartment_Type__c}</b> apartment/ unit bearing no. T-<b>{!Opportunity.Apartment__r.Unit_Number__c}</b> on
+     Floor no: {!Opportunity.Apartment__r.Floor_No__c} of Tower:<b> {!Opportunity.Apartment__r.Block__r.Name}</b> in our project <b>“{!Opportunity.Apartment__r.Block__r.Project__r.Name}” </b>with a carpet area of {!Opportunity.Apartment__r.Carpet_Area__c} square
+     meters with 01 (One) covered car parking.</p>
+    <p>This allotment is subject to terms and conditions in the booking application dated  {!Opportunity.Booking_Amount_Receipt_Date__c}.</p>
+    <p>Kindly note this is a provisional allotment letter only and the same will be confirmed subject to the execution of Agreement/s and adherence to payment schedule without any delay or default.</p>
+    <p>If any clarification regarding the allotment or otherwise, please contact our Customer Relationship Team at <a href="{!Opportunity.Apartment__r.Block__r.Project__r.Project_Email__c}">{!Opportunity.Apartment__r.Block__r.Project__r.Project_Email__c} </a> </p>
+    <p>Yours’ Faithfully,</p>
+    
+    <table>
+        <tr>
+            <td>Regards,</td>
+        </tr>
+        <tr>
+            <td>CRM – Team</td>
+        </tr>
+        <tr>
+            <td>{!Opportunity.Apartment__r.Block__r.Project__r.Name}</td>
+        </tr>
+    </table><br/><br/>
+    
+    <p style="text-align:left; font-family:Times New Roman; font-size: 11pt;" >This is a computer generated letter and does not need a signature.</p>
+    
+     </div>
+    
+</apex:PageBlock> 
+</div>
+</apex:page>

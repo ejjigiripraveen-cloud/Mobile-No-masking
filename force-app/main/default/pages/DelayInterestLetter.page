@@ -1,0 +1,22 @@
+<apex:page sidebar="false"  showHeader="false" standardController="Opportunity" renderAs="pdf" extensions="DelayInterestExtension" >
+  
+  <div style="width:830; background-color:white; height:120px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+     <apex:image style="float:right" value="{!if(contains(opportunity.Project_Name__c,'Primus'),$Resource.Primus,$Resource.OrgLogo)}" width="80" height="50"/>
+</div>
+<p> <b>Ref: MDPL/MWC/LTR -2016-16 </b></p>
+
+<P><b><apex:outputText value="{0,date,dd/MM/yy}">Date: <apex:param value="{!TODAY()}" /> </apex:outputText> </b> </p>
+
+<p><b>Mr./Mrs {!opportunity.Name}</b></p>
+<p>Phone:{!opportunity.contact__r.MobilePhone}</p>
+
+
+<p>Dear Sir/Madam,</p>
+
+<p>Sub: Balance due as against <B> Apt No{!opportunity.Flat_No__c} @{!opportunity.Project_Name__c}</B> </p>
+<p>With reference to your booking of the subject apartment, we regret to inform you that despite multiple reminders, we have not seen any action from your end towards settling the overdue payments.</p>
+<p>In the view of this we are left with no other option to charge interest on the amount outstanding from your end.  We request you to kindly arrange to make the payment of the outstanding amount of <b>Rs.{!Opportunity.Amount_Due__c}/- ({!AmountdueInword})</b> along with the interest of <b>Rs.{!(Opportunity.Total_Cum_OD_Interest__c+ Opportunity.Total_Running_Overdue_Amount1__c-Opportunity.OD_interest_Paid__c-Opportunity.Over_Due_Interest_waived__c)}/- ({!InterestInword})</b> for the delayed payment immediately.</p>
+<p>Continuous defaulting will force us to recommend your application for cancellation and/or the credit note issued shall be revoked.</p>
+<p>Thanks &amp; Regards, </p>
+
+</apex:page>

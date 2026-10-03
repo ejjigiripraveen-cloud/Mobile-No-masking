@@ -1,0 +1,58 @@
+<aura:component controller="updateContactDetails"
+                implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="phone" type="String" default=""/>
+    <aura:attribute name="secondaryPhone" type="String" default=""/>
+     <aura:attribute name="secondaryEmail" type="String" default=""/>
+     <aura:attribute name="email" type="String" default=""/>
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="leaddata" type="Lead" />
+    <aura:attribute name="header" type="String" default="Update Contact Details"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:if isTrue="{!v.isModalOpen}">
+        <div class="slds-modal slds-fade-in-open" >
+            <div class="slds-modal__container" style="width:800px;">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.header}</h2>
+                </header>
+                <div class="slds-modal__content " id="modal-content-id-1">
+                    <aura:if isTrue="{!v.Spinner}">
+                        <div class="demo-only demo--inverse">
+                            <div class="slds-spinner_container">
+                                <div role="status" class="slds-spinner slds-spinner_medium">
+                                    <span class="slds-assistive-text">Loading</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:if>
+                    
+                    <div class="slds-p-around_large row">
+                         <lightning:input aura:id="field1" type="tel" label="Phone" name="phone2" value="{!v.phone}" required="true" placeholder="Primary Phone" messageWhenValueMissing="Please enter phone number"/>
+                        <lightning:input aura:id="field1" type="email" name="email1" value="{!v.email}" label="Email" placeholder="Primary Email" messageWhenBadInput="Please Enter valid email"/>
+                         <lightning:input aura:id="field1" type="tel" label="Secondary Phone" value="{!v.secondaryPhone}" name="phone2" placeholder="Secondary Phone"/>
+                        <lightning:input aura:id="field1" type="email" name="email1" value="{!v.secondaryEmail}" label="Secondary Email" placeholder="Secondary Email"  messageWhenBadInput="Please Enter valid email"/>
+                     </div>
+                </div>
+                
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral"
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{!c.closeModel}"/>
+                    <lightning:button variant="brand" 
+                                      label="Save"
+                                      title="Save"
+                                      onclick="{!c.updateDetails}"/>
+                </footer>
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

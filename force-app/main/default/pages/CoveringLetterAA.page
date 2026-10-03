@@ -1,0 +1,23 @@
+<apex:page sidebar="false"  showHeader="false" standardController="Opportunity" renderAs="pdf"  >
+<div style="width:830; background-color:white; height:80px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+     <apex:image style="float:right" value="{!if(contains(opportunity.Project_Name__c,'Primus'),$Resource.Primus,$Resource.OrgLogo)}" width="80" height="50"/>
+</div>
+
+<p align="center"><b><u> Covering letter for Agreement acknowledgment </u></b></p>
+<p><b>Ref: MDPL/MWC/LTR -2015-16</b></p>
+<p><b>Date:<apex:outputText value="{0,date,dd/MM/yy}"> <apex:param value="{!TODAY()}" /> </apex:outputText> </b></p>
+<p><b>Mr.{!Opportunity.Name}</b></p>
+<p><b>Phone :{!Opportunity.Contact__r.MobilePhone}</b></p> 
+
+<p>Dear Sir/Madam,</p>
+<p><b>Sub :{!Opportunity.Project_Name__c} Apt. No.{!Opportunity.Flat_No__c}</b></p>
+<p>Please find enclosed the original signed Sale and Construction agreements for your records. Kindly acknowledge once you receive them.</p>
+<p>Thanking you,</p>
+
+<p>Yours faithfully,</p>
+
+<p>For <b>Mantri Developers Pvt Ltd</b></p>
+
+
+
+</apex:page>

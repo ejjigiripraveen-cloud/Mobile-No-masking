@@ -1,0 +1,233 @@
+<apex:page sidebar="false" showHeader="false" controller="GenerateComprativeQuotePageController" renderAs="pdf"
+    action="{!GetSummaryData}" applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <style type="text/css" media="print">
+            @page {
+                size: 35cm 40.7cm;
+                margin: 30mm 45mm 30mm 45mm;
+
+                @top-right {
+                    content: element(header);
+                }
+
+                @PageBreak {
+                    page-break-after: always;
+                }
+
+                @bottom-right {
+                    content: element(footer);
+                }
+
+                margin-top:140px;
+                margin-bottom:60px;
+                margin-right:0px;
+                margin-left:0px;
+                font-family: verdana,
+                arial,
+                sans-serif;
+                font-size: 11px;
+                color: #333333;
+            }
+
+            body {
+                margin-right: 80px;
+                margin-left: 80px;
+                font-family: verdana, arial, sans-serif;
+                font-size: 11px;
+                color: #333333;
+            }
+
+            div.header {
+
+                text-align: left;
+                position: running(header);
+                padding: 2px;
+                margin-right: 80px;
+                margin-left: 80px;
+                color: #000000;
+                font-
+            }
+
+            div.footer {
+                padding: 2px;
+                position: running(footer);
+                margin-right: 80px;
+                margin-left: 80px;
+
+                color: #000000;
+            }
+
+            .tableHead1 {
+                background: #BABABA;
+                vertical-align: text-top;
+                font-weight: bold;
+                border-left: 0px solid #FFFFFF;
+                border-right: 0px solid #FFFFFF;
+                border-top: 0px;
+                border-bottom: 0px;
+            }
+
+            table.gridtable {
+                font-family: verdana, arial, sans-serif;
+                font-size: 11px;
+                color: #333333;
+                border-width: .6px;
+                border-style: solid;
+                border-color: black;
+                border-collapse: collapse;
+                color: #333333;
+
+            }
+
+            table.gridtable th {
+                padding: 3px;
+                font-weight: bold;
+                text-shadow: 1px 0 #333333;
+                ;
+                letter-spacing: 1px;
+                border-color: black;
+                border-width: .6px;
+                border-style: solid;
+                border-collapse: collapse;
+                color: #333333;
+                text-align: center;
+
+            }
+
+            table.gridtable td {
+                padding: 3px;
+                border-color: black;
+                border-width: .6px;
+                border-style: solid;
+                width: 5%;
+                border-collapse: collapse;
+                color: #333333;
+                text-align: center;
+
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="header">
+            <apex:outputPanel >
+                <table width="100%" cellspacing="0">
+                    <tr>
+                        <td width="10%">
+                            <apex:image value="{!$Resource.OrgLogo}" width="400" height="70" />
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+        </div>
+
+        <!-- <h3 style="margin-top : 80px">Svasa Homes Basavanagudi Prices</h3> -->
+
+        <table class="gridtable" cellspacing="0" width="100% " style="margin-top : 15px">
+            <tr>
+                <apex:repeat value="{!fieldsList}" var="fld">
+                    <apex:outputtext rendered="{!fieldToVisibleOrNot[fld]}">
+                        <apex:outputtext rendered="{!IF(CONTAINS(fld,'VIEW_FROM__C'), true, false)}">
+                            <th style="width:14%">{!fieldLabelWithApiName[fld]}</th>
+                        </apex:outputText>
+                        <apex:outputtext rendered="{!IF(CONTAINS(fld,'FOM_BARE_SHELL__C'), true, false)}">
+                            <th style="width:6%">{!fieldLabelWithApiName[fld]}</th>
+                        </apex:outputText>
+                        <apex:outputtext rendered="{!IF(CONTAINS(fld,'APARTMENT_PRICE_Q__C'), true, false)}">
+                            <th style="width:8%">{!fieldLabelWithApiName[fld]}</th>
+                        </apex:outputText>
+                        <apex:outputtext rendered="{!IF(AND(fld != 'APARTMENT_PRICE_Q__C',fld != 'FOM_BARE_SHELL__C',fld != 'VIEW_FROM__C'), true, false)}">
+                            <th>{!fieldLabelWithApiName[fld]}</th>
+                        </apex:outputText>
+                    </apex:outputtext>
+                </apex:repeat>
+
+            </tr>
+
+            <apex:repeat value="{!inventoryList}" var="apt">
+                <tr style="font-size: 11px;">
+                    <apex:repeat value="{!fieldsList}" var="fld">
+                        <td> {!apt[fld]} </td>
+                    </apex:repeat>
+
+                </tr>
+            </apex:repeat>
+
+        </table>
+        <div>
+            <p
+                style="font-size: 12px; font-family: verdana, arial, sans-serif ; white-space: pre-line; margin-top : 10px; font-weight:bold;">
+                Please note:</p>
+            <p style="font-size: 11px;font-family: verdana, arial, sans-serif;;white-space: pre-line">
+                {!quotationWrapperObj.projectRec.Summary_Quote_Notes__c}</p>
+        </div>
+        <div style="display: block;padding: 10px;"
+            rendered="{!IF(ISNULL(quotationWrapperObj.userRec) , false , true)} ">
+
+            <div style="float: left">
+                <h3>Prepared by:</h3>
+                <table style="font-size: 11px;font-family: verdana, arial, sans-serif;;white-space: pre-line">
+                    <tr>
+                        <td>Name: {!quotationWrapperObj.userRec.Name}</td>
+                    </tr>
+                    <tr>
+                        <td>Email : {!quotationWrapperObj.userRec.Email}</td>
+                    </tr>
+                    <tr>
+                        <td>Mobile : {!quotationWrapperObj.userRec.MobilePhone}</td>
+                    </tr>
+                    <tr>
+                        <td>Date:
+                            <apex:outputText value="{0, date, MMMM d','  yyyy}">
+                                <apex:param value="{!TODAY()}" />
+                            </apex:outputText>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <apex:outputPanel layout="none" rendered="{!isOppPopulated}">
+                <div style="float: right">
+                    <h3>Customer Details:</h3>
+                    <table style="font-size: 11px">
+                        <tr>
+                            <td>Name : {!oppObject.Name}</td>
+                        </tr>
+                        <tr>
+                            <td>Company : {!oppObject.Company_Name__c}</td>
+                        </tr>
+                        <tr>
+                            <td>Email : {!oppObject.Email__c}</td>
+                        </tr>
+                        <tr>
+                            <td> Mobile : {!oppObject.Mobile__c}</td>
+                        </tr>
+                    </table>
+                </div>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!isLeadPopulated}">
+                <div style="float: right">
+                    <h3>Customer Details:</h3>
+                    <table style="font-size: 11px">
+                        <tr>
+                            <td>Name : {!leadObject.Company}</td>
+                        </tr>
+                        <tr>
+                            <td>Company : {!leadObject.Company_Name__c}</td>
+                        </tr>
+                        <tr>
+                            <td>Email : {!leadObject.Email}</td>
+                        </tr>
+                        <tr>
+                            <td> Mobile : {!leadObject.MobilePhone}</td>
+                        </tr>
+                    </table>
+                </div>
+            </apex:outputPanel>
+        </div>
+
+    </body>
+</apex:page>

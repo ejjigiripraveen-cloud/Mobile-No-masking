@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Allows custom permissions for Agentforce Agent : WhatsApp_Keyword_Agent&apos;s agent user : whatsapp_keyword_agent@00d5j000002zp531406106489.ext.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>WhatsApp_Keyword_Agent2052704339 Permissions</label>
+    <license>Einstein Agent</license>
+</PermissionSet>

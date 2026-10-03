@@ -1,0 +1,190 @@
+<aura:component controller="CustomQuotationController" access="global">
+
+
+    <aura:attribute name="filterString" type="String" default="" />
+    <aura:attribute name="data" type="List" default="[]" />
+    <aura:attribute name="columns" type="List" default="[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="showSpinner" type="boolean" default="false" />
+    <aura:attribute name="resMessage" type="string" access="public" default="No Records to display." />
+
+    <aura:attribute name="projectId" type="string" access="public" default="" />
+    <aura:attribute name="blockId" type="string" access="public" default="" />
+    <aura:attribute name="selectedApartment" type="List" default="[]" />
+    <aura:attribute name="selectedLeadOppData" type="List" default="[]" />
+
+    <aura:attribute name="selectedLead" type="Lead[]" default="{}" />
+    <aura:attribute name="selectedOpportunity" type="List" default="[]" />
+    <aura:attribute name="parent" type="Aura.Component" />
+    <aura:attribute name="showLeadOppPage" type="boolean" default="true" />
+    <aura:attribute name="opportunityId" type="string" access="public" default="" />
+    <aura:attribute name="typeOfSummary" type="string" access="public" default="" />
+
+    <aura:attribute name="opportunityList" type="List" default="[]" />
+    <aura:attribute name="columnsForOpportunityTable" type="List" default="[]" />
+    <aura:attribute name="currentWrapperOfQuoteWithInstallments" type="List" />
+    <aura:attribute name="isDisabled" type="boolean" default="false" />
+
+    <aura:attribute name="quotationRec" type="Quotation__c" default="{}" />
+
+    <aura:attribute name="setOfSelectedOppId" type="Set" default="[]" />
+    <aura:attribute name="setOfSelectedLeadId" type="Set" default="[]" />
+    <aura:attribute name="maxRowSelection" type="Integer" default="1" />
+
+
+    <aura:registerEvent name="cmpEvent" type="c:componentEvent" />
+
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="small" />
+        </div>
+    </aura:if>
+
+    <aura:if isTrue="{!v.showLeadOppPage}">
+
+        <aura:if isTrue="{!v.typeOfSummary == 'quoteSummary'}">
+            <lightning:layout multipleRows="true" class="slds-align_absolute-center ">
+
+                <lightning:layoutItem class="slds-col 
+                                                        slds-large-size_6-of-12 
+                                                        slds-medium-size_4-of-12 
+                                                        slds-small-size_12-of-12" padding="around-small slds-box">
+                    <lightning:input name="name" label="Search Lead/Opportunity"
+                        placeholder="Please Enter Search String" value="{!v.filterString}" />
+
+                    <div class="slds-m-top_medium"></div>
+                    <lightning:button class="slds-align_absolute-center" variant="brand" label="Search"
+                        iconName="utility:search" title="Search" onclick="{!c.applyFilters}" />
+                </lightning:layoutItem>
+            </lightning:layout>
+
+            <lightning:layout multipleRows="true" class="slds-align_absolute-center ">
+
+                <lightning:layoutItem class="slds-col 
+                                                        slds-large-size_6-of-12 
+                                                        slds-medium-size_4-of-12 
+                                                        slds-small-size_12-of-12 slds-box" padding="around-small">
+                    <div class="slds-p-left_small slds-p-right_small">
+                        <aura:if isTrue="{!v.data.length > 0}">
+                            <div class="slds-scrollable tableHeight">
+                                <lightning:datatable keyField="id" aura:id="quoteSummary" hideCheckboxColumn="false"
+                                    data="{!v.data}" columns="{!v.columns}" onrowselection="{!c.getSelectedRow }"
+                                    maxRowSelection="{! v.maxRowSelection }"
+                                    class="slds-table_bordered slds-table--header-fixed" max-row-select='1' />
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="slds-box slds-box_small">
+                                    <center>
+                                        <p><b>{!v.resMessage}</b></p>
+                                    </center>
+
+                                </div>
+                            </aura:set>
+
+                        </aura:if>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+
+
+            <div class="slds-m-top_medium"></div>
+            <lightning:layout multipleRows="true" class="slds-align_absolute-center">
+
+                <lightning:button class="slds-align_absolute-center" variant="brand" label="Back" title="Back"
+                    onclick="{!c.goBackForSummaryQuote}" />
+
+                <aura:if isTrue="{!v.selectedLeadOppData.length > 0}">
+
+                    <lightning:button class="slds-align_absolute-center" variant="brand" label="Preview"
+                        title="Preview Quote" onclick="{!c.previewSummaryQuote}" />
+                </aura:if>
+
+                <aura:if isTrue="{!v.selectedLeadOppData.length > 0}">
+
+                    <lightning:button class="slds-align_absolute-center" variant="brand"
+                        label="Generate Quote And Send Email" title="Generate Quote"
+                        onclick="{!c.generateQuoteSummary}" />
+                </aura:if>
+
+            </lightning:layout>
+
+
+            <!-- for comparative summary quote-->
+            <aura:set attribute="else">
+                <lightning:layout multipleRows="true" class="slds-align_absolute-center ">
+
+                    <lightning:layoutItem class="slds-col 
+                                                        slds-large-size_6-of-12 
+                                                        slds-medium-size_4-of-12 
+                                                        slds-small-size_12-of-12" padding="around-small slds-box">
+                        <lightning:input name="name" label="Search Opportunity" placeholder="Please Enter Search String"
+                            value="{!v.filterString}" />
+
+                        <div class="slds-m-top_medium"></div>
+                        <lightning:button class="slds-align_absolute-center" variant="brand" label="Search"
+                            iconName="utility:search" title="Search" onclick="{!c.applyFiltersOnOpp}" />
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true" class="slds-align_absolute-center ">
+
+                    <lightning:layoutItem class="slds-col 
+                                                        slds-large-size_6-of-12 
+                                                        slds-medium-size_4-of-12 
+                                                        slds-small-size_12-of-12 slds-box" padding="around-small">
+                        <div class="slds-p-left_small slds-p-right_small">
+                            <aura:if isTrue="{!v.opportunityList.length > 0}">
+                                <div class="slds-scrollable tableHeight">
+                                    <lightning:datatable keyField="Id" aura:id="comparativeQuoteSummary"
+                                        hideCheckboxColumn="false" data="{!v.opportunityList}"
+                                        columns="{!v.columnsForOpportunityTable}" onrowselection="{!c.getSelectedRow }"
+                                        class="slds-table_bordered slds-table--header-fixed" />
+                                </div>
+                                <div class="slds-m-top_medium"></div>
+                                <div class="slds-m-top_medium"></div>
+                                <div class="slds-m-top_medium"></div>
+
+                                <aura:set attribute="else">
+                                    <div class="slds-box slds-box_small">
+                                        <center>
+                                            <p><b>{!v.resMessage}</b></p>
+                                        </center>
+
+                                    </div>
+                                </aura:set>
+
+                            </aura:if>
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+
+                <div class="slds-m-top_medium"></div>
+
+                <!--bbbb-->
+                <div class="slds-var-m-top_x-large slds-align_absolute-center">
+
+                    <lightning:button class="slds-m-left_medium" label="Back" variant="brand" onclick="{!c.goBack}">
+                    </lightning:button>
+                    <aura:if isTrue="{!v.selectedOpportunity.length > 0}">
+                        <lightning:button class="slds-m-left_medium" label="Next Quotation" variant="brand"
+                            onclick="{!c.nextQuotation}">
+                        </lightning:button>
+
+                        <lightning:button class="slds-m-left_medium" label="Finish Quotation" variant="brand"
+                            onclick="{!c.finishQuotation}"> </lightning:button>
+                    </aura:if>
+                </div>
+
+                <!--bbbb-->
+            </aura:set>
+        </aura:if>
+    </aura:if>
+
+    <!--for comparative quote lwc-->
+
+    <!--end lwc-->
+
+
+
+</aura:component>

@@ -1,0 +1,37 @@
+<apex:page sidebar="false"  showHeader="false" standardController="Installment__c"  extensions="SecReminderController" renderAs="pdf" >
+  <head>
+<body>
+
+<div style="width:830; background-color:white; height:80px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+     <apex:image style="float:right" value="{!$Resource.OrgLogo}" width="80" height="50"/>
+</div>
+<apex:form >
+<p><b>Ref: MDPL/MWC/LTR -2015-16</b></p>
+<b><apex:outputText value="{0,date,dd/MM/yy}">Date: <apex:param value="{!TODAY()}" /> </apex:outputText> </b> 
+
+
+<p>Mr./Mrs {!Installment__c.opportunity__r.Name}</p>
+<p>Phone :{!Installment__c.opportunity__r.Contact__r.MobilePhone}</p>
+.
+
+<p>Dear Sir/Madam,</p>
+
+<p>Sub: Balance due as against Apt No <b>{!Installment__c.opportunity__r.Flat_No__c} @ {!Installment__c.Project_Name__c} </b></p>
+
+
+
+<p>With reference to the reminder mail sent to you on <b> <apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!Installment__c.Pay_By_Date_PBD__c+3}" /> </apex:outputText> .</b> we wish to inform you that <b>Rs.{!Installment__c.Total_Balance__c}({!AmountInwords}) </b>was overdue as on <b> <apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!TODAY()}" /> </apex:outputText> </b> and this amount  is yet to be received by us. Please refer to the demand note enclosed in our pervious mail.</p>
+<p>As per the terms and conditions mentioned in agreement, accepted and signed by you, an interest on the delayed payment has already commenced.</p>
+
+<p>Please treat this mail as urgent and do the needful on or before <b> <apex:outputText value="{0,date,dd/MM/yy}"><apex:param value="{!Installment__c.Pay_By_Date_PBD__c+9}" /> </apex:outputText> .</b></p>
+
+<p>If payment has already been made, please do accept our thanks and kindly ignore this reminder.</p>
+<p>Thanks &amp; Regards</p>
+
+<p>CRM….</p>
+
+
+</apex:form>
+</body>
+</head>
+</apex:page>

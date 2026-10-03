@@ -1,0 +1,29 @@
+<apex:page sidebar="false"  showHeader="false" standardController="Receipt__c" renderAs="pdf" rendered="true" id="Page" >
+<div style="width:830; background-color:white; height:80px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+     <apex:image style="float:left" value="{!$Resource.OrgLogo}" width="80" height="50"/>
+</div>
+
+<p> <b>Ref: MDPL/MWC/LTR -2016-16 </b></p>
+<p> <b>Date:</b> </p>
+<p> <b>Mr.{!Receipt__c.Opportunity__r.Name}</b></p>
+<p>Phone :{!Receipt__c.Opportunity__r.Contact__r.MobilePhone} </p>
+<p>Dear Sir/Madam,</p>
+
+<p align="center"> <b>Sub:{!Receipt__c.Opportunity__r.Project_Name__c} , Apt No.{!Receipt__c.Opportunity__r.Flat_No__c} </b></p>
+
+<p>Refer to the booking of the subject apartment, we had received a payment of Rs.{!ROUND((Receipt__c.Amount__c),0)}/- (Rupees ________________ only) vide cheque bearing No.{!Receipt__c.Transaction_No__c} dated {!Receipt__c.Deposit_Date__c} drawn on {!Receipt__c.Bank_Name__c} Bank towards the due for (milestone). The cheque issued by you for the above apartment was returned due to {!Receipt__c.Reason_for_Bouncing__c}. In this regard, we have send reminders in the past requesting you to return the demanded payments. However, despite such reminders, payments have not been made by you which amount to termination of the booking from your end.</p>
+
+<p>In view of this default, we have no option but to treat the non-payment of the outstanding amount as a termination of the booking and forfeit _____% of the total agreement value as per the terms of the agreement. Please note that your booking stands cancelled with immediate effect and you shall have no right, title, interest on lien on the above apartment</p>
+
+<p>No further correspondence or explanation in this regard will be entertained.</p>
+
+
+<p>Thanking you,</p>
+
+<p>Yours faithfully,</p>
+<p>For <b> Mantri Developers Pvt Ltd </b> </p>
+
+
+<p>Authorized Signatory </p>
+
+</apex:page>

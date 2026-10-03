@@ -1,0 +1,404 @@
+<apex:page >
+    <apex:includeLightning />
+    <script type="text/javascript" src="https://gsquaregroup--namespace.vf.force.com/support/api/53.0/lightning/opencti.js"></script>
+        
+    <div id="lightning"></div>
+    
+    <script type="text/javascript">
+
+        $Lightning.use("c:slashPhoneApp", function() {
+            $Lightning.createComponent("c:slashPhone", {}, "lightning", function(cmp) {});
+        });
+    
+        window.addEventListener("message", receiveMessage, false);
+    
+
+
+        function openLead(customerPhoneNumber, options = {}){
+            
+            console.log("customerPhoneNumber ", customerPhoneNumber);
+            
+            sforce.opencti.runApex({
+                apexClass    : 'leadOp',
+                methodName   : 'getValues',
+                methodParams : 'phone=' + customerPhoneNumber,
+                callback     : function(response) {
+                    
+                    console.log('Slash ::','call Got response ', response);
+                    
+                    if (response.success == true) {
+                        
+                        var contactId      = null;
+                        let responseString = response.returnValue.runApex || '';
+                        let responseJson   = {};
+                        try{
+                            responseJson = JSON.parse(responseString);
+                        }catch(e){
+                            
+                            console.log('Got Eror while parsing responseString in index.vfp', e);
+                            
+                            if(responseJson && typeof responseJson == 'string'){
+                                responseJson = {};
+                            }else{
+                                responseJson = responseString;
+                            }
+                            
+                        }
+                        
+                        console.log('Slash ::','Open lead responseJson:', responseJson)
+                        
+                        if( typeof options === 'object' && options.campaignId === 8 && responseJson.caseId ) {
+                            contactId = responseJson.caseId;
+                        } else if(responseJson.oppo) {
+                            contactId = responseJson.oppo;
+                        } else if(responseJson.acc) {    
+                            contactId = responseJson.acc;
+                        } else if(responseJson.lead) {
+                            contactId = responseJson.lead;
+                        } else if(responseJson.contact) {
+                            contactId = responseJson.contact;
+                        }
+                        
+                        if (contactId !== null) {
+                            
+                            sforce.opencti.screenPop({
+                                type   : sforce.opencti.SCREENPOP_TYPE.SOBJECT,
+                                params : {
+                                    recordId: contactId
+                                }
+                            });
+                        }
+                    }
+                }
+            });    
+        }
+
+        let retryCount = 2
+        function saveLogCallback(data, value, callCount){
+            
+            console.log('Slash ::','saveLogCallback data',data)
+            console.log('Slash ::','saveLogCallback value',value)
+            
+            if(data && !data.success){
+                
+                delete value["WhatId"]
+                delete value["WhoId"]
+               if(callCount <= retryCount){
+                 saveLog(value,callCount)
+               }   
+            }      
+        }
+        
+        function saveLog(value, callCount){
+            
+            if(callCount){
+                callCount = callCount + 1
+            }else{
+                callCount = 1
+            }
+            
+            console.log('Slash ::','saveLog',callCount,value)
+            
+            // sforce.interaction.saveLog('Task','Phone=8767520926', saveLogCallback);  
+            // sforce.opencti.saveLog({value:{entityApiName:"Task",  Customer_Number__c :"8767520926"}, callback:saveLogCallback});
+            sforce.opencti.saveLog({value:value, callback:(data)=>saveLogCallback(data,value,callCount)});
+        }
+    
+        console.log('kannnnnnnnnnnnnn::::');
+
+        var totalTalkTimeTemp = "";
+    
+        function receiveMessage(event) {
+            
+            console.log("kanishkkk",event);
+
+            console.log('Slash ::',"MESSAGE_RECEIVED", event.data);
+            
+            let { callInfo, eventInfo, userInfo, apiType, methodName, response, message }= event.data;
+            console.log("callInfoooo",callInfo, eventInfo, methodName ,apiType);
+            console.log("kkkkkkk Origin:", event.origin);
+            
+            if(eventInfo && eventInfo.type === "CHANNEL_DESTROY"){
+               if(callInfo && callInfo.variableRecordSeconds){
+                   totalTalkTimeTemp = callInfo.variableRecordSeconds;
+               }
+            }
+
+
+
+            // dispose process 
+            if(eventInfo && eventInfo.type == "disposeProcess"){
+                
+                let dialerUrl           = eventInfo.dialerUrl         || "";
+                let agentUserName       = userInfo.userName           || "";
+                let agentFullName       = userInfo.userFullName       || "";
+                let agentExtenshion     = userInfo.userExtensionType  || "";
+
+                //call Info
+                let campaignName        =  callInfo.campaignName      || "";
+                let campaignId          =  callInfo.campaignId        || "";
+                let processName         =  callInfo.processName       || "";
+                let processId           =  callInfo.processId         || "";
+                let leadsetName         =  callInfo.leadsetName       || ""; 
+                let customerNumber      =  (callInfo.customerNumber && callInfo.customerNumber.toString()) || "";
+                let referenceUuid       =  callInfo.referenceUuid     || "";
+                let totalTalkTime       =  callInfo.totalTalkTime     || "";
+                let startDateTime       =  callInfo.startDateTime     || "";
+                let recordingPublicLink =  callInfo.recordingPublicLink || "";
+                let modeOfCalling       =  callInfo.modeOfCalling     || "";
+                
+                
+                let { logInfo:disposeProcessData } = eventInfo;
+                
+                let disposeName       = disposeProcessData.disposeName       || "";
+                let disposecomment    = disposeProcessData.disposecomment    || "No Comment Added";
+                let firstDisposeName  = disposeProcessData.firstDisposeName  || "";
+                let secondDisposeName = disposeProcessData.secondDisposeName || "";
+                let thirdDisposeName  = disposeProcessData.thirdDisposeName  || "";
+                let disconnectedBy    = disposeProcessData.disconnectedBy    || "";
+                let customerJson      = disposeProcessData.customerJson      || ""; 
+                let callbackDate      = "";
+                let callbackTime      = "";
+                let customerJsonTemp  = {}
+ 
+                if(typeof customerJson != 'string'){
+                 customerJsonTemp = customerJson
+                }
+                
+                if(typeof customerJson == 'string'){
+                  try{
+                   customerJsonTemp = JSON.parse(customerJson);
+                  }catch(e){
+                   if(typeof customerJson != 'string'){
+                    customerJsonTemp = customerJson
+                   }
+                 }
+                }
+                
+                if(modeOfCalling == "manual"){
+                  modeOfCalling='outbound'
+                }
+
+                // To fix the total talkTime issue in manual call
+                if(totalTalkTime === ""){
+                    
+                    totalTalkTime = totalTalkTimeTemp;
+                }
+    
+                //let subject = `[${modeOfCalling.toUpperCase()}] ${customerNumber}`;
+                let subject    = `[${modeOfCalling.toUpperCase()}]`;
+                let callStatus = disposeProcessData.callAnsweredByCustomer !== "FALSE"? "Connected":"Not Connected";
+                let taskValue  = 
+                    { 
+                        entityApiName:"Task",
+                        Subject             :       subject,                   
+                        dialerUrl__c        :       dialerUrl,
+                        agentFullName__c    :       agentFullName,
+                        Agent_Username__c   :       agentUserName,
+                        agentExtenshion__c  :       agentExtenshion,
+                        campaignName__c     :       campaignName,
+                        processName__c      :       processName,
+                        leadsetName__c      :       leadsetName,
+                        customerNumber__c   :       customerNumber,
+                        referenceUuid__c    :       referenceUuid,
+                        totalTalkTime__c    :       totalTalkTime,
+                        startDateTime__c    :       startDateTime,
+                        recordingPublicLink__c:     recordingPublicLink,
+                        modeOfCalling__c    :       modeOfCalling,
+                        disposeName__c      :       disposeName,
+                        dispose__c          :       disposeName,
+                        disposecomment__c   :       disposecomment,
+                        firstDisposeName__c :       firstDisposeName,
+                        secondDisposeName__c:       secondDisposeName,
+                        thirdDisposeName__c :       thirdDisposeName,
+                        disconnectedBy__c   :       disconnectedBy,
+                        Description         :       disposecomment,
+                        Call_Status__c      :       callStatus,
+
+                        //customerJson__c   :       customerJson,
+                        //File_Reference__c :       recordingPublicLink,
+                        //Phone_Number__c   :       customerNumber,
+
+                        //ReminderDateTime  :       new Date(callbackDate + callbackTime).toISOString(),
+                        //ReminderDateTime  :       "2022-02-17 19:00:00",
+                        //IsReminderSet     :       true,
+                        //duration_in_secs__c:      totalTalkTime,
+                        // Call_short_description__c:disposecomment,
+
+                    }
+            
+                console.log('Data :::',taskValue);
+
+                console.log('Slash ::','callback values 1',callbackDate, callbackTime);
+                
+                if(typeof disposeProcessData.callbackdate == 'string' && disposeProcessData.callbackdate != '' && disposeProcessData.callbacktime != '' ){
+                    callbackDate = disposeProcessData.callbackdate;
+                    callbackTime = disposeProcessData.callbacktime;
+                    
+                    taskValue.ReminderDateTime = new Date(callbackDate + " " + callbackTime).toISOString();
+                    taskValue.IsReminderSet    = true;
+                }
+                // console.log('Slash ::','callback values 2',callbackDate, callbackTime);
+                
+                sforce.opencti.runApex({
+                    apexClass    : 'leadOp',
+                    methodName   : 'getValues',
+                    methodParams : 'phone=' + customerNumber,
+                    callback: function(response) {
+                        
+                        console.log('Slash ::','call Got getValues ',customerNumber, response)
+                        
+                        if(!response ||  !response.success || !response.returnValue ||!response.returnValue.runApex){
+                            //saveLog(taskValue)
+                            console.log('Slash ::','leadOp failure ', response);
+                        } else{
+                            let responseString = response.returnValue.runApex || '';
+                            let responseJson = {}
+                            try{
+                                responseJson = JSON.parse(responseString);
+                            }catch(e){
+                                console.log('Got Error in while parins responseString CATCH block', e);
+                                
+                                if(responseJson && typeof responseJson == 'string'){
+                                    responseJson = {}
+                                }else{
+                                    responseJson = responseString
+                                }
+                                
+                            }
+                            console.log("Slash ::",'customerJsonTemp',customerJsonTemp);
+                            console.log("Slash ::",'responseJson',responseJson);
+                            
+                            // salesforce entity mapping logic 
+                            taskValue["WhoId"]  = "";
+                            taskValue["WhatId"] = "";
+                            
+                            if( customerJsonTemp && customerJsonTemp.objectType && 
+                              (customerJsonTemp.objectType == 'Account' || 
+                               customerJsonTemp.objectType == 'Opportunity' || 
+                               customerJsonTemp.objectType == 'Case') 
+                            ){
+                                taskValue["WhatId"] = customerJsonTemp.recordId;
+                            }
+                            
+                            if( !taskValue["WhatId"] ) {
+                                taskValue["WhatId"] = responseJson.oppo || responseJson.acc || "";
+                                
+                                // logic for candere to send caseId instead of OpportunityId for CTT campaign
+                                // Note this is being done in a hurry, ideally would need to generalize this 
+                                // feature to incorporate for any campaign
+                                // candere -> campaign: CTT
+                                if( campaignId === 8 ) {
+                                    taskValue["WhatId"] = responseJson.caseId || responseJson.acc || "";
+                                }
+                            }
+                            
+                            // only fill WhoId if WhatId is not present to avoid the below issue
+                            // field integrity exception: WhoId, WhatId (cannot specify whatID with lead whoID: 1)
+                            if( !taskValue["WhatId"] ){
+                                if( customerJsonTemp && 
+                                    customerJsonTemp.objectType && 
+                                    (customerJsonTemp.objectType == 'Lead' || customerJsonTemp.objectType == 'Contact') 
+                                ) {
+                                    taskValue["WhoId"] = customerJsonTemp.recordId
+                                } else {
+                                    taskValue["WhoId"] = responseJson.lead || responseJson.contact || ""
+                                }
+                            }
+                            
+                            console.log("Slash ::","responseString", responseString);
+                            console.log("Slash ::","responseJson"  ,   responseJson);
+                            console.log("Slash ::","saveLog"       ,      taskValue);
+                            
+                           // commented this function call to stop saving dispose logs in TASKS
+                            // as requirement is to save the call log in Lead callDetails 
+                            
+                            // saveLog(taskValue);
+                        } 
+                    }
+                })
+            }   
+
+            
+            // softPhone CTI popup on clickToDial
+            if(apiType && apiType == "opencti" && methodName && methodName =="onClickToDial" && response && response.number){
+                
+                console.log('Slash ::',"onClickToDial screenPop")
+                
+                if(response.recordId){
+                    
+                    sforce.opencti.screenPop({
+                        type   : sforce.opencti.SCREENPOP_TYPE.SOBJECT,
+                        params : {
+                            recordId: response.recordId
+                        }
+                    });
+                    
+                }else{
+                    
+                    var customerPhoneNumber = response.number || false;
+                    console.log('Slash ::','call Got customer number ', customerPhoneNumber);
+                    openLead(customerPhoneNumber)
+                }
+                
+                return;
+            }
+            
+            // SoftPhoneCTI popup for Inboud call
+            if(eventInfo && eventInfo.type && eventInfo.type == "agentPhoneAnswer" && callInfo && callInfo.modeOfCalling && callInfo.modeOfCalling =="Inbound" ){
+         
+                console.log('Slash ::',"inbound call");
+                
+                sforce.opencti.setSoftphonePanelVisibility({
+                    visible  : true,
+                    callback : function() {
+                        console.log('Slash ::',"visible for Inbound call");
+                    }
+                });
+                var customerPhoneNumber = callInfo.customerNumber  || false;
+                console.log('Slash ::','call Got customer number for Inbound ', customerPhoneNumber);
+                openLead(customerPhoneNumber);  
+                
+                return;
+            }
+
+            // SoftPhoneCTI popup for Auto call 
+            if(eventInfo && eventInfo.type && eventInfo.type == "agentPhoneAnswer" && callInfo && callInfo.modeOfCalling && callInfo.modeOfCalling =="Auto" ){
+                //customerNumber
+                console.log('Slash ::',"Auto call");
+                
+                sforce.opencti.setSoftphonePanelVisibility({
+                    visible  : true,
+                    callback : function() {
+                        console.log('Slash ::',"visible for Auto call");
+                    }
+                });
+                var customerPhoneNumber = (callInfo.customerNumber && callInfo.customerNumber.toString()) || false;
+                console.log('Slash ::','call Got customer number fro Auto ', customerPhoneNumber);
+                
+                openLead(customerPhoneNumber)
+                return;
+            }
+            
+            
+            
+            // Lead search popup for Manual call            
+            if(eventInfo && eventInfo.type && eventInfo.type == "agentPhoneAnswer" && callInfo && callInfo.modeOfCalling && callInfo.modeOfCalling =="manual" ){
+                
+                let customerNumber =  (callInfo.customerNumber && callInfo.customerNumber.toString()) || "";
+                let campaignId     =  callInfo.campaignId || "";
+                
+                openLead(customerNumber, { campaignId });
+            }
+                                          
+  
+        
+            /*sforce.opencti.setSoftphonePanelVisibility({
+                    visible : true,
+                    callback : function() {
+                       console.log("visible");
+                    }
+            });*/
+        }
+    </script>
+</apex:page>

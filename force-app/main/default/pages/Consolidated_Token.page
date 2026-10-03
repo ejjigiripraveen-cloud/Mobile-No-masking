@@ -1,0 +1,134 @@
+<apex:page renderAs="pdf" applyBodyTag="false" standardController="Opportunity" extensions="ConsolidatedReceipt" applyHtmlTag="false" showHeader="false">
+    <head>
+        <style>
+            .h_1{ text-transform:capitalize; line-height:1.8; font-size:18px; font-weight:bold;  } 
+            .p_13{ line-height:1.2; font-size:10px; }
+            .border{ 
+                border:0.5px solid black;
+                border-collapse:collapse;
+            }
+            @page {
+                size: legal;
+                margin-bottom: 3.1cm;
+                margin-left: 3cm;
+                margin-right: 3cm;
+                margin-top: 5.00cm;
+            }
+            div.header {
+                position: running(header);
+                padding-right: 20px;
+            }
+            div.footer {
+                display: block;
+                position: running(footer);
+            }
+            .pagenumber:before { content: counter(page); }
+            .pagecount:before { content: counter(pages); }
+            pre{ font-family:Time Nuremon; font-size:14px; }
+            table{ text-align:justify; }
+            .text-size { font-size:14px; }
+        </style>
+    </head>    
+    <body>
+        <div class="header"></div>
+
+        <h4 style="text-align:center;font-size:18px;">Consolidated Token</h4>
+        <div style="margin-top:100px;"></div>
+
+        <!-- Project Name and Date aligned using table -->
+        <p>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <b>Name of the Project:</b>
+                        <apex:outputText value="{!IF(
+                            CONTAINS(Opportunity.Project_Name__c,'|'),
+                            TRIM(RIGHT(
+                                Opportunity.Project_Name__c,
+                                LEN(Opportunity.Project_Name__c) - FIND('|', Opportunity.Project_Name__c)
+                            )),
+                            Opportunity.Project_Name__c
+                        )}"/>
+                    </td>
+                    <td align="right">
+                        <b>Date:</b>
+                        <apex:outputText value="{0,date,dd-MM-yyyy}">
+                            <apex:param value="{!Today()}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </table>
+        </p>
+
+        <p><b>Apartment/Villa/Plot/Unit No:</b> {!Opportunity.Apartment__r.Unit_number__c}</p>
+
+        <p style="border-top:1px solid #d4d4d4; max-width:100%;"></p>
+
+        <apex:variable value="{!if(Opportunity.Contact__r.Co_App_2_Name__c=null && Opportunity.Contact__r.Co_App_3_Name__c = null , '&' , ',')}" var="sep1"/>
+        <apex:variable value="{!if(Opportunity.Contact__r.Co_App_3_Name__c = null , '&' , ',')}" var="sep2"/>
+        <apex:variable value="&" var="sep3"/> 
+
+        <table width="100%">
+            <tr>
+                <td width="20%" height="40px;"><b>Received with Thanks from :</b></td>
+                <td width="80%">{!Opportunity.Contact__r.Salutation} {!Opportunity.Name} 
+                    <span style="display:{!IF(Opportunity.Contact__r.Co_Applicant_Name__c!=null,'','none')}">{!sep1} {!Opportunity.Contact__r.Co_App_Salutation__c} {!Opportunity.Contact__r.Co_Applicant_Name__c}</span>
+                    <span style="display:{!IF(Opportunity.Contact__r.Co_App_2_Name__c!=null,'','none')}">{!sep2} {!Opportunity.Contact__r.Co_App_2_Salutation__c} {!Opportunity.Contact__r.Co_App_2_Name__c}</span>
+                    <span style="display:{!IF(Opportunity.Contact__r.Co_App_3_Name__c!=null,'','none')}">{!sep3} {!Opportunity.Contact__r.Co_App_3_Salutation__c} {!Opportunity.Contact__r.Co_App_3_Name__c}</span>
+                </td>
+            </tr>
+            <tr>
+                <td width="40%" height="40px;"><b>Address:</b></td>
+                <td width="80%"> {!Opportunity.Contact__r.MailingStreet}, {!Opportunity.Contact__r.MailingCity}-{!Opportunity.Contact__r.MailingPostalCode},{!Opportunity.Contact__r.MailingState},{!Opportunity.Contact__r.MailingCountry}</td>
+            </tr>
+            <tr>
+                <td width="40%" height="40px;"><b>Mobile No:</b></td>
+                <td width="80%">{!Opportunity.Contact__r.MobilePhone}
+                    <span style="display:{!IF(Opportunity.Contact__r.Co_App_Mobile_No__c!=null,'','none')}">{!sep1} {!Opportunity.Contact__r.Co_App_Mobile_No__c}</span>
+                    <span style="display:{!IF(Opportunity.Contact__r.Co_App_2_Mobile__c!=null,'','none')}">{!sep2} {!Opportunity.Contact__r.Co_App_2_Mobile__c}</span>
+                    <span style="display:{!IF(Opportunity.Contact__r.Co_App_3_Mobile__c!=null,'','none')}">{!sep3} {!Opportunity.Contact__r.Co_App_3_Mobile__c}</span>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Receipt Table -->
+        <table class="border" cellpadding="3" cellspacing="0" width="100%" style="font-size:13px;">
+            <tr class="border">
+                <td class="border" style="text-align:center" width="10%"><b>Sl No</b></td>
+                <td class="border" style="text-align:center" width="15%"><b>Bank Name</b></td>
+                <td class="border" style="text-align:center" width="15%"><b>Branch Name</b></td>
+                <td class="border" style="text-align:center" width="15%"><b>Mode Of Payment</b></td>
+                <td class="border" style="text-align:center" width="20%"><b>Transaction Number</b></td>
+                <td class="border" style="text-align:center" width="20%"><b>Instrument Date</b></td>
+                <td class="border" style="text-align:center" width="20%"><b>Amount</b></td>
+            </tr>
+            <apex:variable value="{!1}" var="count" />
+            <apex:repeat value="{!recList}" var="rec">
+                <tr class="border">
+                    <td class="border" style="text-align:center">{!count}</td>
+                    <apex:variable value="{!count+1}" var="count" />
+                    <td class="border">{!rec.Bank_Name__c}</td>
+                    <td class="border">{!rec.Branch_Name__c}</td>
+                    <td class="border" align="center">{!rec.Mode_of_Payment__c}</td>
+                    <td class="border">{!rec.Transaction_No__c}</td>
+                    <td class="border" align="center"><apex:outputText value="{0,date,dd-MM-yyyy}"><apex:param value="{!rec.Instrument_Date__c}"/></apex:outputText></td>
+                    <td class="border" style="text-align:right"><apex:outputText value="{0,number,###,###,###,##0}"><apex:param value="{!rec.Amount__c}" /></apex:outputText></td>
+                </tr>
+            </apex:repeat>
+            <tr>
+                <td colspan="5" align="right" class="border"><b>Total</b></td>
+                <td class="border" style="text-align:right"><b><apex:outputText value="{0,number,###,###,###,##0}"><apex:param value="{!totalAmount}" /></apex:outputText></b></td>
+            </tr>
+        </table>
+
+        <p>
+            Totally received a sum of <b>Rs. <apex:outputText value="{0,number,###,###,###,##0}"><apex:param value="{!totalAmount}" /></apex:outputText> ({!AmountInWord} Rupees Only)</b>
+        </p>
+        <p>
+            Cheque Payments are subject to realisation.<br/>
+            *This is computer generated receipt and does not require any stamp or signature
+        </p>
+
+        <h3 class="h_1"><strong>{!Opportunity.Apartment__r.Block__r.Project__r.Company_Name__c}</strong></h3>
+    </body>
+</apex:page>

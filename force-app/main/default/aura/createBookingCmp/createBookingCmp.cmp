@@ -1,0 +1,823 @@
+<aura:component controller="BookingController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    
+    <aura:attribute name="opp" type="Opportunity__c" default="{}"/>
+    <aura:attribute name="oppplot" type="Opportunity_Plot__c[]" default="[]"/><!--type="Opportunity_Plot__c[]"/> -->
+    <aura:attribute name="lead" type="Lead" default="{}"/>
+    <aura:attribute name="projects" type="Project__c[]" default="[]"/>
+    <aura:attribute name="sources" type="String[]" default="[]"/>
+    <aura:attribute name="Bsources" type="String[]" default="[]"/>
+    <aura:attribute name="recordId" type="string"/>
+    <aura:attribute name="accounts" type="object[]" default="[]"/>
+    <aura:attribute name="plots" type="Plot__c" default="{}"/>
+    <aura:attribute name="showPlotPopup" type="boolean" default="false"/>
+    <aura:attribute name="bookingDate" type="Date"/>
+    <aura:attribute name="soldPrice" type="currency"/>
+    <aura:attribute name="selectedLookUpRecords" type="sObject[]" default="[]"/>
+    <aura:attribute name="selectedprojects" type="List" />
+    <aura:attribute name="LeadSource" type="string"/>
+    <aura:attribute name="pSize" type="double" />
+    
+    <aura:attribute name="searchText1" type="string" default=""/>
+    <aura:attribute name="matchproj" type="Object[]" default="[]"/>
+    <aura:handler name="change" value="{!v.searchText1}" action="{!c.searchText1}"></aura:handler>
+    
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    
+    <aura:attribute name="activeSections" type="List" default="['A','B','C','D']" />
+    <aura:attribute name="activeSectionsMessage" type="String" default="" />
+    
+    <aura:html tag="style">
+        .slds-modal__container{ 
+        max-width: 80rem !important;
+        width:80% !important;
+        } 
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }
+        .slds-modal__content{
+        
+        height:unset !important;
+        max-height:unset !important;
+        }
+        .closeIcon{
+        display:none;
+        }
+        .slds-col{
+        margin-left:5px;
+        }
+        .slds-form-element__control{
+        padding:2px;
+        }
+    </aura:html>
+    
+    <!-- Modal/Popup Box starts here-->
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            
+            <lightning:buttonIcon iconName="utility:close"
+                                  onclick="{! c.cancel }"
+                                  alternativeText="close"
+                                  variant="bare-inverse"
+                                  class="slds-modal__close"/>
+            
+            <header class="slds-modal__header">
+                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Booking</h1>
+            </header>
+            
+            <aura:if isTrue="{!v.showPlotPopup == false}">
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p><div class="slds-form">
+                        
+                        <lightning:accordion allowMultipleSectionsOpen="true" activeSectionName="{! v.activeSections }">
+                            <!-- FIRST APPLICANT SECTION -->
+                            <lightning:accordionSection name="A" label="First Applicants Details">
+                                <div class="slds-scope">
+                                    <div class="slds-grid slds-wrap slds-text-align_left">
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                               
+                                                <label class="slds-form-element__label">
+                                                    <abbr class="slds-required" title="required">* </abbr>Name</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="text" value="{!v.opp.Name}" readonly="true"/>
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing ">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input label="Name" type="text" value="{!v.opp.Name}"  readonly="true"/>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!-- <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">Contact number</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="tel"  value="{!v.opp.Contact_number__c}"/>
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-scope">
+                                    <div class="slds-grid slds-wrap slds-text-align_left">
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    Customer DOB</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="date" name="input3"  value="{!v.opp.Customer_DOB__c}"/>
+                                                    
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input label="Contact number" type="tel"  value="{!v.opp.Contact_number__c}" required="true"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    Email</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="email" name="email1" value="{!v.opp.Email_ID__c}" />
+                                                    
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input label="Alternate Contact number" type="tel"  value="{!v.opp.Alternate_contact_number__c}" required="true"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-scope">
+                                    <div class="slds-grid slds-wrap slds-text-align_left">
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    Customer DOB</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="date" name="input3"  value="{!v.opp.Customer_DOB__c}"/>
+                                                    
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input label="Customer DOB" type="date" name="input3"  value="{!v.opp.Customer_DOB__c}" required="true"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    Email</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="email" name="email1" value="{!v.opp.Email_ID__c}" />
+                                                    
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input label="Email" type="email" name="email1" value="{!v.opp.Email_ID__c}" required="true"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-scope">
+                                    <div class="slds-grid slds-wrap slds-text-align_left">
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    Adhaar Number</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="text" maxlength="14" name="adhaarno1"  value="{!v.opp.Aadhar_Number__c}"/>
+                                                    
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input label="Adhaar Number" type="text" maxlength="14" name="adhaarno1"  value="{!v.opp.Aadhar_Number__c}" required="true"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    PAN Number</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input type="text"  maxlength="10"  name="panno1" value="{!v.opp.PAN_Number__c}" />
+                                                    
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:input label="PAN Number" type="text"  maxlength="10"  name="panno1" value="{!v.opp.PAN_Number__c}" required="true"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-scope">
+                                    <div class="slds-grid slds-wrap slds-text-align_left">
+                                        <div class="slds-size_1-of-1 slds-max-small-size_1-of-1">
+                                            <!--  <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    Address</label>
+                                                <div class="slds-form-element__control">
+                                                     <lightning:textarea name="input3" value="{!v.opp.Address__c}"/>
+                                                    
+                                                </div>  
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <lightning:textarea label="Address" name="input3" value="{!v.opp.Address__c}" required="true"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--<div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                            <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    Project Name</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:select name="select" value="{!v.opp.Project__c}">
+                                                        <option value=""> None </option>
+                                                        <aura:iteration items="{!v.projects}" var="p">
+                                                            <option value="{!p.Id}" selected="{!p.Name==v.opp.Project_Name__c}" text="{!p.Name}"></option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>-->
+                                        
+                                    </div>                       
+                                </div>   
+                                <div class="slds-scope">
+                                    <div class="slds-grid slds-wrap slds-text-align_left">
+                                        
+                                        <div class="slds-size_1-of-1 slds-max-small-size_1-of-1">
+                                            <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                <label class="slds-form-element__label">
+                                                    <abbr class="slds-required" title="required">* </abbr>Project Name</label>
+                                                <div class="slds-form-element__control">
+                                                    <lightning:select name="select" value="{!v.opp.Project__c}">
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.projects}" var="p">
+                                                            <option value="{!p.Id}" selected="{!p.Name==v.opp.Project_Name__c}" text="{!p.Name}"></option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                    
+                                                </div>
+                                            </div>-->
+                                            <div class="slds-form-element slds-is-editing">
+                                                
+                                                <div class="slds-form-element__control">
+                                                    <!--<lightning:select label="Project Name" name="select" value="{!v.opp.Project__c}">
+                                                        <option value="">None</option>
+                                                        <aura:iteration items="{!v.projects}" var="p">
+                                                            <option value="{!p.Id}" selected="{!p.Name==v.opp.Project_Name__c}" text="{!p.Name}"></option>
+                                                        </aura:iteration>
+                                                    </lightning:select>-->
+                                                    <div class="slds-combobox_container">
+                                                        <div class="{!not(empty(v.matchproj)) ? 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open' : 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click' }" aura:id="open">
+                                                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                                                
+                                                                <lightning:input value="{!v.searchText1}" aura:id="field1" name="enter-search" label="Project" type="search" required="true" id="combobox-id-1" aria-autocomplete="list" aria-controls="listbox-id-1" aria-expanded="false" aria-haspopup="listbox" autoComplete="off" role="combobox" placeholder="Search..."/>                                      
+                                                               
+                                                            </div>
+                                                            <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox">
+                                                                
+                                                                <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                                                    <aura:if isTrue="{!v.matchproj}">
+                                                                        <!--<div class="{!if(not(empty(v.matchproj)), 'result-buttom','')}">-->
+                                                                            <aura:iteration items="{!v.matchproj}" var="item">
+                                                                                <li role="presentation" class="slds-listbox__item">
+                                                                                    <div id="option1" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+                                                                                        <!--<div class="slds-media__body">
+                                                                                            <div class="slds-input-has-icon slds-input-has-icon-right">
+                                                                                                <div class="slds-lookup__result-text" data-id="{!item}" onclick="{!c.update1 }">
+                                                                                                    <a role="option" >
+                                                                                                        <lightning:icon iconName="standard:user" size="xx-small"/>&nbsp;{!item}
+                                                                                                    </a>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>-->
+                                                                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                                                                            <span class="slds-icon_container slds-icon-standard-account">
+                                                                                                <lightning:icon iconName="standard:user" size="xx-small"/>&nbsp;
+                                                                                            </span>
+                                                                                        </span>
+                                                                                        <span class="slds-media__body">
+                                                                                             <div class="slds-lookup__result-text" data-id="{!item.Id}" onclick="{!c.update1 }">
+                                                                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!item.Name}</span>
+                                                                                            <!--<span class="slds-listbox__option-meta slds-listbox__option-meta_entity">Account • Burlington, NC</span>-->
+                                                                                            </div>
+                                                                                            </span>
+                                                                                    </div>
+                                                                                </li>
+                                                                            </aura:iteration>
+                                                                      <!--  </div>-->
+                                                                    </aura:if>     
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>                       
+                                </div>  
+                                
+                            </lightning:accordionSection>
+                            
+                            <!-- SECOND APPLICANT SECTION -->
+                            <lightning:accordionSection name="B" label="Second Applicants Details">
+                                <aura:set attribute="body">
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--  <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label" >
+                                                        Co-applicate name</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" value="{!v.opp.Co_applicate_name__c}"/>
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Co-applicate name" type="text" value="{!v.opp.Co_applicate_name__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!-- <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">Co-Applicant Contact number</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="tel" value="{!v.opp.Contact_number_1__c}"/>
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Co-Applicant Contact number" type="tel" value="{!v.opp.Contact_number_1__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        Email</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="email" name="email2" value="{!v.opp.Email_ID_1__c}" />
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Email" type="email" name="email2" value="{!v.opp.Email_ID_1__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        Address</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" name="input3"  value="{!v.opp.Address_1__c}"/>
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Address" type="text" name="input3"  value="{!v.opp.Address_1__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!-- <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        Adhaar Number</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" maxlength="14" name="adhaarno2"  value="{!v.opp.Adhar_Number__c}"/>
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Adhaar Number" type="text" maxlength="14" name="adhaarno2"  value="{!v.opp.Adhar_Number__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        PAN Number</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" maxlength="10" name="panno2" value="{!v.opp.PAN_Number2__c}" />
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="PAN Number" type="text" maxlength="10" name="panno2" value="{!v.opp.PAN_Number2__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </aura:set>
+                            </lightning:accordionSection>
+                            
+                            <!-- THIRD APPLICANT SECTION -->
+                            <lightning:accordionSection name="C" label="Third Applicants Details">
+                                
+                                <aura:set attribute="body">
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label" >
+                                                        Co Applicant Name</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" value="{!v.opp.Co_Applicant_Name3__c}"/>
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Co-applicate name" type="text" value="{!v.opp.Co_Applicant_Name3__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">Contact number</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="tel" value="{!v.opp.Contact_Number3__c}"/>
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Contact number" type="tel" value="{!v.opp.Contact_Number3__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        Email</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="email" name="email2" value="{!v.opp.Email_Id3__c}" />
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Email" type="email" name="email2" value="{!v.opp.Email_Id3__c}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        Address</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" name="input3"  value="{!v.opp.Address3__c}"/>
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Address" type="text" name="input3"  value="{!v.opp.Address3__c}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        Adhaar Number</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" maxlength="14" name="adhaarno3"  value="{!v.opp.Aadhar_Number3__c}"/>
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Adhaar Number" type="text" maxlength="14" name="adhaarno3"  value="{!v.opp.Aadhar_Number3__c}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                        PAN Number</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" maxlength="10" name="panno3" value="{!v.opp.PAN_Number3__c}" />
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="PAN Number" type="text" maxlength="10" name="panno3" value="{!v.opp.PAN_Number3__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </aura:set>
+                            </lightning:accordionSection>
+                            
+                            <!-- BOOKING SECTION -->
+                            <lightning:accordionSection name="D" label="Booking Details">
+                                
+                                <aura:set attribute="body">
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!-- <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label" >
+                                                        Lead Source</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:select name="select" value="{!v.opp.Source__c}">
+                                                            <option value="">None</option>
+                                                            <option value="{!v.LeadSource}">{!v.LeadSource}</option>
+                                                            <aura:iteration items="{!v.sources}" var="s">
+                                                                <option value="{!s}" text="{!s}"></option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element__control">
+                                                    <lightning:select label="Lead Source" name="select" value="{!v.opp.Source__c}">
+                                                        <option value="">--None--</option>
+                                                        <aura:iteration items="{!v.sources}" var="s">
+                                                            <option value="{!s}" text="{!s}" selected="{!v.opp.Source__c}"></option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label" >
+                                                        Date of Booking</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="date" name="input3"  value="{!v.opp.Date_of_Booking__c}"/>
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Date of Booking" type="date" name="input3" value="{!v.opp.Date_of_Booking__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                       Booking Source</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:select name="select" value="{!v.opp.Booking_Source__c}">
+                                                            <option value="">None</option>
+                                                            <aura:iteration items="{!v.sources}" var="s">
+                                                                <option value="{!s}" text="{!s}"></option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                        
+                                                    </div>
+                                                    
+                                                </div>-->
+                                                <div class="slds-form-element__control">
+                                                    <lightning:select label="Booking Source" name="select" value="{!v.opp.Booking_Source__c}">
+                                                        <option value="">--None--</option>
+                                                        <aura:iteration items="{!v.sources}" var="s">
+                                                            <option value="{!s}" text="{!s}"></option>
+                                                        </aura:iteration>
+                                                    </lightning:select>
+                                                </div>
+                                            </div>   
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                          FLS Name</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" name="input3"  value="{!v.opp.FLS_Name__c}"/>
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="FLS Name" type="text" name="input3"  value="{!v.opp.FLS_Name__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div class="slds-scope">
+                                        <div class="slds-grid slds-wrap slds-text-align_left">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <!--<div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                                    <label class="slds-form-element__label">
+                                                         Team Lead</label>
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input type="text" name="input3" value="{!v.opp.Team_Lead__c}" />
+                                                        
+                                                    </div>
+                                                </div>-->
+                                                <div class="slds-form-element slds-is-editing">
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <lightning:input label="Team Lead" type="text" name="input3" value="{!v.opp.Team_Lead__c}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </aura:set>
+                            </lightning:accordionSection>
+                            
+                        </lightning:accordion>
+                        
+                        
+                        
+                        </div>
+                    </p>
+                    
+                </div>
+                
+            </aura:if>
+            <aura:if isTrue="{!v.showPlotPopup}">
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p><div class="slds-form">
+                        <div class="slds-grid">
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                                    <label class="slds-form-element__label">
+                                        <abbr class="slds-required" title="required">* </abbr>Opportunity</label>
+                                    <div class="slds-form-element__control">
+                                        <lightning:input type="text" value="{!v.opp.Name}" readonly="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <lightning:buttonIcon iconName="utility:add"  size="large" variant="bare" alternativeText="Add" onclick="{!c.addRow}"/>
+                        </div>
+                        
+                        <div class="slds-scrollable">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered"> 
+                                <thead>
+                                    <tr class="slds-text-title_caps">
+                                        <th scope="col">
+                                            <div style="width: 20px" class="slds-truncate">Sl. No.</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Plot">Plot</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Size">Size</div>
+                                        </th>
+                                        <!-- <th scope="col">
+                                            <div class="slds-truncate" title="Min. Price">Min. Price</div>
+                                        </th>
+                                         <th scope="col">
+                                            <div class="slds-truncate" title="Max. Price">Max. Price</div>
+                                        </th>-->
+                                        <th scope="col">
+                                            <div class="cont" title="Rate Per Sq.Ft.">Rate Per Sq.Ft.</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Total">Total</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Actions">Actions</div>
+                                        </th>
+                                    </tr>
+                                </thead>   
+                                <tbody>     
+                                    <aura:iteration items="{!v.oppplot}" var="plot" indexVar="index">
+                                        <!--  <c:DynamicRowItem  plots="{!v.plots}" selPlot="{!plot}"  rowIndex="{!index}" /> -->
+                                        <tr class="slds-hint-parent">
+                                            <td> 
+                                                {!index + 1}
+                                            </td>
+                                            
+                                            
+                                            <td>
+                                                <div style="width: 150px"  class="slds-truncate" data-record="{!index}"  >
+                                                    <c:plotLookup  plots="{!v.plots}" value="{!plot.Plot__c}" size="{!plot.Plot_size__c}" rate="{!plot.Rate_per_sqft_Sales__c }" minprice="{!plot.Minimum_Price__c}" maxprice="{!plot.Maximum_Price__c}" total="{!plot.All_inclusive_price__c}"></c:plotLookup> 
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="width: 100px"  class="slds-truncate"  data-record="{!index}" onchange="{!c.calculateTotal}" >
+                                                    <lightning:input name="plotsize" type="number" required="true" maxlength="50" label="Size" messageWhenValueMissing="Enter Size"  value="{!plot.Plot_size__c}" />
+                                                </div>
+                                            </td>
+                                            <!-- <td>
+                                                <div style="width: 100px" class="slds-truncate"  data-record="{!index}">
+                                                    <lightning:input name="min" type="number" formatter="currency" step="0.01" maxlength="50" label="Min. Price" value="{!plot.Minimum_Price__c}" readonly="true" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="width: 100px" class="slds-truncate"  data-record="{!index}">
+                                                    <lightning:input name="max" type="number" formatter="currency" step="0.01" maxlength="50" label="Max. Price" value="{!plot.Maximum_Price__c}" readonly="true" />
+                                                </div>
+                                            </td>-->
+                                            <td>
+                                                <div  style="width: 120px" class="slds-truncate"  data-record="{!index}"  onchange="{!c.calculateTotal}" >
+                                                    <lightning:input name="rate" type="number" formatter="currency" step="0.01" required="true" maxlength="50" label="Rate Per Sqft." messageWhenValueMissing="Enter Rate" messageWhenRangeOverflow="Value is above range." max="{!plot.Maximum_Price__c}" messageWhenRangeUnderflow="Value is below range" min="{!plot.Minimum_Price__c}" value="{!plot.Rate_per_sqft_Sales__c }"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="width: 120px" class="slds-truncate"  data-record="{!index}">
+                                                    <lightning:input name="total" type="number" formatter="currency" step="0.01" maxlength="50" label="Total" value="{!plot.All_inclusive_price__c}" readonly="true" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <aura:if isTrue="{!index != 0}">
+                                                    <a onclick="{!c.removeRow}" data-record="{!index}">
+                                                        <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                                        <span class="slds-assistive-text">Delete</span>
+                                                    </a>
+                                                </aura:if>
+                                            </td> 
+                                        </tr>
+                                        
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        
+                        </div>
+                    </p>
+                </div>
+                
+            </aura:if>   
+            
+            <footer class="slds-modal__footer">
+                <lightning:button label="Cancel" title="Cancel" onclick="{! c.cancel }" />
+                
+                <aura:if isTrue="{!v.showPlotPopup == false}">
+                    <lightning:button variant="brand" label="Save" title="Save" onclick="{! c.save2 }" />
+                    <!--<lightning:button variant="brand" label="Next" title="Next" onclick="{! c.next }" />-->
+                </aura:if>
+                
+                <aura:if isTrue="{!v.showPlotPopup}">
+                    <lightning:button variant="brand" label="Previous" title="Previous" onclick="{! c.previous }" />
+                    <lightning:button variant="brand" label="Save" title="Save" onclick="{! c.save }" />
+                </aura:if>
+                
+            </footer>
+            
+            
+        </div>
+    </div>
+    
+</aura:component>

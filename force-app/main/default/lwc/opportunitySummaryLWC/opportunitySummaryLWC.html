@@ -1,0 +1,394 @@
+<template>
+    <lightning-card>
+
+        <template if:true={opp}>
+            <div class="container">
+
+                <!-- ── Header Banner ── -->
+                <div class="headerBanner">
+                    <div class="headerLeft">
+                        <span class="headerIconBadge">
+                            <lightning-icon icon-name="standard:opportunity" size="large"
+                                variant="inverse"></lightning-icon>
+                        </span>
+                        <div class="propertyInfo">
+                            <div class="unitName">{apartmentName}</div>
+                            <div class="virtualCodeBox">{opp.Bank_Virtual_Code__c}</div>
+                            <div class="area">
+                                <lightning-icon icon-name="utility:applied_amount" size="xx-small"></lightning-icon>
+                                {opp.Unit_Area__c} sq.ft
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Project Bank Details (right side) ── -->
+                    <template if:true={hasProjectBankDetails}>
+                        <div class="headerRight">
+                            <div class="bankCard">
+                                <div class="bankCardTitle">
+                                    <lightning-icon icon-name="utility:money" size="xx-small"
+                                        variant="inverse"></lightning-icon>
+                                    Project Bank Details
+                                </div>
+                                <div class="bankInfoGrid">
+                                    <div class="bankInfoItem">
+                                        <div class="bankLabel">Bank Sub ID</div>
+                                        <div class="bankValue">{project.Bank_Sub_ID__c}</div>
+                                    </div>
+                                    <div class="bankInfoItem">
+                                        <div class="bankLabel">Default Bank A/C No</div>
+                                        <div class="bankValue">{project.Default_Bank_Account_No__c}</div>
+                                    </div>
+                                    <div class="bankInfoItem">
+                                        <div class="bankLabel">Primary Bank A/C No</div>
+                                        <div class="bankValue">{project.Primary_Bank_Account_no__c}</div>
+                                    </div>
+                                    <div class="bankInfoItem">
+                                        <div class="bankLabel">IFSC Code</div>
+                                        <div class="bankValue">{project.IFSC_Code__c}</div>
+                                    </div>
+                                    <div class="bankInfoItem bankInfoItem--wide">
+                                        <div class="bankLabel">Bank Account No</div>
+                                        <div class="bankValue">{project.Bank_Account_Number__c}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- ── KPI Details ── -->
+                <div class="detailsGrid">
+                    <div class="detailBox detailBox--neutral">
+                        <div class="label">Booking Reference Number</div>
+                        <div class="value">
+                            <lightning-formatted-text value={opp.Booking_Reference_Number__c}>
+                            </lightning-formatted-text>
+                        </div>
+                    </div>
+                    <div class="detailBox detailBox--neutral">
+                        <div class="label">Enquiry Reference Number</div>
+                        <div class="value">
+                            <lightning-formatted-text value={opp.Enquiry_Ref_No__c}>
+                            </lightning-formatted-text>
+                        </div>
+                    </div>
+                    <div class="detailBox detailBox--neutral">
+                        <div class="label">Booking Date</div>
+                        <div class="value">
+                            <lightning-formatted-date-time value={opp.Booking_Date__c} year="numeric" month="short"
+                                day="2-digit">
+                            </lightning-formatted-date-time>
+                        </div>
+                    </div>
+                    <template if:true={PlotCostValidation}>
+                        <div class="detailBox detailBox--primary">
+                            <template if:true={showInclusiveTax}>
+                                <span class="tax-badge">* Inclusive Tax</span>
+                            </template>
+                            <template if:true={showExclusiveTax}>
+                                <span class="tax-badge">* Exclusive Tax</span>
+                            </template>
+                            <div class="label">Plot Cost</div>
+                            <div class="value">
+                                <lightning-formatted-number value={opp.Total_Cost_With_Tax__c} format-style="currency"
+                                    currency-code="INR">
+                                </lightning-formatted-number>
+                            </div>
+                        </div>
+                    </template>
+                    <template if:false={PlotCostValidation}>
+                        <div class="detailBox detailBox--primary">
+                            <template if:true={showInclusiveTax}>
+                                <span class="tax-badge">* Inclusive Tax</span>
+                            </template>
+                            <template if:true={showExclusiveTax}>
+                                <span class="tax-badge">* Exclusive Tax</span>
+                            </template>
+                            <div class="label">Plot Cost</div>
+                            <div class="value">
+                                <lightning-formatted-number value={opp.Total_Basic_After_Discount__c}
+                                    format-style="currency" currency-code="INR">
+                                </lightning-formatted-number>
+                            </div>
+                        </div>
+                    </template>
+                    <template if:true={hasEoiDetails}>
+                        <div class="detailBox detailBox--warning">
+                            <div class="label">Balance Amount</div>
+                            <div class="value">
+                                <lightning-formatted-number value={eoi.Computed_Amount__c} format-style="currency"
+                                    currency-code="INR">
+                                </lightning-formatted-number>
+                            </div>
+                        </div>
+                    </template>
+                    <template if:false={hasEoiDetails}>
+                        <div class="detailBox detailBox--warning">
+                            <div class="label">Balance Amount</div>
+                            <div class="value">
+                                <lightning-formatted-number value={opp.Overall_Outstanding__c} format-style="currency"
+                                    currency-code="INR">
+                                </lightning-formatted-number>
+                            </div>
+                        </div>
+                    </template>
+                    <div class="detailBox detailBox--success">
+                        <div class="label">Paid Amount</div>
+                        <div class="value">
+                            <lightning-formatted-number value={opp.Total_Receipts_del__c} format-style="currency"
+                                currency-code="INR">
+                            </lightning-formatted-number>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Editable Contact Fields ── -->
+                <div class="sectionCard">
+                    <div class="sectionHeader">
+                        <span class="iconBadge iconBadge--blue">
+                            <lightning-icon icon-name="utility:contact_card" size="x-small"
+                                variant="inverse"></lightning-icon>
+                        </span>
+                        <span class="sectionTitle">Contact Details</span>
+                        <template if:false={isEditing}>
+                            <lightning-button-icon icon-name="utility:edit" variant="border-filled" size="small"
+                                title="Edit" class="editBtn" onclick={handleEdit}>
+                            </lightning-button-icon>
+                        </template>
+                    </div>
+
+                    <!-- Read mode -->
+                    <template if:false={isEditing}>
+                        <div class="contactGrid">
+                            <div class="contactItem">
+                                <div class="label">Email</div>
+                                <div class="value">{contactEmail}</div>
+                            </div>
+                            <div class="contactItem">
+                                <div class="label">Phone</div>
+                                <div class="value">{opp.PhoneNo__c}</div>
+                            </div>
+                            <div class="contactItem">
+                                <div class="label">Mobile</div>
+                                <div class="value">{opp.Mobile__c}</div>
+                            </div>
+                            <div class="contactItem">
+                                <div class="label">Secondary Mobile</div>
+                                <div class="value">{opp.Secondary_Mobile__c}</div>
+                            </div>
+                            <div class="contactItem">
+                                <div class="label">Mail Validated</div>
+                                <div class="value">
+                                    <span class={mailValidatedClass}>
+                                        <lightning-icon icon-name={mailValidatedIcon} size="xx-small">
+                                        </lightning-icon>
+                                        {mailValidatedLabel}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Edit mode -->
+                    <template if:true={isEditing}>
+                        <div class="contactGrid">
+                            <div class="contactItem">
+                                <lightning-input label="Email" value={editEmail} type="email" data-field="email"
+                                    onchange={handleFieldChange}>
+                                </lightning-input>
+                            </div>
+                            <div class="contactItem">
+                                <lightning-input label="Phone" value={editPhone} type="tel" data-field="phone"
+                                    onchange={handleFieldChange}>
+                                </lightning-input>
+                            </div>
+                            <div class="contactItem">
+                                <lightning-input label="Mobile" value={editMobile} type="tel" data-field="mobile"
+                                    onchange={handleFieldChange}>
+                                </lightning-input>
+                            </div>
+                            <div class="contactItem">
+                                <lightning-input label="Secondary Mobile" value={editSecMobile} type="tel"
+                                    data-field="secmobile" onchange={handleFieldChange}>
+                                </lightning-input>
+                            </div>
+                            <div class="contactItem checkboxItem">
+                                <lightning-input type="checkbox" label="Mail Validated" checked={editMailValid}
+                                    data-field="mailvalid" onchange={handleFieldChange}>
+                                </lightning-input>
+                            </div>
+                        </div>
+                        <div class="editActions">
+                            <lightning-button label="Cancel" onclick={handleCancel}>
+                            </lightning-button>
+                            <lightning-button label="Save" variant="brand" onclick={handleSave} disabled={isSaving}>
+                            </lightning-button>
+                        </div>
+                        <template if:true={saveError}>
+                            <div class="errorMsg">{saveError}</div>
+                        </template>
+                    </template>
+                </div>
+
+                <!-- ── Related Opportunities ── -->
+                <div class="sectionCard">
+                    <div class="sectionHeader">
+                        <span class="iconBadge iconBadge--navy">
+                            <lightning-icon icon-name="standard:opportunity" size="x-small"
+                                variant="inverse"></lightning-icon>
+                        </span>
+                        <span class="sectionTitle">Related Opportunities</span>
+                    </div>
+                    <template if:true={hasRelatedOpps}>
+                        <div class="relatedOppList">
+                            <template for:each={relatedOpps} for:item="ro">
+                                <div key={ro.Id} class="relatedOppItem" data-id={ro.Id} onclick={handleRelatedOppClick}>
+                                    <div class="relatedOppMain">
+                                        <span class="relatedOppName">{ro.ApartmentName}</span>
+                                        <span class="relatedOppStage">{ro.StageName}</span>
+                                        <!-- <span class="relatedOppStage">{ro.Name}</span> -->
+                                    </div>
+                                    <div class="relatedOppSub">
+                                        <span>Booking Ref: {ro.Booking_Reference_Number__c}</span>
+                                        <span>{ro.BookingDateFormatted}</span>
+                                        <lightning-formatted-number value={ro.Amount_Due__c} format-style="currency"
+                                            currency-code="INR">
+                                        </lightning-formatted-number>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template if:false={hasRelatedOpps}>
+                        <p class="emptyMsg">No other opportunities found for this contact.</p>
+                    </template>
+                </div>
+
+
+                <!-- ── Documents ── -->
+                <div class="sectionCard">
+                    <div class="sectionHeader">
+                        <span class="iconBadge iconBadge--blue">
+                            <lightning-icon icon-name="utility:file" size="x-small" variant="inverse"></lightning-icon>
+                        </span>
+                        <span class="sectionTitle">Documents</span>
+                    </div>
+                    <template if:true={hasDocuments}>
+                        <div class="docList">
+                            <template for:each={documents} for:item="doc">
+                                <div key={doc.Id} class="docItem">
+                                    <span class="docIconWrap">
+                                        <lightning-icon icon-name="utility:download" size="xx-small"
+                                            variant="inverse"></lightning-icon>
+                                    </span>
+                                    <a href={doc.downloadUrl} target="_blank" rel="noopener" class="docLink">
+                                        {doc.Title}
+                                    </a>
+                                    <span class="docMeta">{doc.FileExtension} · {doc.ContentSize}</span>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template if:false={hasDocuments}>
+                        <p class="emptyMsg">No documents found.</p>
+                    </template>
+                </div>
+
+                <!-- ── Payment Validation VF Page ── -->
+                <div class="sectionCard">
+                    <div class="sectionHeader">
+                        <span class="iconBadge iconBadge--navy">
+                            <lightning-icon icon-name="utility:currency" size="x-small"
+                                variant="inverse"></lightning-icon>
+                        </span>
+                        <span class="sectionTitle">Payment Validation</span>
+                    </div>
+                    <div class="vfWrapper">
+                        <iframe src={paymentValidationUrl} title="Payment Validation" frameborder="0" scrolling="auto"
+                            class="vfFrame">
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- ── Send Credentials ── -->
+                <div class="sectionCard">
+                    <div class="sectionHeader">
+                        <span class="iconBadge iconBadge--blue">
+                            <lightning-icon icon-name="utility:send" size="x-small" variant="inverse"></lightning-icon>
+                        </span>
+                        <span class="sectionTitle">Send Credentials</span>
+                    </div>
+
+                    <!-- Already sent (field-driven — persists across sessions) -->
+                    <template if:true={credsSentAlready}>
+                        <div class="credBox credBox--shade">
+                            <lightning-icon icon-name="utility:check" size="small"></lightning-icon>
+                            <div>
+                                <p class="credAlreadyTitle">Credentials Already Sent</p>
+                                <p class="credAlreadySub">Customer credentials have already been delivered for this
+                                    opportunity.</p>
+                            </div>
+                        </div>
+                        <div class="credActions">
+                            <lightning-button label="Send Credentials" variant="brand" disabled="true">
+                            </lightning-button>
+                        </div>
+                    </template>
+
+                    <!-- Not yet sent — show spinner / error / success / idle -->
+                    <template if:false={credsSentAlready}>
+
+                        <template if:true={credIsLoading}>
+                            <div class="credCenter">
+                                <lightning-spinner alternative-text="Sending email..."
+                                    size="medium"></lightning-spinner>
+                                <p class="credMsg">Sending credentials to customer, please wait...</p>
+                            </div>
+                        </template>
+
+                        <template if:false={credIsLoading}>
+
+                            <template if:true={credIsError}>
+                                <div class="credBox credBox--error">
+                                    <lightning-icon icon-name="utility:error" size="small"></lightning-icon>
+                                    <p class="credErrorText">{credMessage}</p>
+                                </div>
+                                <div class="credActions">
+                                    <lightning-button label="Retry" variant="brand" onclick={handleSendCredentials}
+                                        disabled="true">
+                                    </lightning-button>
+                                </div>
+                            </template>
+
+                            <template if:true={credIsSuccess}>
+                                <div class="credBox credBox--success">
+                                    <lightning-icon icon-name="utility:success" size="small"></lightning-icon>
+                                    <p class="credSuccessText">{credMessage}</p>
+                                </div>
+                            </template>
+
+                            <template if:true={credIsIdle}>
+                                <div class="credActions">
+                                    <lightning-button label="Send Credentials" variant="brand"
+                                        onclick={handleSendCredentials}>
+                                    </lightning-button>
+                                </div>
+                            </template>
+
+                        </template>
+
+                    </template>
+                </div>
+
+            </div>
+        </template>
+
+        <template if:true={isLoading}>
+            <div class="loadingBox">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+    </lightning-card>
+</template>

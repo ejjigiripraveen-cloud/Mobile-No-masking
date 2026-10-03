@@ -1,0 +1,29 @@
+<template>
+    <lightning-card title="Converted Opportunity" icon-name="standard:opportunity">
+            <template if:true={opportunity}>
+                
+                    <p style="margin-left: 40px; display: inline;">Opportunity Name: </p> <strong onclick = {openOppRecordPage} style="color:blue;">{opportunity.Name}</strong><br/>
+                    <p style="margin-left: 40px; display: inline;">Close Date: </p> {opportunity.CloseDate}<br/>
+                    <p style="margin-left: 40px; display: inline;">Owner Name: </p> {opportunity.Owner_Name__c}<br/>
+                    <p style="margin-left: 40px; display: inline;">Name: </p>{opportunity.StageName}<br/>
+                </template>
+    </lightning-card>
+    <lightning-card title="Converted Account" icon-name="standard:account">
+            <template if:true={account}>
+                    <p style="margin-left: 40px; display: inline;">Account Name: </p> <strong onclick = {openAccRecordPage} style="color:blue;">{account.Name}</strong><br/>
+                    <p style="margin-left: 40px; display: inline;">Email: </p> {account.Email__c}<br/>
+                    <p style="margin-left: 40px; display: inline;">Mobile number: </p> {account.Mobile__c}<br/>
+                    <p style="margin-left: 40px; display: inline;">Owner Name: </p> {account.Owner.Name}<br/>
+                </template>
+    </lightning-card>
+    <lightning-card title="Converted Contact" icon-name="standard:contact">
+            <template if:true={contact}>
+                    <p style="margin-left: 40px; display: inline;">Contact Name: </p> <strong onclick = {openConRecordPage} style="color:blue;">{contact.FirstName}&nbsp;{contact.LastName}</strong><br/>
+                    <p style="margin-left: 40px; display: inline;">Title: </p> {contact.Title}<br/>
+                    <p style="margin-left: 40px; display: inline;">name: </p> {contact.Account.Name}<br/>
+                    <p style="margin-left: 40px; display: inline;">Phone: </p> {contact.Phone}<br/>
+                    <p style="margin-left: 40px; display: inline;">Email: </p> {contact.Email}<br/>
+                    <p style="margin-left: 40px; display: inline;">Mobile Number: </p> {contact.MobilePhone}<br/>
+                </template>
+    </lightning-card>
+</template>

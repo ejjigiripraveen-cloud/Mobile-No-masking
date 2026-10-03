@@ -1,0 +1,251 @@
+<apex:page renderAs="pdf" applyBodyTag="false" standardController="opportunity"  applyHtmlTag="false" showHeader="false" >
+    <head>
+        <style>
+            @page {
+            size:legal;
+            margin:0px;
+            @font-face { font-family: Times, serif;
+            }
+            @top-center {
+            content: element(header);
+            }
+            @bottom-left {
+            content: element(footer);
+            }
+            }
+            div.header {
+            position: running(header);
+            }
+            div.footer {
+            display: block;
+            position: running(footer);
+            }
+            .pagenumber:before {
+            content: counter(page);
+            }
+            .pagecount:before {
+            content: counter(pages);
+            }
+            
+            
+            .pushTop{
+            text-align:center;
+            vertical-align:top;
+            }
+            .pushTop11{
+            vertical-align:center;
+            text-align:center;
+            }
+            .pushTop1{
+            vertical-align:top;
+            }
+            
+            
+            
+            body{font-size:14.5px;
+            font-family:Time Nuremon;
+            word-spacing: 3px;
+            line-height:1.65;
+            text-align:justify;
+            }
+            .border   { 
+            border:0.5px solid black;
+            border-collapse:collapse;
+            //border-width: thin;//
+            }
+              td.label {
+            padding-right: 2px;
+           
+            vertical-align: top;
+            }
+            
+             td.underline {
+            border-bottom: 0.8px solid #000;
+            
+            vertical-align: bottom;
+            
+            }
+            span.underline {
+            border-bottom: 0.5px solid #000;
+            //min-width: 100px;//
+            padding-bottom: 2px;
+            vertical-align: bottom;
+            }
+            div.underline {
+            border-bottom: 1px solid #D5B793;
+            //width: 250px;//
+            padding-bottom: 1px;
+            align: center;
+            }
+            
+            
+            
+            
+            
+            
+        </style>
+    </head>
+       <!----<table >
+                <tr>
+                    <td> 
+                       <apex:image value="{!$Resource.Reconnect_Reward_Requirement_BG}"  height="1320" width="780"  />  </td></tr>
+                     </table>----->
+    <body>
+        
+        
+        
+       
+                    <div style="position: fixed; top: 0; left: 0; width: 8.5in; height: 14in;">
+                        <img src="{!$Resource.Reconnect_Reward_Requirement_BG}" 
+                             style="width:100%; height:100%;" /></div> 
+                  
+                    <div style="position: relative; padding-left:60px;padding-right:60px; font-family: Arial; font-size: 14px; line-height: 1.5;">
+                        
+                                           
+                        
+                          <div  style="margin-left:490px;">
+                            <img src="{!$Resource.Reconnect_Reward_Requirement_LOGO_TOP}"  style="width:200px; height:90px;margin-top:20px;" /> </div>       
+                    
+                        
+                        <p style="font-weight:600;font-family:SansSerif;">&nbsp;S.NO.:RR  {!opportunity.Booking_Reference_Number__c} </p>
+                        
+                        <div  style="margin-top:30px;margin-left:150px;">
+                            <img src="{!$Resource.Reconnect_Reward_Requirement_LOGO_CENTER}"  style="width:400px; height:100px;" /> </div>       
+                     <div  style="margin-top:60px;"></div> 
+                
+                        
+                        <!-----<table width="100%" >
+            <tr width="100%" style="font-family:SansSerif;">
+                <td class="label" width="8%"><b>NAME :</b></td>
+                <td class="underline" width="37%" style="padding-bottom:0;"><b>{!Opportunity.Name}</b></td>
+                <td class="label" width="27%"><b>OPPORTUNITY / LEAD ID :</b></td>
+                <td class="underline" width="28%" style="padding-bottom:0;"><b>{!opportunity.Enquiry_Ref_No__c}</b></td>
+            </tr>
+        </table>
+
+       <div  style="margin-top:10px;"></div>
+        <table width="100%" >
+            <tr style="font-family:SansSerif;">
+                <td class="label" width="16%"><b>CONTACT NO :</b></td>
+                <td class="underline" width="34%"><b>{!Opportunity.Contact__r.MobilePhone}</b></td>
+                <td class="label" width="16.5%"><b>AADHAAR NO :</b></td>
+                <td class="underline" width="33.5%"><b>{!Opportunity.Contact__r.Adhaar_No__c}</b></td>
+            </tr>
+        </table>
+
+       <div  style="margin-top:10px;"></div>
+        <table width="100%">
+            <tr style="font-family:SansSerif;" width="100%">
+                <td class="label" width="11%"><b>PROJECT :</b></td>
+                <td class="underline" width="51%"><b>{!Opportunity.apartment__r.Project_Name__c}</b></td>
+                <td class="label" width="9%"><b>PHASE :</b></td>
+                <td class="underline" width="21%"><b>{!Opportunity.apartment__r.Phase__c}</b></td>
+                
+            </tr>
+        </table>
+                        
+                          <div  style="margin-top:10px;"></div>
+        <table>
+            <tr style="font-family:SansSerif;">
+               
+                <td class="label" width="10%"><b>PLOT NO :</b></td>
+                <td class="underline" width="30%"><b>{!Opportunity.apartment__r.Unit_Number__c}</b></td>
+                <td class="label" width="13%"><b>ISSUE DATE :</b></td>
+                <td class="underline" width="32%"><b><apex:outputText value="{0,date,dd/MM/yyyy}">
+    <apex:param value="{!Opportunity.Cancellation_Date__c}" />
+</apex:outputText></b></td>
+            </tr>
+        </table>----->
+<div  style="margin-top:10px;"></div> 
+                        
+                      <table class="border" width="100%" cellpadding="10">
+                            <tr  class="border" style="font-family:SansSerif;">
+                                <td class="border"  width="50%"><b>NAME :</b>{!Opportunity.Name}</td>
+                                 <td class="border"  colspan="2" ><b>OPPORTUNITY / LEAD ID :</b>{!opportunity.Enquiry_Ref_No__c}</td>
+                            </tr>         
+                       
+                            <tr  class="border" style="font-family:SansSerif;">
+                                <td class="border"  width="50%"><b>CONTACT NO :</b>{!Opportunity.Contact__r.MobilePhone}</td>
+                                 <td class="border"  colspan="2" ><b>AADHAAR NO :</b>{!Opportunity.Contact__r.Adhaar_No__c}</td>
+                            </tr> 
+                        </table>
+                            
+                                                    <table class="border" width="100%" cellpadding="10">
+                             <tr  class="border" style="font-family:SansSerif;">
+                                <td class="border"  width="70%"><b>PROJECT :</b>{!Opportunity.apartment__r.Project_Name__c}</td>
+                                 <td class="border"  width="30%"><b>PHASE :</b>{!Opportunity.apartment__r.Phase__c}</td>
+                            </tr> 
+                        </table>  
+                         <table class="border" width="100%" cellpadding="10">
+                        <tr  class="border" style="font-family:SansSerif;">
+                                <td class="border"  width="50%"><b>PLOT NO :</b>{!Opportunity.apartment__r.Unit_Number__c}</td>
+                                 <td class="border"  colspan="2" ><b>ISSUE DATE :</b><apex:outputText value="{0,date,dd/MM/yyyy}">
+    <apex:param value="{!TODAY()}" />
+</apex:outputText></td>
+                            </tr> 
+                        </table>
+                        <div  style="margin-top:10px;"></div> 
+                        <table width="100%">
+            <tr style="font-family:SansSerif;font-weight:600;font-size:11px;">
+                
+                <td class="label" width="100%">THIS E-COUPON CAN BE USED BY YOU, YOUR FAMILY, FRIENDS OR RELATIVES FOR FUTURE PURCHASES AT G SQUARE.</td>
+            </tr>
+        </table>
+                         <div  style="margin-top:50px;"></div> 
+                        
+                        <div style="font-family:SansSerif;font-weight:600;font-size:13px;"><b>Terms and Conditions for E-Coupon Redemption: </b></div>
+                 <table width="100%" >
+            <tr style="font-family:SansSerif;font-weight:400;font-size:12px;">
+                <td>      
+                        <ul>
+  <li>Eligibility for Redemption: The e-coupon can be redeemed either after signing the agreement or before the registration process.</li>
+  <li>Restrictions on Use: The e-coupon cannot be used at the time of booking or towards the booking advance.</li>
+  <li>Single Use Per Plot: Only one e-coupon can be applied per plot purchase.</li>
+  <li>Applicability: The e-coupon is valid only for new plot purchases and cannot be used for already purchased plots.</li>
+  <li>Redemption Requirement: To redeem, the original e-coupon code must be presented. Screenshots, tampered, or invalid codes will not be accepted.</li>
+  <li>Coupon Value &amp; Usage: The e-coupon offers a redemption value of ₹50,000/-, which can be invested in any G Square project across all operational zones.</li>
+  <li>Transferability: The e-coupon is transferable and may be used by family or friends of the original recipient. However, the registered coupon holder must be present during redemption, or an authorization email must be sent to delight@gsquarehousing.com at least 4 days prior to booking. Each e-coupon can be transferred only once; multiple transfers are not permitted.</li>
+  <li>No Cash Value: The e-coupon has no cash value and cannot be exchanged for cash.</li>
+  <li>Limitation of Liability: G Square is not liable for lost, shared, stolen, or misused e-coupons. No replacement or refund will be issued in such cases.</li>
+  <li>Validity: The e-coupon will be valid only if it carries the authorized digital validation. Any tampered or invalid e-coupon will be void.</li>
+  <li>Expiry: The e-coupon is valid for one year from the date of issuance.</li>
+  <li>Customer Support: For queries or assistance, please contact us at 91500 68610 or email delight@gsquarehousing.com.</li>
+  <li>Dispute Resolution: All disputes related to this e-coupon will fall under the exclusive jurisdiction of the courts in Chennai only.</li>
+</ul>
+
+      </td> 
+                     </tr>
+                        </table>
+                        
+                        
+                        
+        <div  style="margin-top:10px;margin-left:30px;">
+        <table  width="100%">
+            <tr style="font-family:SansSerif;font-size:13px;margin-left:150px;">
+                <td class="label" width="100%"><b>Contact us: delight@gsquarehousing.com (or) 91500 68610 </b></td>
+                
+            </tr>
+                        </table>
+                        </div>
+              <div  style="margin-top:30px;margin-left:30px;">
+        
+        <table  width="100%">
+            <tr  style="font-family:SansSerif;font-size:12px;">
+                <td  class="label" width="100%"><b>*This is a system generated e-coupon and does not require a physical signature  </b></td>
+                
+            </tr>
+        </table>
+              </div>          
+                        
+                        
+          </div>     
+        
+        
+        
+        
+        
+        
+        
+      
+    </body>
+</apex:page>

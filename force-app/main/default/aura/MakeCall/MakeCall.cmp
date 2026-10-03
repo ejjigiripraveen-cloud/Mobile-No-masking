@@ -1,0 +1,71 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"
+                controller="MakeCallController" access="global" >
+     <!-- Beep Sound -->
+   <aura:attribute name="audioSrc" type="String" default="{!$Resource.BeepSound}"/>
+   <audio aura:id="audioPlayer" src="{!v.audioSrc}" />
+    
+
+    <aura:registerEvent name="quoteSummaryToQuotationPageEvent" type="c:quoteSummaryToQuotationPage" />
+    <aura:registerEvent name="sampleComponentEvent1" type="c:closequickaction"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isdisabled" type = "boolean" />
+    <aura:attribute name="phoneList" type="List"/>
+    <aura:attribute name="selectedPhone" type="String"/>
+    <aura:attribute name="taskId" type="String"/>
+    <aura:attribute name="callcomplete" type="boolean" default="false"/>
+    <aura:attribute name="displayCall" type="boolean" default="false"/>
+    <aura:attribute name="fromHome" type="boolean" default="false"/>
+    <aura:attribute name="fromQucickAction" type="boolean" default="false"/>
+    <aura:attribute name="parent" type="Aura.Component"/>
+    
+    <lightning:empApi aura:id="empApi" /> 
+    <lightning:overlayLibrary aura:id="overlayLib"/>    
+    <aura:handler event="force:refreshView" action="{!c.refresh}"/>    
+    
+    <div class="slds-box slds-m-around-medium">
+        <lightning:select aura:id="selectedPhone" name="select1" label="Select Number" required="true" value="{!v.selectedPhone}">
+            <option value="">choose one...</option>
+            <aura:iteration items="{!v.phoneList}" var="record">
+                <option value="{!record}" selected="{!record.value == v.selectedPhone}"> {!record}</option>
+            </aura:iteration>
+        </lightning:select>
+        <!-- <aura:if isTrue="{!v.displayCall}">
+        
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for="textarea-id-01">Call Summary</label>
+            <div class="slds-form-element__control">
+                <textarea id="textareaid01" placeholder="Call Summary" class="slds-textarea"></textarea>
+            </div>
+         </div>
+        
+        </aura:if>-->
+        
+    </div>  
+    
+    <div class="slds-clearfix">
+        <div class="slds-float_left">
+            <lightning:button class="slds-m-around_small" 
+                              label="Clear"  
+                              variant="neutral" 
+                              onclick="{!c.handleClear}"/>
+        </div>
+        
+        <div class="slds-float_right">
+            <lightning:button class="slds-m-around_small" 
+                              label="Call" 
+                              disabled = "{!v.isdisabled}"
+                              variant="brand" 
+                              onclick="{!c.handleCall}"/>
+        </div>
+        <div class="slds-float_right">
+            <!-- <aura:if isTrue="{!v.displayCall}">
+            <lightning:button class="slds-m-around_small" 
+                              label="Save" disabled="{!!v.callcomplete}"
+                              variant="brand" 
+                              onclick="{!c.saveCall}"/>
+        </aura:if>-->
+            
+        </div>
+    </div>
+    
+</aura:component>

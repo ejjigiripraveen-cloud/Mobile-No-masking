@@ -1,0 +1,324 @@
+<apex:page standardController="Opportunity" renderAs="pdf" extensions="ClientAccount">
+<apex:variable value="{!0}" var="FC"/>
+<apex:variable value="{!0}" var="OC"/>
+<apex:variable value="{!0}" var="CD"/>
+<apex:variable value="{!0}" var="RFD"/>
+
+<head>
+  <style type="text/css" media="print">
+    @page {
+        @top-right {
+            content: element(header);
+        }
+        @PageBreak{
+             page-break-after:always;
+        }
+        @bottom-right {
+            content: element(footer);
+        }
+        margin-top:140px;
+        margin-bottom:60px;
+        margin-right:0px;
+        margin-left:0px;
+        font-family:arial;
+    }
+    body {
+        margin-right:80px;
+        margin-left:80px;
+    }
+    div.header {
+       
+        text-align: right;
+        position: running(header);
+        padding: 2px;
+        margin-right:80px;
+        margin-left:80px;
+        color:#000000;
+       font-
+    }
+    div.footer {
+        padding: 2px;
+        position: running(footer);
+        margin-right:80px;
+        margin-left:80px;
+        
+        color:#000000;
+    }
+   
+    .tableHead1 {
+        background: #BABABA;
+        vertical-align:text-top;
+        font-weight:bold;
+        border-left:0px solid #FFFFFF;
+        border-right:0px solid #FFFFFF;
+        border-top:0px;
+        border-bottom:0px;
+    }
+</style>
+</head>
+        <p align = "center"> <b> Mantri Primus Lifespaces Pvt. Ltd., </b> </p>
+        <table border = "1" cellspacing = "0" width = "100%">
+            <tr>
+                <td width = "25%"> </td>
+                <td rowspan = "2" width = "50%" align = "center"> Proforma Invoice </td>
+                <td width = "25%"> As On </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td> <apex:outputText value="{0,date,dd/MM/yyyy}"> <apex:param value="{!TODAY()}"/> </apex:outputText> </td>
+            </tr>
+        </table>
+        
+        <br/>
+        
+        <table width = "100%">
+            <tr>
+                <td width = "30%"> Project </td>
+                <td> {!opportunity.Project_Name__c} </td>
+            </tr>
+            <tr>
+                <td> Unit </td>
+                <td> {!opportunity.Flat_No__c} </td>
+            </tr>
+            <tr>
+                <td> Purchaser 1 </td>
+                <td> {!opportunity.Name} </td>
+            </tr>
+            <tr>
+                <td> Purchaser 2 </td>
+                <td> {!opportunity.Contact__r.Co_Applicant_Name__c} </td>
+            </tr>
+            <tr>
+                <td> Address </td>
+                <td> {!Opportunity.Account.BillingStreet} </td>
+            </tr>
+            <tr>
+                <td> Mobile No </td>
+                <td> {!opportunity.Contact__r.MobilePhone} </td>
+            </tr>
+            <tr>
+                <td> PAN </td>
+                <td> {!opportunity.Contact__r.PAN_Card__c} </td>
+            </tr>
+        </table>
+        
+        <br/>
+        
+        <table width="100%" border="1" cellspacing="0">
+            <tr>
+                <td colspan="11" align="center" style="font-size:15px; font-weight:bold;">SCHEDULES</td>
+            </tr>
+            <tr style="font-size:14px; font-weight:bold;">
+                <td> Payment Details </td>
+                <td> Due Date </td>
+                <td> Total Billed </td>
+                <td> Amount Received </td>
+                <td> Amount Due </td>
+                
+            </tr>         
+        <apex:repeat value="{!psList}"  var="ps">
+            <tr style="font-size:14px;">
+                <td>{!ps.Name}</td>
+                <td>
+                    <apex:outputtext value="{0,date,dd-MMM-yyyy}">
+                        <apex:param value="{!ps.Due_Date__c}"/>
+                    </apex:outputtext>      
+                </td>    
+                <td align="right" width="13%">  
+                    <apex:outputtext value="{0,number,###,###,###,##0.00}">     
+                        <apex:param value="{!ps.Total_Schedule_Amount__c}"/> 
+                    </apex:outputtext> 
+                </td>
+                  
+                  <td align="right" width="13%">
+                    <apex:outputtext value="{0,number,###,###,###,##0.00}">     
+                        <apex:param value="{!ps.Total_Received__c}"/> 
+                    </apex:outputtext> 
+                </td>
+                <td align="right" width="13%">     
+                    <apex:outputtext value="{!ps.Total_Schedule_Amount__c - ps.Total_Received__c}"/> 
+                </td>
+                      
+            </tr>    
+        </apex:repeat>
+        
+            <tr style="font-size:14px;">
+                <td colspan="2" align="right"> <b> Total </b>&nbsp;</td>
+               <td colspan="3" align="left">
+                     <!-- Registration charges and stamp duty charges should not be included in "Total" if project is Palghar or Kengeri or vasind or serene town and for mumbai project of close date > 25 feb 2015 -->
+                    <apex:outputText value="{0,number,###,###,###,##0.00}" >
+                        <apex:param value="{!Opportunity.Total_Opportunity_amount_del__c}"/>
+                    </apex:outputText>              
+                </td>                                
+             </tr> 
+        </table> 
+        <br/>
+        <table width="100%" border="1" cellspacing="0">
+            <tr>
+                <td colspan="11" align="center" style="font-size:15px; font-weight:bold;">RECEIPTS</td>
+            </tr>
+            <tr style="font-size:14px; font-weight:bold;">
+                <td> Receipt No </td>
+                <td> Receipt Date </td>
+                <td> Instrument No </td>
+                <td> Instrument Date </td>
+                <td> Payment Category</td>
+                <td> Payment Towards</td>
+                <td> Bank Name </td>
+                <td> Amount </td>
+                <td> Realization Status </td>    
+            </tr>
+        <apex:repeat value="{!rcList}" var="rc">    
+        <apex:variable value="{!FC + rc.Amount__c}" var="FC" rendered="{!AND(rc.Payment_Category__c=='Flat Cost',rc.Status__c=='Done',rc.Payment_Towards__c != 'Credit Note')}"/>
+        <apex:variable value="{!OC + rc.Amount__c}" var="OC" rendered="{!AND(rc.Payment_Category__c=='Other Cost',rc.Status__c=='Done',rc.Payment_Towards__c != 'Credit Note')}"/>
+        <apex:variable value="{!RFD + rc.Amount__c}" var="RFD" rendered="{!AND(rc.Status__c=='Refund',rc.Payment_Towards__c != 'Credit Note')}"/>
+        
+            <tr style="font-size:14px;">          
+                <td>{!rc.Name}</td>   
+                <td>        
+                    <apex:outputtext value="{0,date,dd-MMM-yyyy}">
+                        <apex:param value="{!rc.Receipt_Date__c}"/>
+                    </apex:outputtext>
+                </td>
+                <td>
+                    <apex:outputField value="{!rc.Transaction_No__c}"/>
+                </td>
+                <td>        
+                    <apex:outputtext value="{0,date,dd-MMM-yyyy}">
+                        <apex:param value="{!rc.Instrument_Date__c}"/>
+                    </apex:outputtext>
+                </td>
+                <td>       
+                    <apex:outputtext value="{!rc.Payment_Category__c}"/> 
+                </td>
+                <td>
+                <apex:outputField value="{!rc.Payment_Towards__c}"/>
+                </td>
+                <td>
+                    <apex:outputtext value="{!rc.Bank_Name__c}"/>
+                </td>
+                <td align="right" width="13%">
+                    <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                        <apex:param value="{!rc.Amount__c}"/>
+                    </apex:outputtext>
+                </td>
+                <td>
+                    <apex:outputtext value="{!rc.Status__c}"/>
+                </td> 
+            </tr>
+        </apex:repeat>
+    <!--    <apex:variable value="{!0}" var="RFD"/>
+       <apex:repeat value="{!cdList}"  var="cd">
+        <apex:variable value="{!RFD+cd.Total_Amount__c}" var="RFD" rendered="{!cd.Type_of_Note__c=='Refund'}"/>  
+        </apex:repeat>   -->
+            <tr style="font-size:14px;">
+                <td colspan="7" align="right"> <b>Total Amount Realized</b> &nbsp; </td>
+                <td colspan="2" align="left">
+                    <apex:outputText value="{0,number,###,###,###,##0.00}">
+                        <apex:param value="{!((FC + OC)-RFD)}"/>
+                    </apex:outputText>
+                </td>
+            </tr>
+                                
+       </table><br/><br/>
+        
+       <table width="100%" border="1" cellspacing="0">
+            <tr>
+                <td colspan="11" align="center" style="font-size:15px; font-weight:bold;">CREDIT / DEBIT</td>
+            </tr>
+            <tr style="font-size:14px; font-weight:bold;">
+                <td>CD</td>
+                <td> Description </td>
+                <td> Date </td>
+                <td> Type of Note </td>
+                <td> PricingGroup</td>
+                <td> PricingElement</td>
+                <td> Amount </td>
+            </tr>         
+        <apex:repeat value="{!cdList}"  var="cd">
+        <apex:variable value="{!CD + cd.Total_Amount__c}" var="CD" rendered="{!cd.Pricing_Group__c=='Other Cost'}"/>
+            <tr style="font-size:14px;">
+                <td>{!cd.Name}</td>
+                <td>
+                    <apex:outputtext value="{!cd.Description__c}"/>
+                </td>
+                <td>  
+                    <apex:outputtext value="{0,date,dd-MM-yyyy}">
+                        <apex:param value="{!cd.Date__c}"/>
+                    </apex:outputtext> 
+                </td>
+                <td>       
+                    <apex:outputtext value="{!cd.Type_of_Note__c}"/> 
+                </td>
+                <td>       
+                    <apex:outputtext value="{!cd.Pricing_Group__c}"/> 
+                </td>
+                <td>       
+                    <apex:outputtext value="{!cd.Pricing_Element__c}"/> 
+                </td>
+                <td>
+                    <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                        <apex:param value="{!cd.Total_Amount__c}"/>
+                    </apex:outputtext>
+                </td>
+           
+          </tr>
+          
+        
+          
+        </apex:repeat>  
+        
+    </table> 
+    <br/>  
+    <table width="50%" align="Right" border="1" cellspacing="0">
+        <apex:variable value="{!0}" var="CD"/>
+        <apex:variable value="{!0}" var="CDN"/>
+        <apex:repeat value="{!cdList}"  var="cd">
+        <apex:variable value="{!CD+cd.Total_Amount__c}" var="CD" rendered="{!cd.Type_of_Note__c=='Credit Note'}"/>
+        <apex:variable value="{!CDN+cd.Total_Amount__c}" var="CDN" rendered="{!cd.Type_of_Note__c=='Debit Note'}"/>
+   <!-- <apex:variable value="{!RFD+cd.Total_Amount__c}" var="RFD" rendered="{!cd.Type_of_Note__c=='Refund'}"/>  -->
+        </apex:repeat>
+    <tr style="font-size:14px;">
+    <td>
+    <b>Balance to be paid towards Flat cost</b>
+    </td>
+         <td align="right" width="13%">
+                <!-- Registration needs to be reduced for few projects as in Total -->                
+
+                <apex:outputText value="{0,number,###,###,###,##0.00}">
+                        <apex:param value="{!((Opportunity.Total_Opportunity_amount_del__c - CD + CDN) - (FC + OC - RFD))}"/>
+                </apex:outputText>                              
+         </td>
+    </tr>
+    </table>   
+    <br />
+    <table width = "100%">
+        <tr>
+            <td> (Prepared By) </td>
+            <td align = "center"> (Approved By) </td>
+        </tr>
+        <tr>
+            <td> CRM Department </td>
+            <td align = "center"> Accounts Department </td>
+        </tr>
+    </table>
+    <br/>
+    <table widht="100%">
+        <tr>
+            <td>
+            <font style="font-size:12px"> 
+             <b> Note :</b>                                         
+            </font>
+            </td>  
+        </tr>
+        <tr>
+            <td align = "center"> 1. </td>
+            <td> Possession will be given after realization of Cheque. </td>
+        </tr>
+        <tr>
+            <td align = "center"> 2. </td>
+            <td> Car Park Allotment will be based on First Come First Serve Basis. </td>
+        </tr>
+    </table>
+     
+</apex:page>

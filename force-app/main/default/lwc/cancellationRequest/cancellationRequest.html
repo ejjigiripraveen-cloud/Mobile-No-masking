@@ -1,0 +1,297 @@
+<template>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <lightning-icon icon-name="utility:cancel_file_request" size="medium"></lightning-icon>
+            <h1 class="title">Cancellation Request</h1>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- OPPORTUNITY DETAILS -->
+        <lightning-card title="Opportunity Details" icon-name="standard:opportunity">
+            <div class="slds-p-around_medium">
+                <div class="slds-grid slds-wrap info-grid">
+                    <div class="info-item"><label>Project Name</label><p>{opp.projectName}</p></div>
+                    <div class="info-item"><label>Plot Number</label><p>{opp.plotNo}</p></div>
+                    <div class="info-item"><label>Plot Size</label><p>{opp.plotSize}</p></div>
+                    <div class="info-item"><label>Customer Name</label><p>{opp.name}</p></div>
+                    <div class="info-item"><label>Sold Rate</label><p>{opp.price}</p></div>
+                    <div class="info-item"><label>Plot Cost</label><p>{opp.plotCost}</p></div>
+                    <div class="info-item"><label>Total Cost</label><p class="highlight">{opp.totalCost}</p></div>
+                    <div class="info-item"><label>Collected Amount</label><p class="highlight">{opp.totalReceipts}</p></div>
+                    <div class="info-item"><label>Mobile</label><p class="highlight">{opp.mobile}</p></div>
+                    <div class="info-item"><label>Secondary Mobile</label><p class="highlight">{opp.secondaryMobile}</p></div>
+                </div>
+            </div>
+        </lightning-card>
+
+        <template if:true={effectiveRecordId}>
+
+            <lightning-card title="Cancellation Form" icon-name="standard:record">
+                <div class="slds-p-around_medium">
+
+                    <!-- SUBMITTED -->
+                    <template if:true={isCancellationAlreadySubmitted}>
+                        <div class="slds-notify slds-notify_alert slds-theme_warning slds-m-bottom_medium">
+                            ⚠️ Cancellation requested on {cancellationSubmittedDate}. Please wait for approval.
+                        </div>
+                    </template>
+
+                    <!-- TL APPROVED -->
+                    <template if:true={isTLApproved}>
+                        <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_medium">
+                            ✅ Sales TL approved on {salesTLApprovedDate}
+                        </div>
+                    </template>
+
+                    <!-- HEAD APPROVED -->
+                    <template if:true={isSalesHeadApproved}>
+                        <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_medium">
+                            ✅ Sales Head approved on {salesHeadApprovedDate}
+                        </div>
+                    </template>
+
+                    <!-- FINAL APPROVED -->
+                    <template if:true={isFinalApproved}>
+                        <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_medium">
+                            🎉 Cancellation fully approved on {finalApprovedDate}
+                        </div>
+                    </template>
+
+                    <lightning-record-edit-form object-api-name="CRM__c" record-id={crmId} onsuccess={handleSuccess} onload={handleFormLoad}>
+                        <lightning-messages></lightning-messages>
+
+                        <!-- CANCELLATION REASON -->
+                        <div class="slds-form-element slds-m-bottom_small">
+                            <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="required">*</abbr>
+                                Cancellation Reason
+                            </label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-select_container">
+                                    <select class="slds-select"
+                                        value={selectedReason}
+                                        onchange={handleReasonChange}
+                                        disabled={isFullyLocked}>
+                                        <option value="">-- Select Reason --</option>
+                                        <template for:each={reasonOptions} for:item="opt">
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Hidden sync field -->
+                        <lightning-input-field field-name="Cancellation_Reason__c" value={selectedReason} class="slds-hide"></lightning-input-field>
+
+                        <!-- CANCELLATION REMARK (depends on Reason) -->
+                        <div class="slds-form-element slds-m-bottom_small">
+                            <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="required">*</abbr>
+                                Cancellation Remark
+                            </label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-select_container">
+                                    <select class="slds-select"
+                                        value={selectedRemark}
+                                        onchange={handleRemarkChange}
+                                        disabled={isRemarkDisabled}>
+                                        <option value="">-- Select Remark --</option>
+                                        <template for:each={remarkOptions} for:item="opt">
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Hidden sync field -->
+                        <lightning-input-field field-name="Cancellation_Remark__c" value={selectedRemark} class="slds-hide"></lightning-input-field>
+
+                        <!-- CANCELLATION SUB REMARK (depends on Remark) -->
+                        <div class="slds-form-element slds-m-bottom_small">
+                            <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="required">*</abbr>
+                                Cancellation Sub Remark
+                            </label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-select_container">
+                                    <select class="slds-select"
+                                        value={selectedSubRemark}
+                                        onchange={handleSubRemarkChange}
+                                        disabled={isSubRemarkDisabled}>
+                                        <option value="">-- Select Sub Remark --</option>
+                                        <template for:each={subRemarkOptions} for:item="opt">
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Hidden sync field -->
+                        <lightning-input-field field-name="Cancellation_Sub_Remark__c" value={selectedSubRemark} class="slds-hide"></lightning-input-field>
+
+                        <!-- CATEGORY TYPE — auto-filled, view only -->
+                        <!-- <template if:true={selectedSubRemark}>
+                            <div class="slds-form-element slds-m-bottom_small">
+                                <label class="slds-form-element__label">Category Type</label>
+                                <div class="slds-form-element__control">
+                                    <div class="derived-field">
+                                        <lightning-icon icon-name="utility:info" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                        {derivedCategoryType}
+                                    </div>
+                                </div>
+                            </div>
+                        </template> -->
+
+                        <!-- BLOCKER DEPARTMENT — auto-filled, view only -->
+                        <div class="slds-form-element slds-m-bottom_small">
+                            <label class="slds-form-element__label">Blocker Department</label>
+                            <div class="slds-form-element__control">
+                                <template if:true={selectedSubRemark}>
+                                    <div class="derived-field">
+                                        <lightning-icon icon-name="utility:groups" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                        {derivedDepartment}
+                                    </div>
+                                    <!-- Hidden sync field -->
+                                    <lightning-input-field field-name="Blocker_Department__c" value={derivedDepartment} class="slds-hide"></lightning-input-field>
+                                </template>
+                                <template if:false={selectedSubRemark}>
+                                    <div class="derived-field derived-field_empty">
+                                        Auto-filled after Sub Remark selection
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- REMAINING STANDARD FIELDS -->
+                        <lightning-input-field field-name="Cancellation_Status__c" disabled></lightning-input-field>
+                        <lightning-input-field field-name="Cancellation_Remark_by_RM__c" disabled={isFullyLocked}></lightning-input-field>
+
+                        <template if:true={isSalesTL}>
+                            <lightning-input-field field-name="Cancellation_remark_by_Sales__c" disabled={isFullyLocked}></lightning-input-field>
+                        </template>
+
+                        <template if:true={isSalesHead}>
+                            <lightning-input-field field-name="Cancellation_Remark_by_Sales_Head__c" disabled={isFullyLocked}></lightning-input-field>
+                        </template>
+
+                        <lightning-input-field field-name="Blocker_Description__c" disabled></lightning-input-field>
+                        <lightning-input-field field-name="Cancellation_Hold_Reason__c" disabled={isFullyLocked}></lightning-input-field>
+                        <lightning-input-field field-name="Cancellation_Reject_Reason__c" disabled={isFullyLocked}></lightning-input-field>
+
+                        <!-- CRM SUBMIT -->
+                        <template if:false={isFullyLocked}>
+                            <template if:true={isCRM}>
+                                <template if:false={isCancellationAlreadySubmitted}>
+                                    <div class="action-bar">
+                                        <lightning-button type="submit" label="Submit" variant="brand" disabled={isLoading}></lightning-button>
+                                        <lightning-button label="Cancel" onclick={handleCancel} disabled={isLoading}></lightning-button>
+                                    </div>
+                                </template>
+                            </template>
+                        </template>
+
+                    </lightning-record-edit-form>
+
+                    <!-- FILE UPLOADS -->
+                    <template if:false={isFullyLocked}>
+
+                        <template if:true={isCRM}>
+                            <div class="upload-section">
+                                <lightning-file-upload label="Audio Proof" record-id={effectiveRecordId}
+                                    accept={acceptedFormats} data-role="CRM" onuploadfinished={handleUploadFinished}>
+                                </lightning-file-upload>
+                            </div>
+                        </template>
+
+                        <template if:true={isSalesTLButton}>
+                            <div class="upload-section">
+                                <lightning-file-upload label="TL Audio Proof" record-id={effectiveRecordId}
+                                    accept={acceptedFormats} data-role="Sales TL" onuploadfinished={handleUploadFinished}>
+                                </lightning-file-upload>
+                            </div>
+                        </template>
+
+                        <template if:true={isPresalesHead}>
+                            <div class="upload-section">
+                                <lightning-file-upload label="Presales Head Audio Proof" record-id={effectiveRecordId}
+                                    accept={acceptedFormats} data-role="Presales Head" onuploadfinished={handleUploadFinished}>
+                                </lightning-file-upload>
+                            </div>
+                        </template>
+
+                    </template>
+
+                </div>
+            </lightning-card>
+
+            <!-- FILE PLAYER -->
+            <template if:true={audioFiles.length}>
+                <div class="audio-section">
+                    <h3>Uploaded Audio / Video Files</h3>
+                    <template for:each={audioFiles} for:item="file">
+                        <div key={file.id} class="audio-card">
+                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                                <p>{file.title}</p>
+                                <template if:true={file.canDelete}>
+                                    <lightning-button-icon icon-name="utility:delete" data-id={file.id}
+                                        onclick={handleDeleteAudio} variant="destructive">
+                                    </lightning-button-icon>
+                                </template>
+                            </div>
+                            <template if:true={file.isVideo}>
+                                <video width="350" controls><source src={file.url}></video>
+                            </template>
+                            <template if:false={file.isVideo}>
+                                <audio controls><source src={file.url}></audio>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- APPROVAL BUTTONS -->
+            <template if:false={isFullyLocked}>
+                <lightning-card title="Approval Actions" icon-name="utility:approval">
+                    <div class="approval-container">
+
+                        <template if:true={isSalesTLButton}>
+                            <div class="approval-row">
+                                <lightning-button label="TL Hold" variant="brand" onclick={handleTLHold}></lightning-button>
+                                <lightning-button label="TL Approve" variant="success" onclick={handleTLApprove}></lightning-button>
+                                <lightning-button label="TL Reject" variant="destructive" onclick={handleTLReject}></lightning-button>
+                            </div>
+                        </template>
+
+                        <template if:true={isSalesHeadButton}>
+                            <div class="approval-row">
+                                <lightning-button label="Hold (Head)" variant="brand" onclick={handleHeadHold}></lightning-button>
+                                <lightning-button label="Head Approve" variant="success" onclick={handleHeadApprove}></lightning-button>
+                                <lightning-button label="Head Reject" variant="destructive" onclick={handleHeadReject}></lightning-button>
+                            </div>
+                        </template>
+
+                        <template if:true={isPresalesHead}>
+                            <div class="approval-row">
+                                <lightning-button label="Hold (Presales Head)" variant="brand" onclick={handlePresalesHeadHold}></lightning-button>
+                                <lightning-button label="Presales Head Approve" variant="success" onclick={handlePresalesHeadApprove}></lightning-button>
+                                <lightning-button label="Presales Head Reject" variant="destructive" onclick={handlePresalesHeadReject}></lightning-button>
+                            </div>
+                        </template>
+
+                    </div>
+                </lightning-card>
+            </template>
+
+        </template>
+
+        <template if:true={isLoading}>
+            <div class="spinner-overlay">
+                <lightning-spinner size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+    </div>
+</template>

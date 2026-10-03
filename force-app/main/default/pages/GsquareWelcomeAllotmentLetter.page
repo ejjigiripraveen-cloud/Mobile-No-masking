@@ -1,0 +1,127 @@
+<apex:page standardController="Opportunity" showHeader="false" renderAs="pdf" applyBodyTag="false" applyHtmlTag="false" extensions="Send_Letters_Opp" >
+     <head>
+        <style>
+            @page{
+              margin-top:1.5cm;
+              margin-bottom:1.5cm;
+              margin-left:1.5cm;
+              margin-right:1.5cm;
+            
+              @top-center{
+              content:element(header);
+             }
+             @bottom-center{
+              content:element(footer)
+             }
+            }
+            body{
+             text-align:justify;
+             font-family:Arial;
+             font-size:16px;
+            }
+            div.footer{
+                text-align:center;
+                display:block;
+                position:running(footer)
+            }
+        </style>
+    </head>
+    <body>
+             <div class="header">
+               <!--<apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name!='G square Aurora | Navalur Phase 1' && oppty.Apartment__r.Block__r.Project__r.Name!='G Square City 2.0 | L&T Bypass' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Crystal | Karapakkam' && oppty.Apartment__r.Block__r.Project__r.Name!='G Square Dynasty | Mahabalipuram' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Magica | Urapakkam Phase 1' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Magica | Urapakkam Phase 2' && oppty.Apartment__r.Block__r.Project__r.Name!='G Square symphony | Sriperumbudur Phase 1' && oppty.Apartment__r.Block__r.Project__r.Name!='G Square symphony | Sriperumbudur Phase 2' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Tranquil | Uthandi Phase 1' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Tranquil | Uthandi Phase 2' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Ambrosia | Padur' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Aspire | Nanjundapuram Phase 1' && oppty.Apartment__r.Block__r.Project__r.Name!='G Square Delta | Trichy - Pudukottai Highway Phase 1' && oppty.Apartment__r.Block__r.Project__r.Name!='G Square Delta | Trichy - Pudukottai Highway Phase 2' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Prime | Thoraipakkam Phase 1' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Prime | Thoraipakkam Phase 2' && oppty.Apartment__r.Block__r.Project__r.Name!='G square Supremee | Sembattu Trichy'}">
+                   <apex:image value="{!$Resource.Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Aurora | Navalur Phase 1'}">
+                    <apex:image value="{!$Resource.Aurora_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                 <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G Square City 2.0 | L&T Bypass'}">
+                    <apex:image value="{!$Resource.City_2_0}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Crystal | Karapakkam'}">
+                    <apex:image value="{!$Resource.Crystal}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G Square Dynasty | Mahabalipuram'}">
+                    <apex:image value="{!$Resource.Dynastya_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Magica | Urapakkam Phase 1' || oppty.Apartment__r.Block__r.Project__r.Name=='G square Magica | Urapakkam Phase 2'}">
+                    <apex:image value="{!$Resource.Magica_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G Square symphony | Sriperumbudur Phase 1' || oppty.Apartment__r.Block__r.Project__r.Name=='G Square symphony | Sriperumbudur Phase 2'}">
+                    <apex:image value="{!$Resource.Symphany_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Tranquil | Uthandi Phase 1' || oppty.Apartment__r.Block__r.Project__r.Name=='G square Tranquil | Uthandi Phase 2'}">
+                    <apex:image value="{!$Resource.Tranquil_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Ambrosia | Padur'}">
+                    <apex:image value="{!$Resource.Ambrosia_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Aspire | Nanjundapuram Phase 1'}">
+                    <apex:image value="{!$Resource.Aspire_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G Square Delta | Trichy - Pudukottai Highway Phase 1' || oppty.Apartment__r.Block__r.Project__r.Name=='G Square Delta | Trichy - Pudukottai Highway Phase 2' }">
+                    <apex:image value="{!$Resource.Delta_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Prime | Thoraipakkam Phase 1' || oppty.Apartment__r.Block__r.Project__r.Name=='G square Prime | Thoraipakkam Phase 2' }">
+                    <apex:image value="{!$Resource.Prime_Logo}" width="120" height="89" />
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!oppty.Apartment__r.Block__r.Project__r.Name=='G square Supremee | Sembattu Trichy'}">
+                    <apex:image value="{!$Resource.Supremee_Logo}" width="120" height="89" />
+                </apex:outputPanel>-->
+                 <apex:image value="{!$Resource.GSquareNewLogo}" width="120" height="89" />
+         </div>
+       <br/><br/>
+       <table width="100%" border="0">
+    <tr>
+        <td align="left" width="80%">
+            Dear <b>{!oppty.name} </b>,
+        </td>
+        <td align="right" width="20%">
+            <b>Date: <apex:outputText value="{0,date,dd/MM/yyyy}"><apex:param value="{!NOW()}"/></apex:outputText></b>
+        </td>
+    </tr>
+</table>
+
+<p>
+    We are delighted to welcome you to the G Square family – thank you for choosing to begin your journey of land ownership with us!
+</p>
+<p>
+    Founded in 2012, G Square is South India’s most trusted and prominent real estate developer, specializing in premium plotted developments. With over 100 landmark projects delivered and more than 4,000 acres of land developed, we’ve proudly helped over 15,000 happy customers realize their dream of owning their own piece of land for home or business space.
+</p>
+<p>
+    Our projects span across major South Indian cities including Chennai, Bengaluru, Hyderabad, Coimbatore, Trichy, Mysuru, Madurai, and more – each one designed to provide value, security, and quality of life.
+</p>
+<p>
+    At G Square, we believe land is more than just property – it’s the foundation for your future. That’s why we focus on developing plotted communities with world-class amenities, 100% clear documentation, and complete freedom for you to design your dream home.
+</p>
+<p>
+    We’re committed to ensuring your experience is seamless and rewarding. From post-sale support like Bank Loan Support to Build Assist and long-term community development, we are here every step of the way.
+</p>
+<p>
+    Your dedicated service personnel is <b>{!oppty.name}</b>, who will get in touch with you shortly and help you through the steps to complete the ownership of the plot booked by you. <b>{!oppty.name}</b> can be reached at <!--<b>{!oppty.Owner.MobilePhone }</b>--> <b>{!Opportunity.Owner.CTI_Number__c}</b> / <b>{!oppty.Owner.Email}</b>.
+</p>
+<p>
+    You will receive a separate mail detailing the steps that will follow along with timelines. We look forward to your utmost cooperation to help us in completing your land ownership process.
+</p>
+<p>
+    Thank you once again for placing your trust in us.  
+</p>
+<p>
+    Welcome aboard – and here’s to building your future, your way.
+</p>
+
+<p style="white-space:nowrap; text-align:left;">
+    Warm regards,<br/>
+    <b>{!oppty.Owner.Name}</b><br/>
+    <b>G Square Housing</b>
+</p>
+
+
+
+<p align="center">
+    <apex:image value="{!$Resource.GSquareNewLogo}" width="150" height="60"/><br/>
+    <a href="https://www.gsquarehousing.com">www.gsquarehousing.com</a>
+</p>
+
+      
+    </body>
+</apex:page>

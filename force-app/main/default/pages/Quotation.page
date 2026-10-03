@@ -1,0 +1,361 @@
+<apex:page sidebar="false"  showHeader="false" standardController="Apartment__c" extensions="QuotationController"  renderAs="pdf" action="{!initAction}">
+ 
+    <head>
+         <style>
+ #tdborder {
+  border: 1px solid black;
+  border-bottom-style:hidden;
+  border-top-style:hidden;
+}
+table
+{padding-right:12px;}
+</style>
+</head>
+        <body>
+            <apex:form >
+                <div style="width:830; background-color:white; height:40px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+                    <apex:image style="float:left;margin-right:100px;" value="{!$Resource.OrgLogo}" width="75" height="150" />
+                </div>
+                <br/><br/><br/><br/><br/><br/><br/><br/>
+                <apex:pageBlock rendered="{! (Apartment__c.Apartment_Status__c != 'Available')}">    
+                    You can generate quotation only for <b>available</b> apartments
+                </apex:pageBlock>
+                <apex:pageBlock rendered="{!(Apartment__c.Apartment_Status__c='Available')}">
+                   
+                    <apex:variable value="{!Apartment__c.Built_Up_Area__c}" var="hlp"/>
+                                        <apex:variable value="{!Apartment__c.Apartment_rate__c}" var="hlp"/>
+
+                    
+                        <table   WIDTH="100%" border="1"  CELLPADDING="1.5" CELLSPACING="0" style="font-size:13px;"> 
+                        <tr><th colspan="2">Tower:</th><td align="right"><b>{!apartment__c.Tower__c}</b></td></tr>
+                        <tr><th colspan="2">Apartment No:</th><td align="right"><b>{!apartment__c.Unit_number__c} {!apartment__c.Wing__c}</b></td></tr>
+                        <tr><th colspan="2">Apartment Floor:</th><td align="right"><b>{!apartment__c.Floor_No__c} </b></td></tr>
+                        <tr><th colspan="2">Apartment Type:</th><td align="right"><b>{!apartment__c.Apartment_type__c}</b></td></tr>
+                        <tr><th colspan="2">Apartment Cost:</th><td align="right"><b></b></td></tr>
+
+                        <tr style="display: {!IF(OR(Apartment__c.Carpet_Area__c=0, ISBLANK(Apartment__c.Carpet_Area__c)), 'none', 'table-row')};">
+                            <td colspan="2" id="tdborder" style="border-top-style:hidden;border-bottom-style:hidden;"> Carpet Area Sft </td>
+                            <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;"> 
+                                <apex:outputText value="{0, number, ##,##0}">
+                                    <apex:param value="{!Apartment__c.Carpet_Area__c}"/>
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <tr style="display: {!IF(OR(Apartment__c.Super_Builtup_Area_in_Sft_Q__c=0, ISBLANK(Apartment__c.Super_Builtup_Area_in_Sft_Q__c)), 'none', 'table-row')};">
+                            <td colspan="2" id="tdborder" style="border-top-style:hidden;border-bottom-style:hidden;"> Super Builtup Area in Sft </td>
+                            <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                <apex:outputtext value="{0, number, ##,##0}">
+                                    <apex:param value="{!Apartment__c.Super_Builtup_Area_in_Sft_Q__c}"/>
+                                </apex:outputtext>
+                            </td>
+                        </tr>
+                        <tr style="display: {!IF(OR(Apartment__c.UDS_Area__c=0, ISBLANK(Apartment__c.UDS_Area__c)), 'none', 'table-row')};">
+                            <td colspan="2" id="tdborder" style="border-top-style:hidden;border-bottom-style:hidden;"> Undivided Land Area </td>
+                            <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                <apex:outputtext value="{0, number, ##,##0}">
+                                    <apex:param value="{!Apartment__c.UDS_Area__c}"/>
+                                </apex:outputtext>
+                            </td>
+                        </tr> 
+                    <!--    <tr style="display: {!IF(OR((Apartment__c.Price_Sft_Q__c-discountAmt)=0, ISBLANK((Apartment__c.Price_Sft_Q__c-discountAmt))), 'none', 'table-row')};">
+                            <td colspan="2" id="tdborder" style="border-top-style:hidden;border-bottom-style:hidden;"> <b>Basic Price/sq.ft</b> </td>
+                            <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                             <b>   <apex:outputtext value="{0, number, ##,##0}">
+                                    <apex:param value="{!(Apartment__c.Price_Sft_Q__c-discountAmt)}"/>
+                                </apex:outputtext>
+                                </b>
+                                </td>
+                        </tr>-->
+                       <!-- <tr >
+                            <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Basic Price</td>
+                            <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                <apex:outputtext value="{0, number, ##,##0}">
+                                    <apex:param value="{!(Apartment__c.Price_Sft_Q__c-discountAmt)*Apartment__c.Super_Builtup_Area_in_Sft_Q__c}"/>
+                                </apex:outputtext>
+                            </td>
+                        </tr>       -->
+                      <tr style="display: {!IF(OR(Apartment__c.No_of_car_park__c=0, ISBLANK(Apartment__c.No_of_car_park__c)), 'none', 'table-row')};">
+                            <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">No of Covered Car Parks </td>
+                            <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                <apex:outputtext value="{0, number, ##,##0}">
+                                    <apex:param value="{!Apartment__c.No_of_car_park__c}"/>
+                                </apex:outputtext>
+                            </td>
+                        </tr>
+                      <!--  <tr style="display: {!IF(OR(Apartment__c.Car_Park_Rate__c=0, ISBLANK(Apartment__c.Car_Park_Rate__c)), 'none', 'table-row')};">
+                            <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Car Parks ({!Apartment__c.No_of_car_park__c} Nos) </td>
+                            <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                <apex:outputtext value="{0, number, ##,##0}">
+                                    <apex:param value="{!Apartment__c.Car_Park_Rate__c}"/>
+                                </apex:outputtext>
+                            </td>
+                            </tr>-->
+                             <tr >
+                                 <apex:variable value="{!(Apartment__c.Super_Builtup_Area_in_Sft_Q__c*(Apartment__c.Price_Sft_Q__c-discountAmt))+Apartment__c.Car_Park_Rate__c+IF(Apartment__c.FOM_Bare_Shell__c ='FOM Apartment Price In Rs (Bare Shell)' , 7500000, 0)}" var="ptA"/>
+                            <th colspan="2" style="border-top-style:hidden;">Apartment Cost Total (A)</th>
+                            <th ALIGN="Right" style="border-top-style:hidden;">
+                                <apex:outputtext value="{0, number, ##,##0}">
+                                    <apex:param value="{!ptA}"/>
+                                </apex:outputtext>
+                            </th>
+                        </tr>
+                       
+                                               
+                    
+                          <tr >
+                            <th colspan="3" align="left"> Statutory &amp; Other Charges</th>
+                            
+                          </tr>
+                           <apex:variable value="{!Apartment__c.KPTCL_BWSSB_Charges_Q__c}" var="ptB"/>
+                             <tr style="display: {!IF(OR(Apartment__c.KPTCL_BWSSB_Charges_Q__c=0, ISBLANK(Apartment__c.KPTCL_BWSSB_Charges_Q__c)), 'none', 'table-row')};">
+                                <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">BWSSB and BESCOM Deposits   </td>
+                                <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.KPTCL_BWSSB_Charges_Q__c}"/>
+                                    </apex:outputText></td>
+                            </tr>
+                           <tr style="display: {!IF(OR(Apartment__c.Club_Memembership_Charges_Q__c=0, ISBLANK(Apartment__c.Club_Memembership_Charges_Q__c)), 'none', 'table-row')};">
+                              <apex:variable value="{!ptB+Apartment__c.Club_Memembership_Charges_Q__c}" var="ptB"/>  
+                              <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Club Membership Charges</td>
+                                <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Club_Memembership_Charges_Q__c}"/>
+                                    </apex:outputText></td>
+                            </tr>
+                           <tr style="display: {!IF(OR(Apartment__c.Corpus_Q__c=0, ISBLANK(Apartment__c.Corpus_Q__c)), 'none', 'table-row')};">
+                               <apex:variable value="{!ptB+Apartment__c.Corpus_Q__c}" var="ptB"/>
+                               <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Corpus Fund Deposit      </td>
+                                <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Corpus_Q__c}"/>
+                                    </apex:outputText></td>
+                            </tr>
+                          
+                            <tr style="display: {!IF(OR(Apartment__c.Generator_Charges_Q__c=0, ISBLANK(Apartment__c.Generator_Charges_Q__c)), 'none', 'table-row')};">
+                                <apex:variable value="{!ptB+Apartment__c.Generator_Charges_Q__c}" var="ptB"/>
+                                <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Generator (DG) Charges  </td>
+                                <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Generator_Charges_Q__c}"/>
+                                    </apex:outputText></td>
+                            </tr>
+                             <tr style="display: {!IF(OR(Apartment__c.Maintenance_Charges_for_1_Year__c=0, ISBLANK(Apartment__c.Maintenance_Charges_for_1_Year__c)), 'none', 'table-row')};">
+                                <apex:variable value="{!ptB+Apartment__c.Maintenance_Charges_for_1_Year__c}" var="ptB"/>
+                                 <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Maintenance Charges (1st Year Advance)</td>
+                                <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Maintenance_Charges_for_1_Year__c}"/>
+                                    </apex:outputText></td>
+                            </tr>
+                          <tr style="display: {!IF(OR(Apartment__c.Apt_Formula_field__c=0, ISBLANK(Apartment__c.Apt_Formula_field__c)), 'none', 'table-row')};">
+                              <apex:variable value="{!ptB+Apartment__c.Apt_Formula_field__c}" var="ptB"/>  
+                              <td colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Finishing Charges</td>
+                                <td ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Apt_Formula_field__c}"/>
+                                    </apex:outputText></td>
+                            </tr>
+                               
+                          <tr>
+                                <th width="80%" colspan="2" style="border-top-style:hidden;border-bottom-style:hidden;">Statutory &amp; Other Charges Total (B)</th>
+                                <th ALIGN="Right" style="border-top-style:hidden;border-bottom-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!ptB}"/>
+                                    </apex:outputText></th>
+                            </tr>
+                          <tr>
+                                <th width="80%" colspan="2" style="border-top-style:hidden;">Total Cost (A+B)</th>
+                                <th ALIGN="Right" style="border-top-style:hidden;">
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!ptB+ptA}"/>
+                                    </apex:outputText></th>
+                            </tr>
+                       
+                     
+                            <tr ALIGN="CENTER">
+                                <th width = "60%" colspan="3" align="left">Payment Schedule</th>
+                                
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_1_Q__c=0, ISBLANK(Apartment__c.Schedule_1_Q__c)), 'none', 'table-row')};">
+                                <td style="border-top-style:hidden;border-bottom-style:hidden;"><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_1_Q__c}"/></td>
+                                <td align="center" style="border-top-style:hidden;border-bottom-style:hidden;"><apex:outputText value="{!Apartment__c.Block__r.Sch_1_Q__c}%"/></td>
+                                <td align="right" style="border-top-style:hidden;border-bottom-style:hidden;"> 
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Schedule_1_Q__c-(value(Apartment__c.Block__r.Sch_1_Q__c)*discountAmt*Apartment__c.Super_Builtup_Area_in_Sft_Q__c*0.01)}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_2_Q__c=0, ISBLANK(Apartment__c.Schedule_2_Q__c)), 'none', 'table-row')};">
+                                <td style="border-top-style:hidden;border-bottom-style:hidden;"> <apex:outputText value="{!Apartment__c.Block__r.Sch_Name_2_Q__c}"/></td>
+                                <td align="center" style="border-top-style:hidden;border-bottom-style:hidden;"> <apex:outputText value="{!Apartment__c.Block__r.Sch_2_Q__c}%"/></td>
+                                <td align="right" style="border-top-style:hidden;border-bottom-style:hidden;"> 
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Schedule_2_Q__c-(value(Apartment__c.Block__r.Sch_2_Q__c)*discountAmt*Apartment__c.Super_Builtup_Area_in_Sft_Q__c*0.01)}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_3_Q__c=0, ISBLANK(Apartment__c.Schedule_3_Q__c)), 'none', 'table-row')};">
+                                <td style="border-top-style:hidden;border-bottom-style:hidden;"><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_3_Q__c}"/> </td>
+                                <td align="center" style="border-top-style:hidden;border-bottom-style:hidden;"><apex:outputText value="{!Apartment__c.Block__r.Sch_3_Q__c}%"/> </td>
+                                <td align="right" style="border-top-style:hidden;border-bottom-style:hidden;"> 
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Schedule_3_Q__c-(value(Apartment__c.Block__r.Sch_3_Q__c)*discountAmt*Apartment__c.Super_Builtup_Area_in_Sft_Q__c*0.01)}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_4_Q__c=0, ISBLANK(Apartment__c.Schedule_4_Q__c)), 'none', 'table-row')};">
+                                <td style="border-top-style:hidden;border-bottom-style:hidden;"><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_4_Q__c}"/></td>
+                                <td align="center" style="border-top-style:hidden;border-bottom-style:hidden;"><apex:outputText value="{!Apartment__c.Block__r.Sch_4_Q__c}%"/> </td>
+                                <td align="right" style="border-top-style:hidden;border-bottom-style:hidden;"> 
+                                    <apex:outputText value="{0, number, ##,##0}">
+                                        <apex:param value="{!Apartment__c.Schedule_4_Q__c-(value(Apartment__c.Block__r.Sch_4_Q__c)*discountAmt*Apartment__c.Super_Builtup_Area_in_Sft_Q__c*0.01)}"/>
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                         <!--   <tr style="display: {!IF(OR(Apartment__c.Schedule_5_Q__c=0, ISBLANK(Apartment__c.Schedule_5_Q__c)), 'none', 'table-row')};">
+                                <td><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_5_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_5_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_6_Q__c=0, ISBLANK(Apartment__c.Schedule_6_Q__c)), 'none', 'table-row')};">
+                                <td><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_6_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_6_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_7_Q__c=0, ISBLANK(Apartment__c.Schedule_7_Q__c)), 'none', 'table-row')};">
+                                <td><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_7_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_7_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_8_Q__c=0, ISBLANK(Apartment__c.Schedule_8_Q__c)), 'none', 'table-row')};">
+                                <td><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_8_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_8_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_9_Q__c=0, ISBLANK(Apartment__c.Schedule_9_Q__c)), 'none', 'table-row')};">
+                                <td> <apex:outputText value="{!Apartment__c.Block__r.Sch_Name_9_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_9_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_10_Q__c=0, ISBLANK(Apartment__c.Schedule_10_Q__c)), 'none', 'table-row')};">
+                                <td> <apex:outputText value="{!Apartment__c.Block__r.Sch_Name_10_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_10_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_11_Q__c=0, ISBLANK(Apartment__c.Schedule_11_Q__c)), 'none', 'table-row')};">
+                                <td><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_11_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_11_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_12_Q__c=0, ISBLANK(Apartment__c.Schedule_12_Q__c)), 'none', 'table-row')};">
+                                <td> <apex:outputText value="{!Apartment__c.Block__r.Sch_Name_12_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_12_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>
+                            <tr style="display: {!IF(OR(Apartment__c.Schedule_13_Q__c=0, ISBLANK(Apartment__c.Schedule_13_Q__c)), 'none', 'table-row')};">
+                                <td><apex:outputText value="{!Apartment__c.Block__r.Sch_Name_13_Q__c}"/></td>
+                                <td align="center"> </td>
+                                <td align="right"> 
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Schedule_13_Q__c}"/></apex:outputText>
+                                </td>
+                            </tr>-->
+                                <tr align="Left">
+                                <td align="Left" colspan="1" style="border-top-style:hidden;"> <b> TOTAL COST </b></td>
+                                <td style="border-top-style:hidden;" align="center"><b>100%</b></td>
+                                <td align="right" style="border-top-style:hidden;"> <b>
+                                    <apex:outputText value="{0, number, ##,##0}"><apex:param value="{!Apartment__c.Total_Q1__c-(discountAmt*Apartment__c.Super_Builtup_Area_in_Sft_Q__c)}"/></apex:outputText> </b>
+                                </td>
+                            </tr>
+     
+                   
+                    </table>
+       
+                    
+                                         
+                    <br/>
+                    <table style="font-size:12px">
+                        <tr><th>Please Note:</th></tr>
+                        <tr><th>1. Price valid till &nbsp; <apex:outputText value="{0,date,dd/MM/yyyy}"> <apex:param value="{!ddy2}" /> </apex:outputText> </th></tr>
+                        <tr><th>2. Price is inclusive of Maintenance Charges (For 1 year) and Corpus Fund</th></tr>
+                        <tr><th>3. Registration &amp; Stamp Duty &amp; Legal Charges payable by Client at actuals</th></tr>
+                        <tr><th>4. All payments shall be in the name of MACHANI RAMESH HERITAGE LLP – MACHANI ANANDA CRE ESCROW A/C</th></tr>
+                        <tr><th>5. Wire Transfer Details : Kotak Mahindra Bank | Account No. 4513833568 | Account Type : Escrow Account |  IFSC : KKBK0000631</th></tr>
+                        <tr><th>6. Extra car park at Rs/- 10,00,000 (subject to availability)</th></tr>
+                        <tr style="display:{!IF(OR(Apartment__c.FOM_Bare_Shell__c='FOM Apartment Price In Rs (Bare Shell)',Apartment__c.FOM_Bare_Shell__c='DC Bare Shell'),'','none')}"><th>7. Prices mentioned are without flooring &amp; fittings. Finishing charges will be additional as applicable</th></tr>
+                        <tr style="display:{!IF(Apartment__c.FOM_Bare_Shell__c='DC Apartment Price InRs (STD Finishes)','','none')}"><th>7. Prices mentioned are inclusive of standard finishing</th></tr>
+                    </table>
+                    <br/><br/>
+<table width="100%" style="font-size:13px">
+               <tr>     <td>    
+            <table width="50%" style="float:left">
+                <tr>
+                <th>Prepared by:
+                    </th>
+                </tr>
+                <tr><td>
+                    {!C_User.Name}
+                    </td></tr>
+                <tr><td>
+                    {!C_User.Designation__c} 
+                    </td></tr>
+                <tr>
+                <td>
+                    <a href="{!C_User.Email}" >{!C_User.Email}</a>
+                    </td>
+                </tr>
+                <tr>
+                <td>
+                    Mobile: {!C_User.MobilePhone}
+                    </td>
+                </tr>
+                <tr>
+                <th>
+                   <apex:outputText value="Date:{0,date,dd/MM/yyyy}"><apex:param value="{!TODAY()}" /> </apex:outputText> 
+                    </th>
+                </tr>
+                    </table>        
+               <table width="50%" style="float:right">
+                   <tr>
+                   <th >Customer Details:</th>
+                   </tr>
+                   <tr>
+                       <td>
+                       Name:{!C_Name}
+                       </td>
+                   </tr>
+                    <tr style="display:{!IF(C_Company=null,'none','')}">
+                        <td> Company:{!C_Company}</td>
+                   </tr>
+                   <tr style="display:{!IF(C_Mobile=null,'none','')}">
+                      <td> Mobile:{!C_Mobile}</td>
+                   </tr>
+                   <tr style="display:{!IF(C_Email=null,'none','')}">
+                        <td>Email:{!C_Email}</td>
+                   </tr>
+                   </table>     
+               
+               </td>
+               
+               </tr>
+                    </table>
+                                  </apex:pageBlock>
+            </apex:form>
+        </body>
+    
+</apex:page>

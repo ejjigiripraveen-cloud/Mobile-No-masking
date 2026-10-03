@@ -1,0 +1,44 @@
+<apex:page sidebar="false"  showHeader="false" standardController="Opportunity" renderAs="pdf" >
+  <head>
+<body>
+<div style="width:830; background-color:white; height:80px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+     <apex:image style="float:right" value="{!if(contains(opportunity.Project_Name__c,'Primus'),$Resource.Primus,$Resource.OrgLogo)}" width="80" height="50"/>
+</div>
+<apex:form >
+<b>Ref: MDPL/MWC/LTR -2015-16 </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<b>Date:<apex:outputText value="{0,date,dd/MM/yy}"> <apex:param value="{!TODAY()}" /> </apex:outputText> </b><br/><br/>
+<b> Mr.&amp;Mrs.{!Opportunity.Name}</b>
+<p>Ph:{!Opportunity.Contact__r.MobilePhone}</p>
+<p>Dear Sir\Madam, </p>
+<p ALIGN="CENTER"> <b>Sub:{!Opportunity.Project_Name__c}, Apt No.{!Opportunity.Flat_No__c},</b></p>
+<p>Refer your booking of the subject Apartment. Enclosed please find two sets of Sale and Construction Agreements, Pre EMI Letter, Allotment Letter and a payment request letter towards the apartment. We request you to follow the below instructions while signing the documents.</p>
+<p><b>1.  Sign at the bottom of the printed matter on all pages at the Left hand corner including at places where it is mentioned as Second Party and Purchaser in the last pages. </b></p>
+
+ <p> <b>2.   Sign in the Pre EMI Letter and the Allotment Letter at the places marked (x).</b></p>
+
+<p> <b>3.Do not mention the date below your signatures as the execution date is already mentioned.</b></p>
+
+<p><b> 4. Send us the copy of the Power of Attorney if the document is signed by the POA holder.</b></p>
+
+    <p><b>Please return the signed agreements within 7 days for our Authorized Signatory’s signatures at the address indicated below.</b></p>
+    <p>Mantri Developers Pvt. Ltd.<br/>{!Opportunity.Apartment__r.Block__r.Project__r.Name}<br/>{!Opportunity.Apartment__r.Block__r.Project__r.Address__c} <br/></p>                                         
+
+<p>Your set of the agreements duly signed by our Authorized Signatory will be sent to you for your records. Kindly contact {!Opportunity.Apartment__r.Block__r.RM_Phone_No__c}, Relationship Manager (email:{!Opportunity.Apartment__r.Block__r.RM_email_Address__c}) for your future correspondence.</p>
+    <p>You are requested to release 15% payment (refer enclosed payment request) <b><u>within 15 days</u></b> from the date of this letter.</p>
+
+<p>Thanking you.</p>
+
+<p>Yours faithfully</p>
+
+<p>For <b> Mantri Developers Pvt Ltd</b></p>
+<p><b>Authorized Signatory</b></p>
+
+ <p><b>Note:</b></p> 
+<p><b>1. If you are planning to avail any housing finance kindly intimate us at {!Opportunity.Apartment__r.Block__r.RM_Phone_No__c} for issue of necessary documents.</b></p> 
+<p><b>2.   We shall arrange to pick up the signed agreements from you. You may contact us on the above mentioned mail id / contact number to enable us coordinate for the same.</b></p> 
+<p><b>3.  You can utilize the online transfer option to release payment towards the apartment (details enclosed).</b></p> 
+<p><b>4.   You can view our website: ⦁ www.mantri.in for progress pictures of the project.</b></p> 
+</apex:form>
+</body>
+</head>
+</apex:page>

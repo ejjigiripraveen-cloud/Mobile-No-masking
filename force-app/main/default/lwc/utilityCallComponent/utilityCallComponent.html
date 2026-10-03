@@ -1,0 +1,88 @@
+<template>
+    <!-- ✅ Visible only if user is the record owner -->
+    <template if:true={isOwner}>
+        <lightning-card title="Trigger Offline Call">
+            <div class="slds-p-around_medium slds-grid slds-grid_vertical slds-gutters">
+
+                <!-- 🔄 Refresh button -->
+                <div class="slds-col slds-m-top_medium">
+                    <lightning-button label="Refresh" variant="neutral" onclick={handleRefresh}
+                        class="slds-m-top_small slds-m-right_small">
+                    </lightning-button>
+                </div>
+                <br>
+
+                <!-- 🆔 Lead Id -->
+                <div class="slds-col">
+                    <lightning-input label="Lead ID" value={ldId} onchange={handleLeadIdChange} disabled></lightning-input>
+                </div>
+
+                <!-- 📞 Call buttons aligned side by side -->
+                <div class="slds-col slds-m-top_medium">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <lightning-button 
+                                label="Call Primary No" 
+                                variant="brand" 
+                                onclick={handleTriggerCallPrimary}
+                                disabled={clickedPrimary}>
+                            </lightning-button>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-button 
+                                label="Call Secondary No" 
+                                variant="brand" 
+                                onclick={handleTriggerCallSecondary}
+                                disabled={clickedSecondary}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <!-- 📞 Call Id + Dropdowns -->
+                <div class="slds-col">
+                    <lightning-input label="Call ID" value={callname} disabled></lightning-input>
+                    
+                    <lightning-combobox 
+                        name="disposition" 
+                        label="Disposition" 
+                        value={selectedDisposition}
+                        placeholder="Select Disposition" 
+                        options={dispositionOptions}
+                        onchange={handleDispositionChange} 
+                        required>
+                    </lightning-combobox>
+
+                    <lightning-combobox 
+                        name="subDisposition" 
+                        label="Sub Disposition" 
+                        value={selectedSubDisposition}
+                        placeholder="Select Sub Disposition" 
+                        options={subDispositionOptions}
+                        onchange={handleSubDispositionChange} 
+                        required>
+                    </lightning-combobox>
+                </div>
+
+                <!-- 📝 Comments -->
+                <div class="slds-col slds-m-top_medium">
+                    <p class="warningText">⚠ Refresh till the recent call id is fetched !!</p>
+                    <lightning-textarea label="Comments" value={cmts}
+                        onchange={handleCmtsChange}></lightning-textarea><br><br>
+                    <lightning-button label="Save Comment" variant="brand" onclick={handleSaveComments}
+                        class="slds-m-top_small"></lightning-button>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+
+    <!-- ❌ If user is not owner -->
+    <template if:false={isOwner}>
+        <lightning-card title="Access Restricted">
+            <div class="access-restricted">
+                <p>🚫 You are not the owner of this record. The call functions are unavailable.</p>
+            </div>
+        </lightning-card>
+    </template>
+</template>

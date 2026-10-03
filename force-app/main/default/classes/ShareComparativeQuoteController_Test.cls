@@ -1,0 +1,569 @@
+@isTest
+public class ShareComparativeQuoteController_Test {
+
+    @isTest
+    static void getApprovedQuotes_Test() 
+    {
+        SetupTestData SetupTestDataAsCR = new SetupTestData(ProfileUtilities.ProfileType.SYSADMIN);
+        System.runAs(SetupTestDataAsCR.TestUser) 
+        {
+            SetupTestDataAsCR.createTestAccount();
+            SetupTestDataAsCR.createTestContact();
+            SetupTestDataAsCR.createTestProject();
+            SetupTestDataAsCR.createTestBlock();
+            SetupTestDataAsCR.createTestComponentMaster();
+            SetupTestDataAsCR.createTestSubComponents();
+            SetupTestDataAsCR.createTestTaxMaster();
+            Template_Master__c TestTemplateMaster  = SetupTestDataAsCR.createTestTemplateMaster();
+            list<Template__c> Testtemplates = SetupTestDataAsCR.createTestTemplates();
+            SetupTestDataAsCR.createTestRateMaster();
+            Apartment__c crntAprtmnt = SetupTestDataAsCR.createTestApartment();
+            Opportunity crntOpp = SetupTestDataAsCR.createTestOpportunity3();
+
+            Quotation__c quoteRec = SetupTestDataAsCR.createTestQuotation();
+
+            Test.startTest();
+
+            ShareComparativeQuoteController.getApprovedQuotes(crntOpp.Id);            
+            Test.stopTest();
+
+            /*System.assertEquals(10, templateDetailList.size(),'List size should be 10');
+            System.assertEquals('On Booking', templateDetailList[0].name, 'First name should be On Booking');
+            System.assertEquals(1, templateDetailList[0].displayOrder, 'First display order should be 1');
+            System.assertEquals(System.today()+2, templateDetailList[0].dueDate);
+            System.assertEquals(2, templateDetailList[0].gracePeriod);
+            System.assertEquals(0.0, templateDetailList[0].installmentValue);
+            System.assertEquals(0.10000000000000, templateDetailList[1].installmentValue);*/
+        }
+    }
+
+    @isTest
+    static void generateAndSendPdf_Test() 
+    {
+        SetupTestData SetupTestDataAsCR = new SetupTestData(ProfileUtilities.ProfileType.SYSADMIN);
+        System.runAs(SetupTestDataAsCR.TestUser) 
+        {
+            SetupTestDataAsCR.createTestAccount();
+            SetupTestDataAsCR.createTestContact();
+            SetupTestDataAsCR.createTestProject();
+            SetupTestDataAsCR.createTestBlock();
+            SetupTestDataAsCR.createTestComponentMaster();
+            SetupTestDataAsCR.createTestSubComponents();
+            SetupTestDataAsCR.createTestTaxMaster();
+            Template_Master__c TestTemplateMaster  = SetupTestDataAsCR.createTestTemplateMaster();
+            list<Template__c> Testtemplates = SetupTestDataAsCR.createTestTemplates();
+            SetupTestDataAsCR.createTestRateMaster();
+            Apartment__c crntAprtmnt = SetupTestDataAsCR.createTestApartment();
+            Opportunity crntOpp = SetupTestDataAsCR.createTestOpportunity3();
+
+            Quotation__c quoteRec = SetupTestDataAsCR.createTestQuotation();
+
+            Test.startTest();
+
+            Set<String> setOfQIds = new Set<String>();
+            setOfQIds.add(quoteRec.Id);
+            ShareComparativeQuoteController.generateAndSendPdf(JSON.Serialize(setOfQIds));            
+            Test.stopTest();
+
+            /*System.assertEquals(10, templateDetailList.size(),'List size should be 10');
+            System.assertEquals('On Booking', templateDetailList[0].name, 'First name should be On Booking');
+            System.assertEquals(1, templateDetailList[0].displayOrder, 'First display order should be 1');
+            System.assertEquals(System.today()+2, templateDetailList[0].dueDate);
+            System.assertEquals(2, templateDetailList[0].gracePeriod);
+            System.assertEquals(0.0, templateDetailList[0].installmentValue);
+            System.assertEquals(0.10000000000000, templateDetailList[1].installmentValue);*/
+        }
+    }
+
+    /*@isTest
+    static void beforeInsertInstallment_Test() 
+    {
+        SetupTestData SetupTestDataAsCR = new SetupTestData(ProfileUtilities.ProfileType.SYSADMIN);
+        System.runAs(SetupTestDataAsCR.TestUser) 
+        {
+            SetupTestDataAsCR.createTestAccount();
+            SetupTestDataAsCR.createTestContact();
+            SetupTestDataAsCR.createTestProject();
+            SetupTestDataAsCR.createTestBlock();
+            SetupTestDataAsCR.createTestComponentMaster();
+            SetupTestDataAsCR.createTestSubComponents();
+            SetupTestDataAsCR.createTestTaxMaster();
+            Template_Master__c TestTemplateMaster  = SetupTestDataAsCR.createTestTemplateMaster();
+            list<Template__c> Testtemplates = SetupTestDataAsCR.createTestTemplates();
+            SetupTestDataAsCR.createTestRateMaster();
+            Apartment__c crntAprtmnt = SetupTestDataAsCR.createTestApartment();
+            Opportunity crntOpp = SetupTestDataAsCR.createTestOpportunity3();
+
+            SetupTestDataAsCR.createTestOppDetail();
+            Quotation__c quoteRec = SetupTestDataAsCR.createTestQuotation();
+            
+            list<Installment__c> testinstlmntlst1 = SetupTestDataAsCR.createTestInstallmentList();
+            list<InstallmentDetail__c> testinstlmntdtllst1 = SetupTestDataAsCR.createTestInstallmentdtlList();
+
+             // create Quotation_Installment__c
+             List<Quotation_Installment__c> quotationInstallmentList = new list<Quotation_Installment__c>();
+             list<string> namelst = new list<String>{'On Booking','Agreement Signing','On Foundation','On First Floor Roof Slab','On Fourth Floor Roof Slab','On Seventh Floor Roof Slab','On Last Floor Roof Slab','On Possession','On Possession1','On Possession2','On Possession3'};
+             for(integer i=0;i<10;i++)
+             {
+                 quotationInstallmentList.add(new Quotation_Installment__c(Name = namelst[i],
+                                                         Template__c = SetupTestDataAsCR.TestTemplateList[i].Id,Display_Order__c = i+1,
+                                                         Status__c = 'pending',
+                                                         Quotation__c = quoteRec.Id,
+                                                         Component_Included__c = '1;2;3;4;5;6;7;8;9;10;11;12;13;14;15'));
+             }
+             insert quotationInstallmentList;
+
+
+            Test.startTest();
+
+                Template_Controller.InstallmentAndQuotationWrapper installmentAndQuotationWrapperData =  Template_Controller.beforeInsertInstallment(quotationInstallmentList,quoteRec,true);
+            	System.debug('THIS DEBUG'+installmentAndQuotationWrapperData);
+            Test.stopTest();
+            
+            System.assertEquals(10000, installmentAndQuotationWrapperData.quotationObj.Total_Basic__c);
+        }
+    }*/
+
+    public class SetupTestData {
+        public User TestUser                                 {get;set;}
+        public User SomeUser                                 {get;set;} 
+        public Account TestAccount                           {get;set;}
+        public Contact TestContact                           {get;set;}
+        public Project__c TestProject                        {get;set;}
+        public Block__c TestBlock                            {get;set;}
+        public Component_Master__c testComponentMaster       {get;set;} 
+        public List<Sub_Component__c> testSubComponentList   {get;set;}
+        public List<Tax_Master__c> TestTaxMasterList         {get;set;}
+        public list<Rate_Master__c> Rate_Master_List         {get;set;}
+        public Apartment__c TestApartment                    {get;set;}
+        public Template_Master__c TestTemplateMaster         {get;set;}
+        public list<Template__c> TestTemplateList            {get;set;}
+        public Opportunity TestOpportunity                   {get;set;}
+        public OpportunityDetail__c TestOpportunityDetail    {get;set;}
+        public list<Installment__c> testinstlmntlst          {get;set;}
+        public list<InstallmentDetail__c> testinstlmntdtllst {get;set;}
+        public Quotation__c testQuotation   				 {get;set;}
+
+        public SetupTestData(ProfileUtilities.ProfileType profile_type) 
+        {
+            TestUser = UserTestData.getUserForTest().setProfile(ProfileUtilities.getInstance().getProfileName(profile_type)).save().getRecord();
+            SomeUser = UserTestData.getUserForTest().setProfile(ProfileUtilities.getInstance().getProfileName(profile_type)).save().getRecord();
+            TestAccount = new Account();
+         
+            TestContact = new Contact();
+            TestProject = new Project__c();
+            TestBlock = new Block__c();
+            testComponentMaster = new Component_Master__c();
+            testSubComponentList = new list<Sub_Component__c>();
+            TestTaxMasterList = new List<Tax_Master__c>();
+            Rate_Master_List = new list<Rate_Master__c>();
+            TestApartment = new Apartment__c();
+            TestTemplateMaster = new Template_Master__c();
+            TestTemplateList = new list<Template__c>();
+            TestOpportunity = new Opportunity();
+            TestOpportunityDetail = new OpportunityDetail__c();
+            testQuotation = new Quotation__c();
+        }
+        
+        //Create Test Account
+        public void createTestAccount() {
+            TestAccount.Name = 'Test Acc Name';
+            TestAccount.Email__c = 'test786@gmail.com';
+            insert TestAccount;
+        }
+        
+        //Create Test Contact
+        public Contact createTestContact() {
+            TestContact.lastname = 'lastname';
+            TestContact.Salutation='Mr.';
+            //TestContact.Contact_Type__c = 'type';
+            TestContact.Birthdate = Date.newInstance(1990,10,06);
+            //TestContact.AccountId = AccountId;
+            TestContact.OtherCity='India';  
+            TestContact.OtherCountry='Delhi';
+            TestContact.OtherStreet='chandni chowk';
+            TestContact.OtherPostalCode='320222';
+            TestContact.Nationality__c ='Indian';
+            TestContact.Industry__c ='Riico';
+            TestContact.Designation__c ='Doveloper';
+            TestContact.Employed_at__c ='Google';
+            TestContact.Profession__c='IT';
+            TestContact.Resident_Status__c='PIO';
+            TestContact.Relation_with_Applicant__c = 'N/A';
+            TestContact.PAN_Card__c = 'ABCDE0011Q';
+            insert TestContact;
+            return TestContact;
+        }
+        
+        //Create Test Project
+        public Project__c createTestProject()
+        {
+            TestProject.Name = 'Test Mantri Manyata Lithos Project';
+            TestProject.Bank_Account_Name__c = 'Test Bank Account';
+            TestProject.Bank_Account_Number__c = 1234567890;
+            TestProject.Bank_Account_Type__c = 'test';
+            TestProject.Bank_Name__c = 'Test Bank';
+            TestProject.Grace_Period__c = 30;
+            TestProject.Overdue_Available__c = true;
+            TestProject.Overdue_penalty__c = 18;
+            TestProject.Payment_Allocation__c = 'Inclusive First';
+            TestProject.Project_Email__c = 'Test@test.com';
+            TestProject.Summary_Quote_Notes__c = 'testeat';
+            insert TestProject;
+            return TestProject;
+        }
+        
+        //Create Test Block
+        public void createTestBlock()
+        {
+            TestBlock.Name = 'Test Block A';
+            TestBlock.CRM_Name__c = 'XYZ';
+            TestBlock.Date_Of_Possession__c = date.newinstance(2021, 8, 22);
+            TestBlock.Project__c = TestProject.Id;
+            TestBlock.Previous_Possession_Date__c = date.newinstance(2019, 8, 22);
+            TestBlock.RM_email_Address__c = 'Test@test.com';
+            TestBlock.RM_Phone_No__c = '98754387654';
+            insert TestBlock;
+        }
+        
+        //Create Test Component Master
+        public void createTestComponentMaster()
+        {
+            testComponentMaster.Name = 'Test Component Master';
+            testComponentMaster.isStandardMaster__c = true;
+            testComponentMaster.Project__c = TestProject.Id;
+            insert testComponentMaster;
+        }       
+        
+        //Create Test Sub Component
+        public void createTestSubComponents()
+        {
+            testSubComponentList = new list<Sub_Component__c>();
+            list<String> CompNameList = new list<String>{'Other','Construction Cost','Land Cost','Floor Rise Charges','Premium Charges','Car Park','Other6','Other7','Other8','Other9','Other10',
+            'Other11','Other12','Other13','Other14','Other15','Other16','Other17','Other18','Other19','Other20'};
+            for(integer i = 0;i<= 2;i++)
+            {
+                testSubComponentList.add(
+                    new Sub_Component__c(
+                        Name = CompNameList[i],
+                        apartment_Comp__c = CompNameList[i],
+                        Component_Master__c = testComponentMaster.id,
+                        Display_Order__c = i+1,
+                        Collection_Type__c = 'Inclusive',
+                        Component_Rate_Type__c ='Franking'
+                    )
+                );
+            }
+            for(integer i = 3;i<= 9;i++)
+            {
+                testSubComponentList.add(
+                    new Sub_Component__c(
+                        Name = CompNameList[i],
+                        apartment_Comp__c = CompNameList[i],
+                        Component_Master__c = testComponentMaster.id,
+                        Display_Order__c = i+1,
+                        Collection_Type__c = 'On Possession'
+                    )
+                );
+            }
+            
+            insert testSubComponentList;
+            
+        }
+        //Create Test Tax Master
+        public void createTestTaxMaster()
+        {
+            TestTaxMasterList = new list<Tax_Master__c>();
+            list<String> TaxRateNameList = new list<String>{'Other','Construction Cost','Land Cost','Floor Rise Charges','Premium Charges','Car Park','Other6','Other7','Other8','Other9','Other10',
+            'Other11','Other12','Other13','Other14','Other15','Other16','Other17','Other18','Other19','Other20'};
+            for(integer i = 1;i <= 10;i++)
+            {
+                TestTaxMasterList.add(
+                    new Tax_Master__c (
+                        Name = TaxRateNameList[i]+' Tax',
+                        From_Date__c = date.newinstance(2021, 1, 22),
+                        To_Date__c = date.newinstance(2025, 1, 22),
+
+                        Sub_Component__c = testSubComponentList[i-1].Id,
+                        TC1_Change_Type__c = 'Receipt',
+                        TC1_Appr__c = 40,
+                        TC1_Available__c = true,
+                        TC1_Name__c = 'ST',
+                        TC1_Type__c = 'Inclusive',
+                        TC1_Value__c = 12.36,
+                        TC2_Change_Type__c = 'Receipt',
+                        TC2_Appr__c = 100,
+                        TC2_Available__c = true,
+                        TC2_Name__c = 'VAT',
+                        TC2_Type__c ='Inclusive',
+                        TC2_Value__c = 4,
+                        TC3_Change_Type__c = 'Receipt',
+                        TC3_Appr__c = 100,
+                        TC3_Available__c = true,
+                        TC3_Name__c = 'VAT',
+                        TC3_Type__c ='Inclusive',
+                        TC3_Value__c = 4,
+                        TC4_Change_Type__c = 'Receipt',
+                        TC4_Appr__c = 100,
+                        TC4_Available__c = true,
+                        TC4_Name__c = 'VAT',
+                        TC4_Type__c ='Inclusive',
+                        TC4_Value__c = 4
+                    )
+                );
+            }
+            
+            insert TestTaxMasterList;
+        }
+        
+        //Create Test Template Master
+        public Template_Master__c createTestTemplateMaster()
+        {
+            TestTemplateMaster.Name = 'Test Lithos Block A Template';
+            TestTemplateMaster.Block__c = TestBlock.Id;
+            TestTemplateMaster.Is_Construction_Link_Plan__c = true;
+            TestTemplateMaster.Project__c = TestProject.Id;
+            insert TestTemplateMaster;
+
+            return TestTemplateMaster;
+        }
+        
+        //Create Test Template 
+        public list<Template__c> createTestTemplates()
+        {
+            TestTemplateList = new list<Template__c>();
+            list<String> TemplateNameList = new list<String>{'On Booking','Agreement Signing','On Foundation','On First Floor Roof Slab','On Fourth Floor Roof Slab','On Seventh Floor Roof Slab','On Last Floor Roof Slab','On Possession','On Possession1','On Possession2','On Possession3'};
+            for(integer i =0;i<10;i++)
+            {
+                TestTemplateList.add(
+                    new Template__c(
+                        Name = TemplateNameList[i],
+                        Display_Order__c = i+1,
+                        Due_Date__c = (Date.today()).addDays(2),
+                        Installment_Value__c = 10,
+                        Generate_Demand_Letter__c = false,
+                        Template_Master__c = TestTemplateMaster.Id,
+                        Grace_Period__c = 2,
+                        Overdue_Interest_Applicable__c = false,
+                        Use_STD_Amt__c = true
+                    )
+                );
+            }
+            insert TestTemplateList;
+            return TestTemplateList;
+        }
+        
+        //Create Test Rate_Master__c
+        public void createTestRateMaster()
+        {
+            Rate_Master_List = new list<Rate_Master__c>();
+            list<String> RateNameList = new list<String>{'Construction Cost','Land Cost','Premium Rate','Floor Rise Charges','Car Park','Apartment Cost'};
+            list<String> RateTypeList = new list<String>{'','Normal','North Facing','1st Floor','',''};
+            for(integer i=0;i<=5;i++)
+            {
+                Rate_Master_List.add(
+                    new Rate_Master__c(
+                        Name = RateNameList[i],
+                        Component_Name__c = RateNameList[i],
+                        Component_Type__c = RateTypeList[i],
+                        Project__c = TestProject.Id,
+                        Rate__c = 3000+i
+                    )
+                );
+            }
+            insert Rate_Master_List;
+        }
+        
+        //Create Test Apartment
+        public Apartment__c createTestApartment() {
+            TestApartment.Name = 'Test Apartment';
+            TestApartment.Additional_Sit_out_Area_SBUA__c = 120;
+            TestApartment.Additional_Terrace_area__c = 30;
+            TestApartment.Apartment_Master__c = Rate_Master_List[5].Id;
+            TestApartment.Apartment_Cost__c = 4190;
+            TestApartment.Apartment_Status__c = 'Available';
+            TestApartment.Apartment_Sub_type__c =
+            TestApartment.Apartment_Type__c = '2BHK';
+            TestApartment.Block__c = TestBlock.Id;
+            TestApartment.Built_Up_Area__c = 1145;
+            TestApartment.Car_Park_Master__c = Rate_Master_List[4].Id;
+            TestApartment.Car_Park_Rate__c = 3000;
+            TestApartment.Car_Park_Type__c = 'Open';
+            TestApartment.Carpet_Area__c = 1000;
+            TestApartment.Construction_Cost_Master__c = Rate_Master_List[0].Id;
+            TestApartment.Construction_Cost__c = 3000;
+            TestApartment.Discount_Amount__c = 50;
+            TestApartment.Discount_Type__c = 'Land Rate';
+            TestApartment.Flat_No__c = '001';
+            TestApartment.Floor_No__c ='1';
+            TestApartment.Floor_Rate_Master__c = Rate_Master_List[3].Id;
+            TestApartment.Floor_Rise_Charges__c = 2000;
+            TestApartment.Floor_Rise_Charges_Per_Sqft__c = 90.00;
+            TestApartment.Generate_Forecast__c = false;
+            TestApartment.Land_Cost_Master__c = Rate_Master_List[1].Id;
+            TestApartment.Land_Cost__c = 4000;
+            TestApartment.Other_Area__c = 1200;
+            TestApartment.Premium_Charges__c = 200;
+            TestApartment.Premium_Rate_Master__c = Rate_Master_List[2].Id;
+            TestApartment.Premium_Rate__c = 3900;
+            TestApartment.Take_Rate_from_Rate_Master__c = true;
+            TestApartment.Terrace_Area__c = 200.00;
+            TestApartment.UDS_Area__c = 100;
+            TestApartment.ComponentMaster__c = testComponentMaster.Id;
+            insert TestApartment;
+            return TestApartment;
+        }
+        
+        //Create Test Opportunity without Apartment
+        public Opportunity createTestOpportunity3(){
+            TestOpportunity.StageName = '1.Site Visit';
+            TestOpportunity.Name = 'test Opp Name';
+            TestOpportunity.CloseDate = Date.today();
+            TestOpportunity.AccountId = TestAccount.Id;
+            TestOpportunity.Contact__c = TestContact.Id;
+            //TestOpportunity.Apartment__c = TestApartment.Id;
+            TestOpportunity.Minimum_Booking_Amount_Received__c =True;
+            TestOpportunity.Template_Master__c = TestTemplateMaster.Id;
+            TestOpportunity.Component_Master__c = testComponentMaster.Id;
+            insert TestOpportunity;
+            return TestOpportunity;
+        }
+        
+        public OpportunityDetail__c createTestOppDetail()
+        {
+            TestOpportunityDetail.Opportunity__c = TestOpportunity.Id;
+            TestOpportunityDetail.Name = 'test Opp Name' + '-Detail';
+            TestOpportunityDetail.Apartment__c = TestApartment.Id;
+            TestOpportunityDetail.Component_Master__c = testComponentMaster.Id;
+            TestOpportunityDetail.Booking_Date__c = Date.today();
+            for(integer i = 1; i<=8;i++)
+            {
+                TestOpportunityDetail.put('Comp'+i+'_Tax__c',TestTaxMasterList[i].Id);
+            }
+            insert TestOpportunityDetail;
+            return TestOpportunityDetail;
+        }
+        
+        public list<Installment__c> createTestInstallmentList()
+        {
+            testinstlmntlst = new list<Installment__c>();
+            list<string> namelst = new list<String>{'On Booking','Agreement Signing','On Foundation','On First Floor Roof Slab','On Fourth Floor Roof Slab','On Seventh Floor Roof Slab','On Last Floor Roof Slab','On Possession','On Possession1','On Possession2','On Possession3'};
+            for(integer i=0;i<10;i++)
+            {
+                testinstlmntlst.add(new Installment__c(Name = namelst[i],Opportunity__c = TestOpportunity.Id,
+                                                        OpportunityDetail__c = TestOpportunityDetail.Id,
+                                                        Template__c = TestTemplateList[i].Id,Display_Order__c = i+1,
+                                                        Status__c = 'pending',
+                                                        Component_Included__c = '1;2;3;4;5;6;7;8;9;10;11;12;13;14;15'));
+            }
+            insert testinstlmntlst;
+            return testinstlmntlst;
+        }
+        
+        public list<InstallmentDetail__c> createTestInstallmentdtlList()
+        {
+            testinstlmntdtllst = new list<InstallmentDetail__c>();
+            list<string> namelst = new list<String>{'On Booking','Agreement Signing','On Foundation','On First Floor Roof Slab','On Fourth Floor Roof Slab','On Seventh Floor Roof Slab','On Last Floor Roof Slab','On Possession','On Possession1','On Possession2','On Possession3'};
+            for(integer i=0;i<10;i++)
+            {
+                testinstlmntdtllst.add(new InstallmentDetail__c(Name = namelst[i],Opportunity__c = TestOpportunity.Id,
+                                                        OpportunityDetail__c = TestOpportunityDetail.Id,Total_Balance__c = 500,Status__c = 'Completed',
+                                                        Incl_Tax1_Received__c = 0,Incl_Tax2_Received__c = 0,Incl_Tax3_Received__c = 0,Incl_Tax4_Received__c = 0,
+                                                        Rec_Comp1_Basic__c = 1, Rec_Comp2_Basic__c = 0, Rec_Comp3_Basic__c = 0, Rec_Comp4_Basic__c = 0, Rec_Comp5_Basic__c = 0, Rec_Comp6_Basic__c = 0, Rec_Comp7_Basic__c = 0, 
+                                                        Rec_Comp8_Basic__c = 0, Rec_Comp9_Basic__c = 0, Rec_Comp10_Basic__c =0,
+                                                        Rec_Comp11_Basic__c = 0, Rec_Comp12_Basic__c = 0, Rec_Comp13_Basic__c = 0, Rec_Comp14_Basic__c = 0, Rec_Comp15_Basic__c = 0, 
+                                                        Rec_Comp16_Basic__c = 0, Rec_Comp17_Basic__c = 0, Rec_Comp18_Basic__c = 0, Rec_Comp19_Basic__c = 0, Rec_Comp20_Basic__c = 0,
+                                                        Rec_Comp1_Tax1_Amount__c = 0, Rec_Comp2_Tax1_Amount__c = 0, Rec_Comp3_Tax1_Amount__c = 0, Rec_Comp4_Tax1_Amount__c = 0, Rec_Comp5_Tax1_Amount__c = 0, 
+                                                        Rec_Comp6_Tax1_Amount__c = 0, Rec_Comp7_Tax1_Amount__c = 0, Rec_Comp8_Tax1_Amount__c = 0, Rec_Comp9_Tax1_Amount__c = 0, Rec_Comp10_Tax1_Amount__c = 0,
+                                                        Rec_Comp11_Tax1_Amount__c = 0, Rec_Comp12_Tax1_Amount__c = 0, Rec_Comp13_Tax1_Amount__c = 0, Rec_Comp14_Tax1_Amount__c = 0, Rec_Comp15_Tax1_Amount__c = 0, 
+                                                        Rec_Comp16_Tax1_Amount__c = 0, Rec_Comp17_Tax1_Amount__c = 0, Rec_Comp18_Tax1_Amount__c = 0, Rec_Comp19_Tax1_Amount__c = 0, Rec_Comp20_Tax1_Amount__c = 0,
+                                                        Rec_Comp1_Tax2_Amount__c = 0, Rec_Comp2_Tax2_Amount__c = 0, Rec_Comp3_Tax2_Amount__c = 0, Rec_Comp4_Tax2_Amount__c = 0, Rec_Comp5_Tax2_Amount__c = 0, 
+                                                        Rec_Comp6_Tax2_Amount__c = 0, Rec_Comp7_Tax2_Amount__c = 0, Rec_Comp8_Tax2_Amount__c = 0, Rec_Comp9_Tax2_Amount__c = 0, Rec_Comp10_Tax2_Amount__c = 0,
+                                                        Rec_Comp11_Tax2_Amount__c = 0, Rec_Comp12_Tax2_Amount__c = 0, Rec_Comp13_Tax2_Amount__c = 0, Rec_Comp14_Tax2_Amount__c = 0, Rec_Comp15_Tax2_Amount__c = 0, 
+                                                        Rec_Comp16_Tax2_Amount__c = 0, Rec_Comp17_Tax2_Amount__c = 0, Rec_Comp18_Tax2_Amount__c = 0, Rec_Comp19_Tax2_Amount__c = 0, Rec_Comp20_Tax2_Amount__c = 0,
+                                                        Rec_Comp1_Tax3_Amount__c = 0, Rec_Comp2_Tax3_Amount__c = 0, Rec_Comp3_Tax3_Amount__c = 0, Rec_Comp4_Tax3_Amount__c = 0, Rec_Comp5_Tax3_Amount__c = 0, 
+                                                        Rec_Comp6_Tax3_Amount__c = 0, Rec_Comp7_Tax3_Amount__c = 0, Rec_Comp8_Tax3_Amount__c = 0, Rec_Comp9_Tax3_Amount__c = 0, Rec_Comp10_Tax3_Amount__c = 0,
+                                                        Rec_Comp11_Tax3_Amount__c = 0, Rec_Comp12_Tax3_Amount__c = 0, Rec_Comp13_Tax3_Amount__c = 0, Rec_Comp14_Tax3_Amount__c = 0, Rec_Comp15_Tax3_Amount__c = 0, 
+                                                        Rec_Comp16_Tax3_Amount__c = 0, Rec_Comp17_Tax3_Amount__c = 0, Rec_Comp18_Tax3_Amount__c = 0, Rec_Comp19_Tax3_Amount__c = 0, Rec_Comp20_Tax3_Amount__c = 0,
+                                                        Rec_Comp1_Tax4_Amount__c = 0, Rec_Comp2_Tax4_Amount__c = 0, Rec_Comp3_Tax4_Amount__c = 0, Rec_Comp4_Tax4_Amount__c = 0, Rec_Comp5_Tax4_Amount__c = 0, 
+                                                        Rec_Comp6_Tax4_Amount__c = 0, Rec_Comp7_Tax4_Amount__c = 0, Rec_Comp8_Tax4_Amount__c = 0, Rec_Comp9_Tax4_Amount__c = 0, Rec_Comp10_Tax4_Amount__c = 0,
+                                                        Rec_Comp11_Tax4_Amount__c = 0, Rec_Comp12_Tax4_Amount__c = 0, Rec_Comp13_Tax4_Amount__c = 0, Rec_Comp14_Tax4_Amount__c = 0, Rec_Comp15_Tax4_Amount__c = 0, 
+                                                        Rec_Comp16_Tax4_Amount__c = 0, Rec_Comp17_Tax4_Amount__c = 0, Rec_Comp18_Tax4_Amount__c = 0, Rec_Comp19_Tax4_Amount__c = 0, Rec_Comp20_Tax4_Amount__c = 0,
+                                                        Rec_Comp1_Total__c = 0, Rec_Comp2_Total__c = 0, Rec_Comp3_Total__c = 0, Rec_Comp4_Total__c = 0, Rec_Comp5_Total__c = 0, Rec_Comp6_Total__c = 0, Rec_Comp7_Total__c = 0, 
+                                                        Rec_Comp8_Total__c = 0, Rec_Comp9_Total__c = 0, Rec_Comp10_Total__c = 0, Rec_Comp11_Total__c = 0, Rec_Comp12_Total__c = 0, Rec_Comp13_Total__c = 0, Rec_Comp14_Total__c = 0, 
+                                                        Rec_Comp15_Total__c = 0, Rec_Comp16_Total__c = 0, Rec_Comp17_Total__c = 0, Rec_Comp18_Total__c = 0, Rec_Comp19_Total__c = 0, Rec_Comp20_Total__c = 0, 
+                                                        Bal_Comp1_Basic__c = 0, Bal_Comp2_Basic__c = 0, Bal_Comp3_Basic__c = 0, Bal_Comp4_Basic__c = 0, Bal_Comp5_Basic__c = 0, Bal_Comp6_Basic__c = 0, Bal_Comp7_Basic__c = 0, 
+                                                        Bal_Comp8_Basic__c = 0, Bal_Comp9_Basic__c = 0, Bal_Comp10_Basic__c = 0, Bal_Comp11_Basic__c = 0, Bal_Comp12_Basic__c = 0, Bal_Comp13_Basic__c = 0, Bal_Comp14_Basic__c = 0, 
+                                                        Bal_Comp15_Basic__c = 0, Bal_Comp16_Basic__c = 0, Bal_Comp17_Basic__c = 0, Bal_Comp18_Basic__c = 0, Bal_Comp19_Basic__c = 0, Bal_Comp20_Basic__c = 0, 
+                                                        Bal_Comp1_Tax1_Amount__c = 0, Bal_Comp2_Tax1_Amount__c = 0, Bal_Comp3_Tax1_Amount__c = 0, Bal_Comp4_Tax1_Amount__c = 0, Bal_Comp5_Tax1_Amount__c = 0, 
+                                                        Bal_Comp6_Tax1_Amount__c = 0, Bal_Comp7_Tax1_Amount__c = 0, Bal_Comp8_Tax1_Amount__c = 0, Bal_Comp9_Tax1_Amount__c = 0, Bal_Comp10_Tax1_Amount__c = 0,
+                                                        Bal_Comp11_Tax1_Amount__c = 0, Bal_Comp12_Tax1_Amount__c = 0, Bal_Comp13_Tax1_Amount__c = 0, Bal_Comp14_Tax1_Amount__c = 0, Bal_Comp15_Tax1_Amount__c = 0, 
+                                                        Bal_Comp16_Tax1_Amount__c = 0, Bal_Comp17_Tax1_Amount__c = 0, Bal_Comp18_Tax1_Amount__c = 0, Bal_Comp19_Tax1_Amount__c = 0, Bal_Comp20_Tax1_Amount__c = 0,
+                                                        Bal_Comp1_Tax2_Amount__c = 0, Bal_Comp2_Tax2_Amount__c = 0, Bal_Comp3_Tax2_Amount__c = 0, Bal_Comp4_Tax2_Amount__c = 0, Bal_Comp5_Tax2_Amount__c = 0, 
+                                                        Bal_Comp6_Tax2_Amount__c = 0, Bal_Comp7_Tax2_Amount__c = 0, Bal_Comp8_Tax2_Amount__c = 0, Bal_Comp9_Tax2_Amount__c = 0, Bal_Comp10_Tax2_Amount__c = 0,
+                                                        Bal_Comp11_Tax2_Amount__c = 0, Bal_Comp12_Tax2_Amount__c = 0, Bal_Comp13_Tax2_Amount__c = 0, Bal_Comp14_Tax2_Amount__c = 0, Bal_Comp15_Tax2_Amount__c = 0, 
+                                                        Bal_Comp16_Tax2_Amount__c = 0, Bal_Comp17_Tax2_Amount__c = 0, Bal_Comp18_Tax2_Amount__c = 0, Bal_Comp19_Tax2_Amount__c = 0, Bal_Comp20_Tax2_Amount__c = 0,
+                                                        Bal_Comp1_Tax3_Amount__c = 0, Bal_Comp2_Tax3_Amount__c = 0, Bal_Comp3_Tax3_Amount__c = 0, Bal_Comp4_Tax3_Amount__c = 0, Bal_Comp5_Tax3_Amount__c = 0, 
+                                                        Bal_Comp6_Tax3_Amount__c = 0, Bal_Comp7_Tax3_Amount__c = 0, Bal_Comp8_Tax3_Amount__c = 0, Bal_Comp9_Tax3_Amount__c = 0, Bal_Comp10_Tax3_Amount__c = 0,
+                                                        Bal_Comp11_Tax3_Amount__c = 0, Bal_Comp12_Tax3_Amount__c = 0, Bal_Comp13_Tax3_Amount__c = 0, Bal_Comp14_Tax3_Amount__c = 0, Bal_Comp15_Tax3_Amount__c = 0, 
+                                                        Bal_Comp16_Tax3_Amount__c = 0, Bal_Comp17_Tax3_Amount__c = 0, Bal_Comp18_Tax3_Amount__c = 0, Bal_Comp19_Tax3_Amount__c = 0, Bal_Comp20_Tax3_Amount__c = 0,
+                                                        Bal_Comp1_Tax4_Amount__c = 0, Bal_Comp2_Tax4_Amount__c = 0, Bal_Comp3_Tax4_Amount__c = 0, Bal_Comp4_Tax4_Amount__c = 0, Bal_Comp5_Tax4_Amount__c = 0, 
+                                                        Bal_Comp6_Tax4_Amount__c = 0, Bal_Comp7_Tax4_Amount__c = 0, Bal_Comp8_Tax4_Amount__c = 0, Bal_Comp9_Tax4_Amount__c = 0, Bal_Comp10_Tax4_Amount__c = 0,
+                                                        Bal_Comp11_Tax4_Amount__c = 0, Bal_Comp12_Tax4_Amount__c = 0, Bal_Comp13_Tax4_Amount__c = 0, Bal_Comp14_Tax4_Amount__c = 0, Bal_Comp15_Tax4_Amount__c = 0, 
+                                                        Bal_Comp16_Tax4_Amount__c = 0, Bal_Comp17_Tax4_Amount__c = 0, Bal_Comp18_Tax4_Amount__c = 0, Bal_Comp19_Tax4_Amount__c = 0, Bal_Comp20_Tax4_Amount__c = 0,
+                                                        Bal_Comp1_Total__c = 0, Bal_Comp2_Total__c = 0, Bal_Comp3_Total__c = 0, Bal_Comp4_Total__c = 0, Bal_Comp5_Total__c = 0, Bal_Comp6_Total__c = 0, Bal_Comp7_Total__c = 0, 
+                                                        Bal_Comp8_Total__c = 0, Bal_Comp9_Total__c = 0, Bal_Comp10_Total__c = 0, Bal_Comp11_Total__c = 0, Bal_Comp12_Total__c = 0, Bal_Comp13_Total__c = 0, Bal_Comp14_Total__c = 0, 
+                                                        Bal_Comp15_Total__c = 0, Bal_Comp16_Total__c = 0, Bal_Comp17_Total__c = 0, Bal_Comp18_Total__c = 0, Bal_Comp19_Total__c = 0, Bal_Comp20_Total__c = 0,
+                                                        Total_Basic_Received__c = 0,Total_Basic_Balance__c = 0,Total_Tax1_Received__c = 0,Total_Tax2_Received__c = 0,Total_Tax3_Received__c = 0,Total_Tax4_Received__c = 0,
+                                                        Total_Tax1_Balance__c = 0,Total_Tax2_Balance__c = 0,Total_Tax3_Balance__c = 0,Total_Tax4_Balance__c = 0,Total_Received__c = 100,
+                                                        Tax1_paid__c = 0,Tax2_paid__c = 0,Tax3_paid__c = 0,Tax4_paid__c = 0,
+                                                        Installment__c = testinstlmntlst[i].Id,Display_Order__c = i+1));
+            }
+            
+            insert testinstlmntdtllst;
+            return testinstlmntdtllst;
+        }
+        
+        public Quotation__c createTestQuotation()
+        {
+           	testQuotation = new Quotation__c();
+            testQuotation.Opportunity__c = TestOpportunity.Id;
+            testQuotation.Inventory__c = TestApartment.Id;
+            testQuotation.Total_Basic__c = 10000;
+            testQuotation.Total_Balance__c = 2323;
+            testQuotation.Inclusive_Amt_Total__c = 2323;
+            testQuotation.Total_Tax1__c = 1222;
+            testQuotation.Total_Tax2__c = 1222;
+            testQuotation.Total_Tax3__c = 1222;
+            testQuotation.Total_Tax4__c = 2122;
+            testQuotation.Is_Final_Quotation__c = false;
+
+            for(Sub_Component__c sub : testSubComponentList)
+            {
+                testQuotation.put('Component_'+sub.Display_Order__c+'_Name__c',sub.Name);
+                testQuotation.put('Component_'+sub.Display_Order__c+'_Basic__c',100);
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax1_Amount__c',100);
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax2_Amount__c',100);
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax3_Amount__c',100);
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax4_Amount__c',100);
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax1_Name__c','one');
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax2_Name__c','tow');
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax3_Name__c','three');
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax4_Name__c','four');
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Total__c',800);
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Tax__c',null);
+                testQuotation.put('Comp'+sub.Display_Order__c+'_Selection_Type__c',sub.apartment_Comp__c);
+            }
+            
+            for(Integer compCount = 1; compCount<= 10 ; compCount++)
+            {
+                  testQuotation.put('Comp'+compCount+'_Tax__c', TestTaxMasterList[compCount-1].Id);
+            }
+            
+            insert testQuotation;
+            return testQuotation;
+        }
+
+    }  
+
+}

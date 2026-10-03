@@ -1,0 +1,114 @@
+<apex:page showHeader="false" sidebar="false" renderAs="PDF" standardController="Opportunity">
+ <apex:form >
+  <p align = "center" style = "font-size : 18px;"> <b> APPLICATION FOR SHIFTING </b> </p>
+  <p><b> From: </b></p>
+  <p> {!opportunity.Contact__r.name} &nbsp; <apex:outputText value="{!if(Opportunity.Contact__r.Co_Applicant_Name__c != null,"&",'')}"/> &nbsp; <apex:outputText value="{!if(Opportunity.Contact__r.Co_Applicant_Name__c != null,Opportunity.Contact__r.Co_Applicant_Name__c,'')}"/> <br/>
+   Phone No: {!opportunity.Contact__r.MobilePhone} &nbsp; Email: {!opportunity.Contact__r.Email} </p>
+  <p> Sub: <b> Request for shift of Unit No. {!opportunity.Flat_No__c} (old Unit) at Project: <u> {!opportunity.Project_Name__c} </u> </b> <br/>
+  I have applied to you for allotment of a unit in your scheme as above. Pending the finalization of Negotiations in the above matter, we have deposited so for an amount of Rs. 2,00,000/- I hereby request you to shift my/our booking as below and transfer the paid amount to new unit. </p>
+  
+  <table width = "100%">
+     <tr>
+      <th colspan="2"> <b> Kindly shift my booking to Apt. No. {!opportunity.Flat_No__c}, at Project: {!opportunity.Project_Name__c}  </b> </th>
+     </tr>
+     <tr>
+      <td width = "50%"> 1. Agreement Status </td>
+      <td width = "50%"> </td>
+     </tr>
+     <tr>
+      <td> 2. If prepared, Collection Status </td>
+      <td> </td>
+     </tr>
+     <tr>
+      <td> 3. NOC Status </td>
+      <td> </td>
+     </tr>
+     <tr>
+      <td> 4. If prepared, Collection Status </td>
+      <td> </td>
+     </tr>
+     <tr>
+      <td> 5. Any Modifications done </td>
+      <td> </td>
+     </tr>
+     <tr>
+      <td> 6. If yes, Modification amount </td>
+      <td> </td>
+     </tr>
+     <tr>
+      <td> 7. Signature of Site In charge (for Modifications) </td>
+      <td> </td>
+     </tr>
+     <tr> </tr>     
+     <tr>
+      <td> Signature of Sales Manager : </td>
+      <td> Signature of Client : </td>
+     </tr>
+     <tr>
+      <td> Date : </td>
+      <td> Date : </td>
+     </tr>
+  </table>
+  <hr style = "border : dotted 1px;"/>
+  <table width = "100%">
+   <tr>
+    <th colspan = "2"> <u> <b> DETAILS OF NEW UNIT APPLIED FOR ALLOTMENT: </b> </u> </th>
+   </tr>
+   <tr>
+    <td width = "50%"> SCHEME : </td>
+    <td width = "50%"> {!opportunity.Project_Name__c} </td>
+   </tr>
+   <tr>
+    <td> UNIT No : </td>
+    <td> {!opportunity.Flat_No__c} </td>
+   </tr>
+   <tr>
+    <td> AREA (sqft) : </td>
+    <td> {!opportunity.Apartment__r.Area_in_Sq_Mts__c} </td>
+   </tr>
+   <tr>
+    <td> SUPER BUILT UP AREA : </td>
+    <td> {!opportunity.Built_Up_Area__c} </td>
+   </tr>
+   <tr>
+    <td> BASIC PRICE OF FLAT : </td>
+    <td> {!opportunity.Apartment_Rate__c} </td>
+   </tr>
+   <tr>
+    <td> CAR PARKING COST : </td>
+    <td> {!opportunity.Car_Park_Rate__c} </td>
+   </tr>
+   <tr>
+    <td> TERRACE AREA (sqft) : </td>
+    <td> {!opportunity.Apartment__r.Terrace_Area__c} </td>
+   </tr>
+   <tr>
+    <td> TERRACE RATE : </td>
+    <td> {!opportunity.Apartment__r.Terrace_rate__c} </td>
+   </tr>
+   <tr>
+    <td> GARDEN AREA (sqft) : </td>
+    <td> {!opportunity.Apartment__r.Garden_Area__c} </td>
+   </tr>
+   <tr>
+    <td> TOTAL VALUE : </td>
+    <td> </td>
+   </tr>
+  </table>
+  <p> BESCOM &amp; BWSSB EXPENSES @ RS. 150/- /Sft OF SBUA OR AS CHARGED TO ALL MEMBERS <br/>
+MAINTENANCE DEPOSIT @ RS. 200/- /Sft OF SBUA OR AS CHARGED TO ALL MEMBERS <br/>
+STAMP DUTY; REGN. FEES &amp; LEGAL EXPENSES: - AT ACTUALS <br/>
+SHIFTING CHARGES OF RS. _NIL_ to be COLLECTED </p>
+
+  <p> If waived reason for waiver : </p>
+  <table width = "100%">
+      <tr>
+       <th colspan = "2"> Shifting Entered At Sales Register At Sr. No. _________ </th>
+      </tr>
+      <tr> 
+       <th> Checked By : ________ </th>
+       <th> Approved By : __________ </th>
+      </tr>
+  </table>
+ </apex:form>
+</apex:page>

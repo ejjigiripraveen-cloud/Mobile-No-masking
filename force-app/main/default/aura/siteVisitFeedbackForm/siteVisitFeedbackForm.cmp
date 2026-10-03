@@ -1,0 +1,334 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-01-2024
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<aura:component controller="SiteVisitFeedbackController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <lightning:navigation aura:id="navService" />
+    <aura:attribute name="newSiteVisit" type="Site_Visit__c" default="{}" />
+    <aura:attribute name="message" type="String" default=""/>
+    <aura:attribute name="Country" type="String[]" default="[]"/>
+    <aura:attribute name="leadSources" type="String[]" default="[]"/>
+    <aura:attribute name="projects" type="String[]" default="[]"/>
+    <aura:attribute name="purpose" type="String[]" default="[]"/>
+    <aura:attribute name="lookingfor" type="String[]" default="[]"/>
+    <aura:attribute name="leadStage" type="String[]" default="[]"/>
+    <aura:attribute name="aspect" type="String[]" default="[]"/>
+    <aura:attribute name="infosource" type="String[]" default="[]"/>
+    <aura:attribute name="pricerange" type="String[]" default="[]"/>
+    <aura:attribute name="location" type="String[]" default="[]"/>
+    <aura:attribute name="users" type="object[]" />
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    
+    <aura:attribute name="activeSections" type="List" default="['A','B','C','D']" />
+    <aura:attribute name="activeSectionsMessage" type="String" default="" />
+    <aura:attribute name="prjId" type="String" />
+    
+    <aura:attribute name="searchText1" type="string" default=""/>
+    <aura:attribute name="matchproj" type="string[]" default="[]"/>
+    <aura:handler name="change" value="{!v.searchText1}" action="{!c.searchText1}"></aura:handler> 
+    
+    <!-- lookup attributes -->
+    <aura:attribute name="searchText" type="string" default=""/>
+    <aura:attribute name="matchUsers" type="object[]" default="[]"/>
+    <aura:handler name="change" value="{!v.searchText}" action="{!c.searchText}"></aura:handler> 
+    <aura:html tag="style">
+        .slds-form-element__control{
+        padding:2px;
+        }
+    </aura:html>
+    
+    <header class="slds-modal__header">
+        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">SITE VISIT FORM</h1>
+    </header>
+    <lightning:card iconName="standard:contact" title="SV Feedback Form">
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <p><div class="slds-form">
+                
+                <lightning:accordion allowMultipleSectionsOpen="true" activeSectionName="{! v.activeSections }">
+                    <!-- Customer Details -->
+                    <lightning:accordionSection name="A" label="Customer Details">
+                        <div class="slds-scope">
+                            <div class="slds-grid slds-wrap slds-text-align_left">
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="mobileField"  
+                                                             label="Mobile" 
+                                                             type="tel" 
+                                                             value="{!v.newSiteVisit.Mobile__c}" 
+                                                             messageWhenValueMissing="Enter Mobile Number" 
+                                                             required="true" 
+                                                             pattern="\d{8,14}" 
+                                                             messageWhenPatternMismatch="Mobile number must be 8 to 14 digits"/>
+                                            <lightning:button variant="brand" 
+                                                              label="Check Lead Availability" 
+                                                              onclick="{!c.handleMobileChange}" 
+                                                              class="slds-m-top_small" />
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="field1" label="Name" type="text" value="{!v.newSiteVisit.Name__c}" required="true"  messageWhenValueMissing="Enter The Customer Name"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="field1" label="Email" type="email" name="email1" value="{!v.newSiteVisit.Email__c}" />
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="field1" label="Secondary Phone" type="tel" maxlength="10" value="{!v.newSiteVisit.Secondary_Phone__c}"  min="10" messageWhenValueMissing="Enter The Number"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                       <div class="slds-form-element__control">
+                                            <lightning:select aura:id="field1" label="Country" name="select" value="{!v.newSiteVisit.Country__c}" messageWhenValueMissing="Select The Country" required="true">
+                                                
+                                                <aura:iteration items="{!v.Country}" var="p">
+                                                    <option value="{!p.value}" text="{!p.value}"></option>
+                                                </aura:iteration>
+                                            </lightning:select>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                
+                            </div>
+                        </div>
+                        <div class="slds-scope">
+                            <div class="slds-grid slds-wrap slds-text-align_left">
+                                
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="field1"  label="Secondary email" type="email" value="{!v.newSiteVisit.Secondary_Email__c}"  messageWhenValueMissing="Enter Secondary Email Address"  />
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:select aura:id="field1" label="Source" name="select" value="{!v.newSiteVisit.Source__c}" messageWhenValueMissing="Select The Source" required="true">
+                                                <option value="">-- None --</option>
+                                                <aura:iteration items="{!v.leadSources}" var="p">
+                                                    <option value="{!p.value}" text="{!p.value}"></option>
+                                                </aura:iteration>
+                                            </lightning:select>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="field1" label="Sub Source" type="text" name="Sub Source" value="{!v.newSiteVisit.Sub_Source__c}" messageWhenValueMissing="Enter Sub Source" required="true" />
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    
+                                    <ul class="slds-lookup__list" role="listbox">
+                                        <lightning:input value="{!v.searchText1}" aura:id="field1" name="enter-search" label="Project" type="search" required="true"/><br/>                                      
+                                        <aura:if isTrue="{!v.matchproj}">
+                                            <div class="{!if(not(empty(v.matchproj)), 'result-buttom','')}">
+                                                <aura:iteration items="{!v.matchproj}" var="item">
+                                                    <li role="presentation">
+                                                        <span class="slds-lookup__item-action slds-media slds-media--center" role="option">
+                                                            <div class="slds-media__body">
+                                                                <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                    <div class="slds-lookup__result-text" data-id="{!item}" onclick="{!c.update1 }">
+                                                                        <a role="option" >
+                                                                            <lightning:icon iconName="standard:user" size="xx-small"/>&nbsp;{!item}
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </span>
+                                                    </li>
+                                                </aura:iteration>
+                                            </div>
+                                        </aura:if>     
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="slds-scope">
+                            <div class="slds-grid slds-wrap slds-text-align_left">
+                                
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <ul class="slds-lookup__list" role="listbox"> 
+                                        <lightning:input  value="{!v.searchText}" aura:id="field1" name="enter-search" label="FLS Name" type="search"  messageWhenValueMissing="Select FLS" required="true" /><br/>                                      
+                                        <aura:if isTrue="{!v.matchUsers}">
+                                            <div class="{!if(not(empty(v.matchUsers)), 'result-buttom','')}">
+                                                <aura:iteration items="{!v.matchUsers}" var="item">
+                                                    <li role="presentation">
+                                                        <span class="slds-lookup__item-action slds-media slds-media--center" role="option">
+                                                            <div class="slds-media__body">
+                                                                <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                    <div class="slds-lookup__result-text" data-id="{!item.Id}" onclick="{!c.update }">
+                                                                        <a role="option" >
+                                                                            <lightning:icon iconName="standard:account" size="xx-small"/>&nbsp;{!item.Name} - {!item.Profile.Name}
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </span>
+                                                    </li>
+                                                </aura:iteration>
+                                            </div>
+                                        </aura:if>     
+                                    </ul>
+                                </div>
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="field1" label="Site Visit Date" type="datetime"  value="{!v.newSiteVisit.Conducted_On__c}"  messageWhenValueMissing="Select The Date" required="true"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        <div class="slds-form-element__control">
+                                            <lightning:select label="Looking for" name="select" value="{!v.newSiteVisit.Looking_For__c}" required="true">
+                                                <option value="">-- None --</option>
+                                                <aura:iteration items="{!v.lookingfor}" var="p">
+                                                    <option value="{!p}" text="{!p}"></option>
+                                                </aura:iteration>
+                                            </lightning:select>                                            
+                                        </div>                                     
+                                    </div>
+                                </div>
+                                <!--<div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input label="Company" type="text"  required="true" name="occup" value="{!v.newSiteVisit.Company_Name__c}" />
+                                            
+                                        </div>
+                                    </div>
+                                </div>-->
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="slds-scope">
+                            <div class="slds-grid slds-wrap slds-text-align_left">
+                                <!--<div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        <div class="slds-form-element__control">
+                                            <lightning:input label="Age"  type="number" name="input3" value="{!v.newSiteVisit.Age__c}"/>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        <div class="slds-form-element__control">
+                                            <lightning:input label="Occupation" type="text" name="occup" value="{!v.newSiteVisit.Occupation__c}" />
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <div class="slds-size_2-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element  slds-is-editing">   
+                                        <div class="slds-form-element__control">
+                                            <lightning:textarea  label="Current Residential Location" type="text" name="input3"  value="{!v.newSiteVisit.Current_Residential_Location__c}"/>
+                                            
+                                        </div>  
+                                    </div>
+                                    
+                                </div>-->
+                                <div class="slds-size_2-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element  slds-is-editing">   
+                                        <div class="slds-form-element__control">
+                                            <lightning:textarea  label="Comments" required="true" type="text" name="input4"  value="{!v.newSiteVisit.Comments__c}"/>
+                                            
+                                        </div>  
+                                    </div>
+                                    
+                                </div>
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        <div class="slds-form-element__control">
+                                            <lightning:select label="Lead Stage" name="select" value="{!v.newSiteVisit.Status}" disabled="true">
+                                                <option value="">-- None --</option>
+                                                <aura:iteration items="{!v.leadStage}" var="p">
+                                                    <option value="{!p}" text="{!p}"></option>
+                                                </aura:iteration>
+                                            </lightning:select>                                            
+                                        </div>                                     
+                                    </div>
+                                </div>  
+                                <div class="slds-size_1-of-4 slds-max-small-size_1-of-1">
+                                    <div class="slds-form-element slds-is-editing">
+                                        
+                                        <div class="slds-form-element__control">
+                                            <lightning:input aura:id="field1" label="Voice of Customer / Source" type="text" name="Voice of Customer / Source" value="{!v.newSiteVisit.Voice_of_the_Customer__c}" messageWhenValueMissing="Enter" required="true" />  
+                                        </div>  
+                                    </div>
+                                </div>
+                                
+                                                         
+                            </div>
+                        </div>
+                        
+                    </lightning:accordionSection>
+                    
+                    
+                    
+                </lightning:accordion>
+                
+                <lightning:button variant="brand" label="Save" title="Save" onclick="{!c.save}" />
+                
+                </div>
+            </p>
+            
+        </div>
+        <div>
+            <aura:if isTrue="{!v.spinner}">
+                <lightning:spinner class="spins" size="large" variant="brand" alternativeText="Loading" />
+            </aura:if>
+        </div>
+    </lightning:card>
+</aura:component>

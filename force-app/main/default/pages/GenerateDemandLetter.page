@@ -1,0 +1,232 @@
+<apex:page sidebar="false" applyBodyTag="false" showHeader="false"
+    standardController="Installment__c"
+    extensions="GenerateDemandLetterController" renderAs="pdf">
+    <head>
+<style type="text/css" media="print">
+@page {
+        margin-bottom: 4cm;
+        margin-top: 5cm;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        justify-content: left;
+        @top-center
+        {
+            content:element(header);
+        }
+        
+        @bottom-center {
+            content: element(footer);
+        }
+
+    }
+div.header {
+        padding: 10px;
+        position: running(header);
+}
+
+div.footer {
+        padding: 10px;
+        position: running(footer);
+}
+
+tr.middle {
+    text-align:center;
+  }
+
+</style>
+    </head>
+    <div class="header" style="width:830; background-color:white; height:80px; overflow:scroll; overflow-x: scroll;overflow-y: hidden; margin-top:-10px">
+    <apex:image url="{!URLFOR($Resource.OrgLogo)}" width="200" height="50 "/>
+            
+    </div>
+
+    
+
+    <apex:variable value="{!0.00}" var="ma" />
+    <apex:variable value="{!0.00}" var="cg" />
+    <apex:variable value="{!0.00}" var="sg" />
+    <apex:variable value="{!0.00}" var="ra" />
+    <apex:variable value="{!0.00}" var="ai" />
+    <apex:pageBlock >
+    <div  style="font-family:calibry; font-size:11pt;text-align:justify">  
+        <table width="40%">
+            <tr >
+                <td>Date</td>
+                <td>:&nbsp;<apex:OutputText value="{0,date,MMMMM dd, yyyy}">
+                        <apex:param value="{!Installment__c.Due_Date__c}" />
+                    </apex:OutputText>
+                </td>
+            </tr>
+            <tr>
+                <td>Ref #</td>
+                <td>:&nbsp;ICH/{!Installment__c.Opportunity__r.apartment__r.Unit_Number__c}/{!Installment__c.Display_Order__c}
+                </td>
+            </tr>
+         <!--   <tr>
+                <td>GST no</td>
+                <td>:&nbsp;{!Installment__c.Opportunity__r.apartment__r.block__r.Project__r.GST_Reg_No__c}
+                </td>
+            </tr>
+            <tr>
+                <td>PAN</td>
+                <td>:&nbsp;{!Installment__c.Opportunity__r.Contact__r.PAN_Card__c}</td>
+            </tr>-->
+        </table>
+        <br />
+
+
+        <table width="50%">
+            <tr>
+                <td>Dear <apex:outputText rendered="{!Installment__c.Opportunity__r.Contact__r.Salutation != null}"> {!Installment__c.Opportunity__r.Contact__r.Salutation}</apex:outputText>{!Installment__c.Opportunity__r.Contact__r.Name}
+                    <apex:outputText rendered="{!Installment__c.Opportunity__r.Contact__r.Co_Applicant_Name__c != null}"> and <apex:outputText rendered="{!Installment__c.Opportunity__r.Contact__r.Co_App_Salutation__c != null}"> {!Installment__c.Opportunity__r.Contact__r.Co_App_Salutation__c} </apex:outputText> {!Installment__c.Opportunity__r.Contact__r.Co_Applicant_Name__c }</apex:outputText>
+                </td>
+            </tr>
+            <tr>
+                <td>{!Installment__c.Opportunity__r.Contact__r.MailingStreet},{!Installment__c.Opportunity__r.Contact__r.MailingCity}<apex:OutputText rendered="{!Installment__c.Opportunity__r.Contact__r.MailingPostalcode != null}">-{!Installment__c.Opportunity__r.Contact__r.MailingPostalcode}</apex:OutputText></td>
+            </tr>
+            <tr>
+                <td>Contact&nbsp; :
+                    &nbsp;{!Installment__c.Opportunity__r.Contact__r.MobilePhone}</td>
+            </tr>
+          <!--  <tr>
+                <td>GST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  :&nbsp;{!Installment__c.Opportunity__r.Contact__r.Customer_GST_No__c}</td>
+            </tr>-->
+        </table>
+        <p>Greetings from {!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Company_Name__c}!</p>
+        <p>Subject: Demand letter for “{!Installment__c.Name}”, unit no
+            {!Installment__c.Opportunity__r.Apartment__r.Unit_Number__c} at
+            project
+            “{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Name}”</p>
+
+        <p>We wish to inform you that the next installment for your
+            apartment is due now. The total amount payable by you as on date is
+            detailed below:</p>
+
+        <apex:variable value="{!1}" var="i"/>
+        <table border="1px solid black" width="100%"  cellspacing="0" >
+            <tr class="middle" >
+                <th>SN No.</th>
+                <th>Description</th>
+               <!-- <th>SAC/HSN Code</th>-->
+                <th>Amount Due</th>
+                <!--<th>CGST</th>
+                <th>SGST</th>-->
+                <th>Amount Received</th>
+                <th>Amount Payable</th>
+            </tr>
+            <apex:repeat value="{!wrapperData}" var="var" >
+            <tr class="middle" >
+            <td   style="text-align:center;"    >
+            {!i}
+            <apex:variable var="i" value="{!i+1}" /></td>
+            <td   style="text-align:center;" >{!var.Description}</td>
+           <!-- <td>{!var.sacCode}</td>-->
+            
+            <td style="text-align:center;">
+                <apex:outputText value="{0, number, ###,###,###,##0.00}">
+                    <apex:param value="{!var.milestoneAmount}" />
+                </apex:outputText>
+                <apex:variable var="ma" value="{!ma + var.milestoneAmount}" />
+            </td>
+
+           <!-- <td style="text-align:center;" width="12%"  >
+                <apex:outputText value="{0, number, ###,###,###,##0.00}">
+                    <apex:param value="{!var.CGST}" />
+                </apex:outputText>
+                <apex:variable var="cg" value="{!cg + var.CGST}" />
+            </td>
+            <td style="text-align:center;" width="12%" >
+                <apex:outputText value="{0, number, ###,###,###,##0.00}">
+                    <apex:param value="{!var.SGST}" />
+                </apex:outputText>
+                <apex:variable var="sg" value="{!sg + var.SGST}" />
+            </td>-->
+            <td style="text-align:center;" headerValue="Received Amount"  headerClass="TableTitle"  >
+                <apex:outputText value="{0, number, ###,###,###,##0.00}">
+                    <apex:param value="{!var.AmountReceived}" />
+                </apex:outputText>
+                <apex:variable var="ra" value="{!ra + var.AmountReceived}" />
+            </td>
+            <td style="text-align:center;"    >
+                <apex:outputText value="{0, number, ###,###,###,##0.00}">
+                    <apex:param value="{!var.InvoiceAmt}" />
+                </apex:outputText>
+                <apex:variable var="ai" value="{!ai + var.InvoiceAmt}" />
+            </td>
+          </tr>
+          </apex:repeat>
+          <tr class="middle" >
+                <!--<td style="border-right:0px solid white " > </td>
+                <td style="border-left:0px solid white; border-right:0px solid white;align:center" ><b>Total</b></td>
+                <td style="border-left:0px solid white"></td>-->
+                <td colspan="2" align="center"><b>Total</b></td>
+                <td align="center"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+                        <apex:param value="{!ma}" />
+                    </apex:outputText></td>
+               <!-- <td  align="center"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+                        <apex:param value="{!cg}" />
+                    </apex:outputText></td>
+                <td align="center"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+                        <apex:param value="{!sg}" />
+                    </apex:outputText></td>-->
+                <td align="center"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+                        <apex:param value="{!ra}" />
+                    </apex:outputText></td>
+                <td align="center"><apex:outputText value="{0, number, ###,###,###,##0.00}">
+                        <apex:param value="{!ai}" />
+                    </apex:outputText></td>
+            </tr>
+        </table>
+
+        
+
+
+        <p>
+            You are requested to remit aforesaid payment of Rs.
+            <apex:outputText value="{0, number, ###,###,###,##0.00}">
+                <apex:param value="{!ai}" />
+            </apex:outputText>
+            /- (<apex:outputText rendered="{!AmountInWord != 'Nil' }">Rupees </apex:outputText>{!AmountInWord} <apex:outputText rendered="{!AmountInWord != 'Nil' }"> only</apex:outputText>) to us either by way of demand draft
+            or account payee cheque favoring "{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Bank_Account_Name__c}"
+            or by way of electronic fund transfer within 15 days from the date of this
+            demand letter. The bank details are mentioned below.
+        </p>
+
+
+        <table border="1px solid black" cellspacing="0" width="90%">
+            <tr>
+                <th width="30%">Account Name</th>
+                <td width="70%">{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Bank_Account_Name__c}</td>
+            </tr>
+            <tr>
+                <th width="30%">Account Number</th>
+                <td width="70%">{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Bank_Account_Number__c}</td>
+            </tr>
+            <tr>
+                <th width="30%">Bank Name</th>
+                <td width="70%" >{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Bank_Name__c}</td>
+            </tr>
+            <tr>
+                <th width="30%" >Bank Address</th>
+                <td width="70%" >{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Bank_Address__c}</td>
+            </tr>
+            <tr>
+                <th  width="30%" >IFSC Code</th>
+                <td width="70%">{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Bank_Name__c}</td>
+            </tr>
+        </table>
+
+        <p>If any clarification or information required, please write to us at
+            <a href="{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Project_Email__c}">{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Project_Email__c}</a></p>
+
+        <p>We thank you for your valued patronage.</p>
+
+        <table>
+        <tr> <td>Yours Sincerely, </td> </tr>
+        <tr> <td>{!Installment__c.Opportunity__r.Apartment__r.Block__r.Project__r.Company_Name_Abbreviation__c} </td> </tr>
+        </table> 
+        <p>This is a computer generated letter and does not need a signature.</p>
+        <p>In case you have already made the payment in advance, please read this letter as information.</p>
+            </div>
+    </apex:pageBlock>
+</apex:page>

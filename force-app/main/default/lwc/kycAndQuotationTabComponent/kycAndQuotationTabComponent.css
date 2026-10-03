@@ -1,0 +1,133 @@
+.modalWidth
+{
+  padding-right: 20%;
+  padding-left: 20%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+.slds-border--bottom, .slds-border_bottom {
+  border-bottom: 4px solid black;
+}
+
+.slds-box 
+{
+  border: 1px solid rgba(0, 0, 0, 0.350);
+}
+
+.slds-form-element__control .slds-radio, .slds-form-element__control .slds-checkbox {
+  display: inline;
+}
+
+.slds-box1 {
+    border: 3px solid red;
+}
+.temp{
+  color: #03527a;
+  background-color: #fAffff
+}
+
+.timer {
+    font-size: 3.6em;
+    font-weight: 600;
+    color: 	#D2042D;
+    border-bottom: 5px solid #D2042D;
+}
+.dropdown-menu {
+   max-height:200px;
+   overflow:scroll; 
+}
+.showApplicant2{
+    margin-left: 160px;
+    margin-top: -40px;
+}
+.details{
+  margin-top: 2px;
+}
+.top
+{
+    margin-top: -35px;
+}
+.header{
+  margin-top: 2px;
+}
+
+:host {
+    --slds-c-input-color-border : rgb(80, 164, 213);
+    --slds-c-input-color-border-focus : rgb(80, 164, 213);
+}
+
+
+
+/* element.style {
+}
+.slds-scope .slds-input  */
+/* :host { --sds-c-accordion-summary-color-background: var(--lwc-colorBackground,lavender); } */
+
+/* .slds-input{
+    outline: 0; 
+    border-color: rgb(129, 238, 21); /* This is the blue color of the border */
+    /* background-color: rgb(255, 255, 255);
+    box-shadow: 0 0 3px #00d231f8; /* This is the blue color of the shadow 
+} */
+
+.slds-tabs_scoped
+{
+  background-color: #fAffff  
+}
+
+.fieldNameStyle {
+    -webkit-text-security: disc;
+}
+
+.fieldNameStyle .label {
+     -webkit-text-security: none !important;
+}
+.mobile-button{
+  display: none;
+}
+.laptop-view{
+  display: block;
+}
+
+@media (max-width: 480px) {
+   .mobileViewForKyc
+  {
+    margin-left: 0px;
+    margin-top: 25px;
+  }
+  .butMobVie
+  {
+    margin-left: -33%;
+  }
+  .nextReceiptMobView
+  {
+    margin-top: -10%;
+    margin-right: -3%;
+  }
+  .updateBut{
+    margin-left: -140px;
+  }
+  .mobile-button{
+    display: block;
+    margin-left: -17%;
+    position: relative;
+    left: 9%;
+  }
+  .button1{
+
+  }
+  .button2{
+    padding: 2%;
+  }
+  .button3{
+
+  }
+  .laptop-view{
+    display: none;
+  }
+}
+label.required::before {
+  content: '*';
+  margin-right: 4px;
+  color: red;
+}

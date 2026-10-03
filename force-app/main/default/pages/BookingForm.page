@@ -1,0 +1,736 @@
+<apex:page showHeader="false" sidebar="false" standardController="Opportunity"  renderAs="pdf" extensions="ControllerClassHandler"> 
+    <head>
+        <style>
+            table {
+                border-collapse:collapse;
+                border-color:#4682B4;
+            }
+                
+            td.title
+            {
+                border-left:1px transparent;
+            <!--    border-right:none; -->
+            }
+            
+        </style>
+    </head>
+   <apex:form >       
+       <apex:pageBlock >
+                                                <!-- Page 0 -->
+        <div align = "center">
+            <apex:outputPanel >
+                <table width="100%" cellspacing="0">
+                    <tr>
+                        <td width="100%">
+                        <apex:image value="{!if(contains(opportunity.Project_Name__c,'Primus'),$Resource.Primus,$Resource.OrgLogo)}" width="150" height="100"/>
+                        </td>                    
+                    </tr>
+                    <tr> <td height = "10"> </td> </tr>
+                    <tr style="text-align:center; color:#4682B4;font-size:20px;" >
+                        <td height = "50"> APPLICATION FOR ALLOTMENT </td>
+                    </tr>
+                    <tr>
+                        <td width="100%">
+                        <apex:image value="{!if((Opportunity.Apartment__r.Project_Name__c = 'Mantri Serenity'),$Resource.Tempimage3,$Resource.Tempimage2)}" width="600" height="600"/>
+                        </td>                    
+                    </tr>
+                    <tr style="text-align:center; color:#006400">
+                        <td width="100%" height = "50">
+                      <b>  <apex:outputField value="{!Opportunity.Apartment__r.Project_Name__c}"/> </b>
+                        </td>                    
+                    </tr> 
+                    <tr style="text-align:center; color:#4682B4">
+                        <td width="100%">
+                        <apex:outputField value="{!Opportunity.Apartment__r.Block__r.Project__r.Address__c}"/>
+                        </td>                    
+                    </tr>
+                    <tr style="text-align:center; color:#4682B4">
+                       <td width="100%" height = "50">
+                      <b> www.mantri.in </b>
+                        </td>                    
+                    </tr><br/>
+                    
+                    <tr style="font-size:14px; color:black; font-weight:bold"> <td> ______________________________________________&nbsp;Page 0&nbsp;_______________________________________________ </td></tr><br/> <br/>
+                </table>
+            </apex:outputPanel>                 
+        </div> 
+                                                <!-- Page 1 -->
+        <table width = "100%"> 
+            <tr style="font-size:14px; font-weight:bold;">
+                <th colspan = "4" style="text-align:center; font-size:16px; background-color:#9E1721; color:White"> PERSONAL INFORMATION (to be filled in block letters) </th>
+            </tr> 
+            <tr style="font-size:14px; color:#4682B4; font-weight:bold">
+                <td colspan = "4" height = "25"> Applicants Details </td> 
+            </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "20%">
+                    <b> a) Mr./Ms. : </b>
+                </td>
+                <td colspan = "3" height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Name}"/>
+                </td>               
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "20%">
+                   <b> S/o D/o W/o : </b>
+                </td>
+                <td colspan = "3" height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Salutation__c}"/>
+                </td>
+            </tr> 
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Date Of Birth : </b>
+                </td>
+                <td height = "25" width = "30%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Birthdate}"/>
+                </td>
+                <td height = "25" width = "30%">
+                   <b> Anniversary Date : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Anniversary_Date__c}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Email Id : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Email}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Mobile No : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.MobilePhone}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> PAN No : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.PAN_Card__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Passport No : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Passport_No__c}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Nationality : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Nationality__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Res.Status: Resident/Non-Resident : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Resident_Status__c}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> <td height = "20" colspan ="4"> </td> </tr>
+            
+            <tr style="font-size:14px; color:#4682B4"> 
+                <td height = "25" colspan = "4">   
+                   <b> Professional Details : </b>
+                </td>                              
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Profession : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Profession__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Industry : </b>
+                </td>            
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Industry__c}"/>
+                </td> 
+            </tr>
+            <tr style="font-size:12px; color:#4682B4">    
+                <td height = "25" width = "20%">   
+                   <b> Employeed at : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Employed_at__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Designation : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Designation__c}"/>
+                </td>                
+            </tr>
+         </table>
+            
+            <hr style="border:none; border-top:2px dashed; color:#4682B4"/> 
+      
+         <table width = "100%">     
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "20%">
+                    <b> b) Mr./Ms. : </b>
+                </td>
+                <td colspan = "3" height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_Applicant_Name__c}"/>
+                </td>               
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "20%">
+                   <b> S/o D/o W/o : </b>
+                </td>
+                <td colspan = "3" height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_rel_salutation__c}"/>
+                </td>
+            </tr> 
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Date Of Birth : </b>
+                </td>
+                <td height = "25" width = "30%">
+                    <apex:outputField value="{!Opportunity.Contact__r.date_of_birth__c}"/>
+                </td>
+                <td height = "25" width = "30%">
+                   <b> Anniversary Date : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_Anniversary_Date__c}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Email Id : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_Email_Id__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                  <b> Mobile No : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_Mobile_No__c}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> PAN No : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_PAN_No__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Passport No : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_Passport_No__c}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Nationality : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_Nationality__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Res.Status: Resident/Non-Resident : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Co_App_Residential_Status__c}"/>
+                </td>                
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> <td height = "20" colspan ="4"> </td> </tr>
+            
+            <tr style="font-size:14px; color:#4682B4"> 
+                <td height = "25" colspan = "4">   
+                   <b> Professional Details : </b>
+                </td>                              
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4"> 
+                <td height = "25" width = "20%">   
+                   <b> Profession : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Profession__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Industry : </b>
+                </td>            
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Industry__c}"/>
+                </td> 
+            </tr>
+            <tr style="font-size:12px; color:#4682B4">    
+                <td height = "25" width = "20%">   
+                   <b> Employeed at : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Employed_at__c}"/>
+                </td>
+                <td height = "25" width = "25%">
+                   <b> Designation : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Designation__c}"/>
+                </td>                
+            </tr>
+         </table>
+            <br/>
+            <hr style="size:1px; color:#4682B4"/>
+         
+         <table width = "100%">
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "50%">
+                    <b> Correspondence address : </b>
+                </td> 
+                <td height = "25" width = "50%">
+                    <b> Permanent address : </b>
+                </td>
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25">
+                    <apex:outputText value="{!Opportunity.Contact__r.MailingStreet} <br/> {!Opportunity.Contact__r.MailingCity} <br/> {!Opportunity.Contact__r.MailingState} <br/> {!Opportunity.Contact__r.MailingPostalCode} <br/> {!Opportunity.Contact__r.MailingCountry}" escape = "false"/>
+                </td>
+                <td height = "25">
+                    <apex:outputText value="{!Opportunity.Contact__r.OtherStreet} <br/> {!Opportunity.Contact__r.OtherCity} <br/> {!Opportunity.Contact__r.OtherState} <br/> {!Opportunity.Contact__r.OtherPostalCode} <br/> {!Opportunity.Contact__r.OtherCountry}" escape = "false"/>
+                </td>
+            </tr>
+        </table>
+        <table width = "100%">
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "5%">
+                    <b> Pin : </b>
+                </td>
+                <td height = "25" width = "10%">
+                    
+                </td>
+                <td height = "25" width = "10%">
+                    <b> Tel : </b>
+                </td>
+                <td height = "25" width = "10%">
+                    
+                </td>
+                
+                <td height = "25" width = "5%">
+                    <b> Pin : </b>
+                </td>
+                <td height = "25" width = "10%">
+                    
+                </td>
+                <td height = "25" width = "10%">
+                    <b> Tel : </b>
+                </td>
+                <td height = "25" width = "10%">
+                    
+                </td>
+            </tr>
+        </table> 
+           
+           <hr style="size:1px; color:#4682B4"/>
+        
+        <table width = "100%"> 
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" colspan = "2">
+                   <b> Power of Attorney holder's name (if required) : (a)Mr./Ms. </b>
+                </td>
+                <td height = "25" colspan = "2">
+                    <apex:outputField value="{!Opportunity.Contact__r.Attorney_holder_Name__c}"/>
+                </td>
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "25%">
+                  <b> Power of Attorney holder's address : </b>
+                </td>
+                <td height = "25" colspan = "3">
+                    <apex:outputField value="{!Opportunity.Contact__r.Attorney_holder_Address__c}"/>
+                </td>
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4">
+                <td height = "25" width = "20%">
+                 <b> Email ID : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Attorney_Holder_Email__c}"/>
+                </td>
+                <td height = "25" width = "20%">
+                   <b> Mobile No : </b>
+                </td>
+                <td height = "25" width = "25%">
+                    <apex:outputField value="{!Opportunity.Contact__r.Attorney_Holder_mobile__c}"/>
+                </td>
+
+            </tr>
+                 
+            <tr style="font-size:14px; color:black; font-weight:bold"> 
+                <td colspan = "4"> 
+                    ______________________________________________&nbsp;Page 1&nbsp;_______________________________________________ 
+                </td>
+            </tr><br/> 
+        </table>
+           
+                                            <!-- Page 2 -->
+                         
+        <table  class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0" bordercolor="SteelBlue">
+            <tr width = "100%"> <td style="text-align:center; font-size:16px; background-color:#9E1721; color:White" colspan = "3"> UNIT DETAILS </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "30%"  height = "30"> <b> Bldg. No: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Block__c}"/> </td>
+                <td width = "30%"  height = "30"> <b> Unit No: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Flat_No__c}"/> </td>
+                <td width = "30%"  height = "30"> <b> Floor No: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Apartment__r.Floor_No__c}"/> </td>           
+            </tr>
+        </table>
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "20%"  height = "30"> <b> SBUA Per sq.ft*: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Built_Up_Area__c}"/> </td>
+                <td width = "25%"  height = "30"> <b> Base Rate Per sq.ft: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Apartment__r.Apartment_rate__c}"/> </td>
+                <td width = "20%"  height = "30"> <b> Floor Rise Charges Per sq.ft: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Apartment__r.Floor_Rise_Charges_Per_Sqft__c}"/> </td>           
+            </tr>
+        </table>
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "30%"  height = "30"> <b> Preferred Location Charges Per sq.ft: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Apartment__r.Premium_Charges__c}"/> </td>
+                <td width = "20%"  height = "30"> <b> Total Rate Per sq.ft: &nbsp;&nbsp;</b> <apex:outputField value="{!Opportunity.Apartment__r.Apartment_rate__c}"/></td>                          
+            </tr>
+        </table>
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td colspan="5" width = "30%" height = "30"> <b> Basic cost of the apartment: </b> &nbsp;&nbsp; 
+                  <apex:outputText value="{0, Number, #,###}">
+                    <apex:param value="{!(Opportunity.Apartment__r.Apartment_rate__c * Opportunity.Apartment__r.Built_Up_Area__c)}"/> 
+                  </apex:outputText>
+                </td>                                          
+            </tr>
+       
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "50%"  height = "30"> <b> No. of car parks: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Number_of_Carpark__c}"/> </td>
+                <td width = "50%"  height = "30"> <b> Car Park Type: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Apartment__r.Car_Park_Type__c}"/> </td>                
+            </tr>
+        
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td colspan = "2" width = "30%" height = "30"> <b> Total cost of car parks: </b> &nbsp;&nbsp; <apex:outputField value="{!Opportunity.Car_Park_Rate__c}"/> </td>                                          
+            </tr>
+        </table>
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <apex:repeat value="{!oppdet}"  var="od">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "20%"  height = "30"> <b> Terrace area: </b>  </td>
+                <td width = "15%"  height = "30"> <b> Rate per sq.ft: </b> <apex:outputtext value="{!if(contains(OD.Comp1_Name__c,'Terrace'),OD.Comp1_Basic__c,if(contains(OD.Comp2_Name__c,'Terrace'),OD.Comp2_Basic__c,if(contains(OD.Comp3_Name__c,'Terrace'),OD.Comp3_Basic__c,if(contains(OD.Comp4_Name__c,'Terrace'),OD.Comp4_Basic__c,if(contains(OD.Comp5_Name__c,'Terrace'), OD.Comp5_Basic__c, 0)))))}"/> </td>
+                <td width = "15%"  height = "30"> <b> Cost: </b> <apex:outputField value="{!Opportunity.Apartment__r.Terrace_Area__c}"/>  </td>                
+            </tr>
+        
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "20%"  height = "30"> <b> Garden area: </b> &nbsp;&nbsp;  </td>
+                <td width = "15%"  height = "30"> <b> Rate per sq.ft: </b> <apex:outputtext value="{!if(contains(OD.Comp1_Name__c,'Garden'),OD.Comp1_Basic__c,if(contains(OD.Comp2_Name__c,'Garden'),OD.Comp2_Basic__c,if(contains(OD.Comp3_Name__c,'Garden'),OD.Comp3_Basic__c,if(contains(OD.Comp4_Name__c,'Garden'),OD.Comp4_Basic__c,if(contains(OD.Comp5_Name__c,'Garden'), OD.Comp5_Basic__c, 0)))))}"/> </td>
+                <td width = "15%"  height = "30"> <b> Cost: </b> <apex:outputField value="{!Opportunity.Apartment__r.Garden_Area__c}"/> </td>                
+            </tr>
+          </apex:repeat>
+        </table>
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <apex:repeat value="{!oppdet}"  var="od">
+            <tr style="font-size:14px; color:#4682B4;"> 
+                <td colspan = "3" width = "30%" height = "30"> <b> Agreement Value: </b>  
+                 <apex:outputtext value="{!(if(contains(OD.Comp1_Name__c , 'Construction'),OD.Comp1_Basic__c,if(contains(OD.Comp2_Name__c , 'Construction'),OD.Comp2_Basic__c,if(contains(OD.Comp3_Name__c , 'Construction'),OD.Comp3_Basic__c,if(contains(OD.Comp4_Name__c , 'Construction'),OD.Comp4_Basic__c,if(contains(OD.Comp5_Name__c , 'Construction'), OD.Comp5_Basic__c, 0)))))
+                                           +
+                                            if(contains(OD.Comp1_Name__c , 'Land'),OD.Comp1_Basic__c,if(contains(OD.Comp2_Name__c , 'Land'),OD.Comp2_Basic__c,if(contains(OD.Comp3_Name__c , 'Land'),OD.Comp3_Basic__c,if(contains(OD.Comp4_Name__c , 'Land'),OD.Comp4_Basic__c,if(contains(OD.Comp5_Name__c , 'Land'), OD.Comp5_Basic__c, 0)))))
+                                           +
+                                            if(contains(OD.Comp1_Name__c , 'Floor'),OD.Comp1_Basic__c,if(contains(OD.Comp2_Name__c , 'Floor'),OD.Comp2_Basic__c,if(contains(OD.Comp3_Name__c , 'Floor'),OD.Comp3_Basic__c,if(contains(OD.Comp4_Name__c , 'Floor'),OD.Comp4_Basic__c,if(contains(OD.Comp5_Name__c , 'Floor'), OD.Comp5_Basic__c, 0)))))
+                                           +
+                                           if(contains(OD.Comp1_Name__c , 'Car park'),OD.Comp1_Basic__c,if(contains(OD.Comp2_Name__c , 'Car park'),OD.Comp2_Basic__c,if(contains(OD.Comp3_Name__c , 'Car park'),OD.Comp3_Basic__c,if(contains(OD.Comp4_Name__c , 'Car park'),OD.Comp4_Basic__c,if(contains(OD.Comp5_Name__c , 'Car park'), OD.Comp5_Basic__c, 0)))))
+                                          )}"/> </td>                                        
+            </tr>
+            <tr style="font-size:14px; color:#4682B4;"> 
+                <td colspan = "3" width = "30%"  height = "30"> <b> One Time Charge: </b></td>                                          
+            </tr>
+          </apex:repeat>
+        </table>
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+          <apex:repeat value="{!oppdet}"  var="od">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "30%"  height = "30"> <b> Club Membership <br/> fees: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b> 
+                    <apex:outputtext value="{!if(contains(OD.Comp6_Name__c , 'Club'),OD.Comp6_Basic__c,if(contains(OD.Comp7_Name__c , 'Club'),OD.Comp7_Basic__c,if(contains(OD.Comp8_Name__c , 'Club'),OD.Comp8_Basic__c,if(contains(OD.Comp9_Name__c , 'Club'),OD.Comp9_Basic__c,if(contains(OD.Comp10_Name__c , 'Club'),OD.Comp10_Basic__c,if(contains(OD.Comp11_Name__c , 'Club'),OD.Comp11_Basic__c,if(contains(OD.Comp12_Name__c , 'Club'),OD.Comp12_Basic__c,if(contains(OD.Comp13_Name__c , 'Club'),OD.Comp13_Basic__c,if(contains(OD.Comp14_Name__c , 'Club'),OD.Comp14_Basic__c,if(contains(OD.Comp15_Name__c , 'Club'),OD.Comp15_Basic__c,0))))))))))}"/>
+                </td>
+                <td width = "30%"  height = "30"> <b> Infrastructure <br/> development cost: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b> 
+                    <apex:outputtext value="{!if((od.Comp6_Name__c = 'Infrastructure'),od.Comp6_Basic__c,if((od.Comp7_Name__c = 'Infrastructure'),od.Comp7_Basic__c,if((od.Comp8_Name__c = 'Infrastructure'),od.Comp8_Basic__c,if((od.Comp9_Name__c = 'Infrastructure'),od.Comp9_Basic__c,if((od.Comp10_Name__c = 'Infrastructure'),od.Comp10_Basic__c,if((od.Comp11_Name__c = 'Infrastructure'),od.Comp11_Basic__c,if((od.Comp12_Name__c = 'Infrastructure'),od.Comp12_Basic__c,if((od.Comp13_Name__c = 'Infrastructure'),od.Comp13_Basic__c,if((od.Comp14_Name__c = 'Infrastructure'),od.Comp14_Basic__c,if((od.Comp15_Name__c = 'Infrastructure'),od.Comp15_Basic__c,0))))))))))}"/>
+                </td>
+                <td width = "30%"  height = "30"> <b> Generator <br/> charges: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b> 
+                    <apex:outputtext value="{!if(contains(OD.Comp6_Name__c , 'Generator'),OD.Comp6_Basic__c,if(contains(OD.Comp7_Name__c , 'Generator'),OD.Comp7_Basic__c,if(contains(OD.Comp8_Name__c , 'Generator'),OD.Comp8_Basic__c,if(contains(OD.Comp9_Name__c , 'Generator'),OD.Comp9_Basic__c,if(contains(OD.Comp10_Name__c , 'Generator'),OD.Comp10_Basic__c,if(contains(OD.Comp11_Name__c , 'Generator'),OD.Comp11_Basic__c,if(contains(OD.Comp12_Name__c , 'Generator'),OD.Comp12_Basic__c,if(contains(OD.Comp13_Name__c , 'Generator'),OD.Comp13_Basic__c,if(contains(OD.Comp14_Name__c , 'Generator'),OD.Comp14_Basic__c,if(contains(OD.Comp15_Name__c , 'Generator'),OD.Comp15_Basic__c,0))))))))))}"/>
+                </td>                
+            </tr>
+          </apex:repeat>
+        </table>
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+          <apex:repeat value="{!oppdet}"  var="od">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "50%"  height = "30"> <b> Home Automation <br/> (if Applicable): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b> 
+                    <apex:outputtext value="{!if(contains(OD.Comp6_Name__c , 'Home Automation'),OD.Comp6_Basic__c,if(contains(OD.Comp7_Name__c , 'Home Automation'),OD.Comp7_Basic__c,if(contains(OD.Comp8_Name__c , 'Home Automation'),OD.Comp8_Basic__c,if(contains(OD.Comp9_Name__c , 'Home Automation'),OD.Comp9_Basic__c,if(contains(OD.Comp10_Name__c , 'Home Automation'),OD.Comp10_Basic__c,if(contains(OD.Comp11_Name__c , 'Home Automation'),OD.Comp11_Basic__c,if(contains(OD.Comp12_Name__c , 'Home Automation'),OD.Comp12_Basic__c,if(contains(OD.Comp13_Name__c , 'Home Automation'),OD.Comp13_Basic__c,if(contains(OD.Comp14_Name__c , 'Home Automation'),OD.Comp14_Basic__c,if(contains(OD.Comp15_Name__c , 'Home Automation'),OD.Comp15_Basic__c,0))))))))))}"/>
+                </td>
+                <td width = "50%"  height = "30"> <b> Pipe Gas Connection <br/> Charges(if Applicable): &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b> 
+                    <apex:outputtext value="{!if(contains(OD.Comp6_Name__c , 'Piped Gas'),OD.Comp6_Basic__c,if(contains(OD.Comp7_Name__c , 'Piped Gas'),OD.Comp7_Basic__c,if(contains(OD.Comp8_Name__c , 'Piped Gas'),OD.Comp8_Basic__c,if(contains(OD.Comp9_Name__c , 'Piped Gas'),OD.Comp9_Basic__c,if(contains(OD.Comp10_Name__c , 'Piped Gas'),OD.Comp10_Basic__c,if(contains(OD.Comp11_Name__c , 'Piped Gas'),OD.Comp11_Basic__c,if(contains(OD.Comp12_Name__c , 'Piped Gas'),OD.Comp12_Basic__c,if(contains(OD.Comp13_Name__c , 'Piped Gas'),OD.Comp13_Basic__c,if(contains(OD.Comp14_Name__c , 'Piped Gas'),OD.Comp14_Basic__c,if(contains(OD.Comp15_Name__c , 'Piped Gas'),OD.Comp15_Basic__c,0))))))))))}"/>
+                </td>               
+            </tr>                       
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "50%"  height = "30"> <b> Water &amp; Electricity charges <br/> rate per sq. ft of SBUA: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b> 
+                   <apex:outputtext value="{!if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp6_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp7_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp8_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp9_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp10_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp11_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp12_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp13_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp14_Basic__c,if(or(Contains(OD.Comp6_Name__c, 'Water'),Contains(OD.Comp6_Name__c, 'KPTCL')),OD.Comp15_Basic__c,0))))))))))}"/>
+                </td>
+                <td width = "50%"  height = "30"> <b> Maintenance deposit/charges <br/> rate per sq. ft of SBUA: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b> 
+                    <apex:outputtext value="{!if(contains(OD.Comp6_Name__c , 'Maintenace'),OD.Comp6_Basic__c,if(contains(OD.Comp7_Name__c , 'Maintenace'),OD.Comp7_Basic__c,if(contains(OD.Comp8_Name__c , 'Maintenace'),OD.Comp8_Basic__c,if(contains(OD.Comp9_Name__c , 'Maintenace'),OD.Comp9_Basic__c,if(contains(OD.Comp10_Name__c , 'Maintenace'),OD.Comp10_Basic__c,if(contains(OD.Comp11_Name__c , 'Maintenace'),OD.Comp11_Basic__c,if(contains(OD.Comp12_Name__c , 'Maintenace'),OD.Comp12_Basic__c,if(contains(OD.Comp13_Name__c , 'Maintenace'),OD.Comp13_Basic__c,if(contains(OD.Comp14_Name__c , 'Maintenace'),OD.Comp14_Basic__c,if(contains(OD.Comp15_Name__c , 'Maintenace'),OD.Comp15_Basic__c,0))))))))))}"/>
+                </td>               
+            </tr>
+          </apex:repeat>
+        </table>
+        
+        <p style="font-size:12px; color:#4682B4;">
+          <apex:repeat value="{!recList}"  var="rc">
+            Stamp duty, registration fee, legal expenses. taxes &amp; charges as applicable on the date of registration of the sale deed shall be extra.<br/> 
+        
+            I/We request you to allot the apartment applied. I/We hereby pay a sum of &nbsp;<apex:outputField value="{!rc.Amount__c}"/> towards the booking amount, subject to terms and conditions which we have read and agreed. <br/>
+            
+            Payment is made by Wire Transfer / DD / Cheque No. &nbsp; <apex:outputField value="{!rc.Name}"/> dated &nbsp; <apex:outputField value="{!rc.Receipt_Date__c}"/> Drawn on &nbsp; <apex:outputField value="{!rc.Bank_Name__c}"/> bank. <br/>
+            
+            We have applied for allotment of the apartment and are bound by the booking terms &amp; conditions printed overleaf.
+          </apex:repeat>                        
+        </p>
+        
+        <hr style="size:1px; color:#4682B4"/>
+
+        <table>
+           <tr style="font-size:14px; color:#4682B4;">
+              <td> <b> Source of Booking &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Enquiry No. : <apex:outputField value="{!Opportunity.Enquiry_Ref_No__c}"/> </b> </td>
+           </tr>   
+           <tr style="font-size:14px; color:#4682B4;">
+              <td> __  Advertisement, &nbsp; __  Hoarding, &nbsp; __  Exhibition, &nbsp; __  Website, &nbsp; __  Associates, &nbsp; __  Others Pls. Specify ____</td>
+           </tr>     
+        </table> 
+                   
+        <hr style="size:1px; color:#4682B4"/>
+         
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td class="title" width = "50%"  height = "30"> <b> Associate Company <br/> Name: </b> </td>
+                <td width = "50%"  height = "30"> <b> Associate Signature <br/> (if Applicable): </b> </td>                          
+            </tr>
+        </table>
+          
+        <hr style="size:1px; color:#4682B4"/>  
+           
+        <table>
+            <tr style="font-size:14px; color:#4682B4;"> 
+                <td> <b> Source of Reference </b> </td>
+            </tr>
+            <tr style="font-size:14px; color:#4682B4;"> 
+                <td> __ Friend, &nbsp; __ Existing Customer, &nbsp; __ Employee Reference, &nbsp; __ Others Pls. Specify _________ </td>
+            </tr>
+        </table>
+        
+        <hr style="size:1px; color:#4682B4"/>
+        
+         <p style="font-size:12px; color:#4682B4;"> <b> Mantri Insignia Membership No. of the  referrer: </b> </p>
+           
+        <hr style="size:1px; color:#4682B4"/>
+           
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "50%"  height = "30"><b> Signature of <br/> First Applicant <br/> Date: </b> </td>
+                <td width = "50%"  height = "30"><b> Signature of <br/> Second Applicant <br/> Date: </b> </td>                          
+            </tr>
+        </table>
+        <p style="font-size:14px; color:#4682B4;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b> For office use only </b> <br/>
+        </p>
+        <p style="font-size:12px; color:#4682B4;">                    
+           <b> Scheme details(if any): </b>_____________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> Sl.No. in Sales Register: </b>________________________ 
+        </p>
+           
+        <table class="table" border="1" width ="100%" cellpadding ="0" cellspacing= "0">
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "30%"  height = "30"> <b> Sales converter: </b> </td>
+                <td width = "30%"  height = "30"> <b> DGM/GM's/AVP's: </b> </td>                          
+                <td width = "30%"  height = "30"> <b> FH.: </b> </td> 
+            </tr>
+            
+            <p style="font-size:14px; color:black; font-weight:bold"> ______________________________________________&nbsp;Page 2&nbsp;_______________________________________________ </p> <br/>
+        </table>
+           
+                                                <!-- Page 3 -->
+        <table>
+            <tr> <td width = "10%" style="text-align:center; font-size:16px; background-color:#9E1721; color:White"> Terms &amp; Conditions </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 1. </td> <td> Booking amount will be 10% of the agreement value. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 2. </td> <td> Cheques are subject to realization. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 3. </td> <td> If the cheque issued / paid by the applicant towards the booking amount bounces, then in such an event this allotment / booking of the Unit shall stand terminated and cancelled. The applicant shall not have any claim towards the said allotment / booking. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 4. </td> <td> The charges, taxes, government levies etc are based on the current applicable rules / rates and may vary at the time of the actual payment and that any upward revision will be borne by the applicant and any downward revision will be adjusted against other payments due at that time. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 5. </td> <td> If booking is made on behalf, Power of Attorney should be produced at the time of execution of agreement with duly signed and notarized copy of POA to be submitted. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 6. </td> <td> Plans are subject to approvals from statutory authorities. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 7. </td> <td> Cancellation charges will be 1% of the Agreement value of the unit booked along with the taxes discharged to the concerned department, franking charges (e-stamping), cost of modifications executed (if any) will be applicable and deducted accordingly from the Booking amount paid. Cancellation is at company's sole discretion and is on case to case basis to consider/approve the cancellation. Mantri developers is entitled to re-allot and re-sell the unit to any other person and on such terms and conditions as Mantri developers deems fit and repay the applicant(s) the balance amount without interest in 30 days after the resale of the said unit. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 8. </td> <td> In case of cancellation post availing housing loan - the bank loan availed on the unit to be closed (Loan closure letter and Agreements, NOC /Tripartite /other relevant documents issued by Mantri Developers to be returned by the Bank) and the balance after all the deduction will be paid as mentioned in clause 7. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 9. </td> <td> In case if the applicant(s) fails to execute the Agreements for Sale and Agreements for construction within the prescribed 15 days or if any delay / default in payment continues for a period of one month, the Mantri developers are entitled to cancel the booking and recover 1% from total sales value and the interest for the delayed period in making the payment. In such an event, Mantri developers is also entitled to re-allot and re-sell the unit to any other person. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> 10. </td> <td> For all outstanding duespayable by the Applicants to Mantri developers, Mantri developers shall have the first lien on the said unit. </td> </tr> <br/>
+        
+            <hr style="font-size:12px; color:#4682B4;"/> <br/>
+            
+            <tr style="font-size:14px; color:#4682B4;"> <td> <b> For Home Loans </b> </td> </tr> <br/> 
+            <tr style="font-size:12px; color:#4682B4;"> <td> Planning to take a home loan: Yes/No </td> </tr> 
+            <tr style="font-size:12px; color:#4682B4;"> <td> Annual Income: </td> </tr> 
+            <tr style="font-size:12px; color:#4682B4;"> <td> Loan Amount: </td> </tr> 
+            <tr style="font-size:12px; color:#4682B4;"> <td> From Bank/HFI: </td> </tr> 
+            <tr style="font-size:12px; color:#4682B4;"> <td> Serviced by: </td> </tr> <br/> 
+            
+            <hr style="font-size:12px; color:#4682B4;"/> <br/>
+            
+            <tr style="font-size:14px; color:#4682B4;"> <td> <b> Declaration </b> </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> I/We the undersigned applicant (Sole/First and Co/Second applicant), do hereby declare that the above mentioned particulars/information given by me/us are irrevocable, true andcorrect to my/our knowledge and no material fact has been cancealed there from. I/We have gone through the terms and conditions written in this form and accept the same and which shall ipso-facto be applicable to my/our legal heirs and successors. I/We declare that in case of non-allotment oa the apartment/unit, my/our clam shall be limited only to the extend of the amount paid by me/us in relation to this application form. </td> </tr> <br/>
+            
+            <hr style="font-size:12px; color:#4682B4;"/> <br/>
+            
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "70%"> <b> Signature of First Applicant </b> </td> 
+                <td width = "70%"> <b> Signature of Second Applicant </b> </td>
+            </tr>
+            <tr style="font-size:12px; color:#4682B4;"> 
+                <td width = "70%"> <b> Date: </b> </td> 
+                <td width = "70%"> <b> Date: </b> </td>
+            </tr>
+            
+            <tr style="font-size:14px; color:black; font-weight:bold"> <td colspan = "2"> ______________________________________________&nbsp;Page 3&nbsp;_______________________________________________ </td></tr><br/>
+        
+        </table> 
+           
+                                                <!-- Page 4 -->
+        
+        <table>
+            <tr> <td width = "10%" style="text-align:center; font-size:16px; background-color:#9E1721; color:White"> NOTES AND COMMENTS </td> </tr> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <hr style="font-size:12px; color:#4682B4;"/> <br/><br/>
+            <tr style="font-size:14px; color:black; font-weight:bold"> <td colspan = "2"> ______________________________________________&nbsp;Page 4&nbsp;_______________________________________________ </td></tr><br/>
+        </table>
+           
+                                                <!-- Page 5 -->
+           
+        <table width = "100%">
+            <tr> <td width = "100%" style="text-align:center; font-size:16px; background-color:#9E1721; color:White"> ASSOCIATE APPLICATION FORM </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Dear Sir, </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> I/We representing ________________________________________________ having registration number ______________________________ </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> have sold a unit in your scheme ______________________________. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Pending the finalization of this application my client _________________________________________________________ residing at </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td width = "10%"> ____________________________________________________________________________________________________________________ </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> ________________________________________________________________________________________________ has remitted here with a </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> sum of Rs. ____________________________ by cash/Cheque No. ____________________________ dated ____________________________ </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> drawn on ________________________________________________________________ Bank ______________________________________ </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Branch _________________________________________________________________ which on execution of the Agreement for sale is to be </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> considered as Booking Amount. </td> </tr> <br/>
+            
+            <hr style="font-size:12px; color:#4682B4;"/> <br/>
+            
+            <tr style="font-size:14px; color:#4682B4;"> <td> <b> Details of Unit Sold By Associate </b> </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Scheme: ____________________ </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Flat No: ___________________ Bldg. No.: ___________________ Floor: ___________________ </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Super Built Up Area: ____________________ per sq. ft: ___________________ per sq. ft(SBUA) </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Car Parking: ___________________ (Open): ___________________ (Covered) ___________________  </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Terrace Area: ___________________ sq. ft: ___________________ per sq. ft   Amount: ___________________ </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Total Agreement Value: ______________________ </td> </tr> <br/>
+            
+            <hr style="font-size:12px; color:#4682B4;"/> <br/>
+            
+            <tr style="font-size:14px; color:#4682B4;"> <td> <b> NOTE: </b> </td> </tr> <br/>            
+            <tr style="font-size:12px; color:#4682B4;"> <td> In case of cancellation of the above said unit please note that payments made to the associate for rendering  his services will be deducted from the payment received from customer prior to settlement. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> All the other terms and conditions are applicable ap per the agreement executed between associate and the developer. </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Has the associate given you complete overview of the project: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Yes/No </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> Has the associate accompanied you for a site inspection: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Yes/No </td> </tr> <br/>
+            <tr style="font-size:12px; color:#4682B4;"> <td align = "right"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Yours Faithfully, </td> </tr> <br/>
+        </table>
+           
+        <table width = "100%">                                 
+            <tr style="font-size:12px; color:#4682B4;">
+                <td width = "50%">
+                    Date: ____________________
+                </td>
+                <td width = "50%">
+                    Purchaser: ___________________
+                </td>
+            </tr> 
+            
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            
+            <tr style="font-size:12px; color:#4682B4;">
+                <td width = "50%">  </td>
+                <td width = "50%">
+                    Associate: ___________________
+                </td>
+            </tr> 
+            
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            
+            <tr style="font-size:12px; color:#4682B4;">
+                <td width = "50%"> </td>
+                <td width = "50%">
+                    <b> Sales Converter: ____________________ </b>
+                </td>
+            </tr>
+            
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            
+            <tr style="font-size:12px; color:#4682B4;">
+                <td width = "50%"> </td>
+                <td width = "50%">
+                    Name: ___________________
+                </td>
+            </tr> 
+            
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            <tr style="font-size:12px; color:#4682B4;"> <td> </td> <td> </td> </tr>
+            
+            <tr style="font-size:12px; color:#4682B4;">
+                <td width = "50%"> </td>
+                <td width = "50%">
+                    Signature: 
+                </td>
+            </tr> <br/>
+            
+            <tr style="font-size:14px; color:black; font-weight:bold"> <td colspan = "2"> ______________________________________________&nbsp;Page 5&nbsp;_______________________________________________ </td> </tr> <br/> <br/>
+
+            
+        </table>
+           
+      </apex:pageBlock>
+   </apex:form>
+</apex:page>

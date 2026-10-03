@@ -1,0 +1,162 @@
+<apex:page renderAs="pdf" applyBodyTag="false" standardController="Opportunity" extensions="CostSheetController" >
+  <head>
+                <style type="text/css" media="print">
+                @page {
+                    size: A4;
+                    margin-top: 5cm;
+                    margin-bottom: 3.5cm; 
+                    margin-left: 2cm;
+                    margin-right: 2cm;
+
+                    @top-center {
+                content: element(header);
+                    }
+                    @bottom-left {
+                        content: element(footer);
+                    }
+                }
+                div.header {
+                    position: running(header);
+                }
+                div.footer {
+                    display: block;
+                    position: running(footer);
+                }
+                .pagenumber:before {
+                    content: counter(page);
+                }
+                .pagecount:before {
+                    content: counter(pages);
+                }
+                        table {
+        -fs-table-paginate: paginate;
+    }`
+                    </style>
+              </head>
+    <div    class="header" style="margin-left:-80px;display:{!IF(Opportunity.Project_Name__c='The Pearl','none','')}" >
+     <div  style="display:{!IF(Opportunity.Apartment__r.Project_Name__c='The Regent','','none')}"><apex:image value="{!$Resource.RegentHeader}"  /></div>
+    <div style="display:{!IF(Opportunity.Project_Name__c='The Pearl','','none')}"><apex:image value="{!$Resource.PearlHeader}"  /></div>
+     <div style="display:{!IF(Opportunity.Project_Name__c!='The Pearl' &&  Opportunity.Project_Name__c!='The Regent','','none')}"><apex:image value="{!$Resource.KohinoorHeader}"  /></div>
+
+    </div>
+    <div    class="footer" style="margin-left:-90px;display:{!IF(Opportunity.Project_Name__c='The Pearl','none','')}">
+     <div style="display:{!IF(Opportunity.Apartment__r.Project_Name__c='The Regent','','none')}"><apex:image value="{!$Resource.RegentFooter}"  /></div>
+     <div style="display:{!IF(Opportunity.Project_Name__c='The Pearl','','none')}"><apex:image value="{!$Resource.PearlFooter}"  /></div>
+     <div style="display:{!IF(Opportunity.Project_Name__c!='The Pearl' &&  Opportunity.Project_Name__c!='The Regent','','none')}"><apex:image value="{!$Resource.KohinoorFooter}"  /></div>
+    </div>
+    
+    <div style="display:{!IF(Opportunity.Project_Name__c='The Pearl','none','')}">
+   <table border="1" cellspacing="0" cellpadding="0" width="100%" >
+       <tr><th colspan="2" align="center" style="font-size: 25px;">Apartment Cost Sheet</th></tr>
+       <tr><th width="40%">Customer Name</th><td align="center">{!Opportunity.Contact__r.Name}</td></tr>
+       <tr><th>Mobile Number</th><td align="center">{!Opportunity.Mobile__c}</td></tr>
+    </table>
+    
+    <table border="1" cellspacing="0" cellpadding="0" width="100%" >
+       <tr><th colspan="2" align="center">Flat Details</th></tr>
+       <tr><td width="40%">Project</td><th align="center">{!Opportunity.Apartment__r.Project_Name__c}</th></tr>
+        <tr><td width="40%">Tower Name</td><th align="center">{!Opportunity.Apartment__r.Block__r.Name}</th></tr>
+       <tr><td>Unit Number</td><th align="center">{!Opportunity.Apartment__r.Unit_Number__c}</th></tr>
+       <tr><td>Type</td><th align="center">{!Opportunity.Apartment__r.Apartment_Type__c}</th></tr>
+       <tr><td>Floor</td><th align="center">{!Opportunity.Apartment__r.Floor_No__c}</th></tr>
+       <tr><td>Facing</td><th align="center">{!Opportunity.Apartment__r.Facing__c}</th></tr>
+       <tr><td>Number of Car Parks</td><th align="center">{!Opportunity.Number_of_Carpark__c}</th></tr>
+    </table>
+    
+    <table border="1" cellspacing="0" cellpadding="0" width="100%" >
+       <tr><th width="40%" align="center">Area In</th><th align="center" width="30%">Sq Mts</th><th align="center" width="30%">Sq Ft</th></tr>
+       <tr><td width="40%">Carpet Area</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!(Opportunity.Apartment__r.Carpet_Area__c)*0.093}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Opportunity.Apartment__r.Carpet_Area__c}"/></apex:outputtext></td></tr>
+       <tr style="display:{!IF(Opportunity.Apartment__r.Project_Name__c='The Regent','none','')}"><td width="40%">Extra Balcony, Verandah &amp; Terrace area</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!(IF(Opportunity.Apartment__r.Terrace_Area__c==null,0,Opportunity.Apartment__r.Terrace_Area__c)+IF(Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c==null,0,Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c)+IF(Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c))*0.093}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!IF(Opportunity.Apartment__r.Terrace_Area__c==null,0,Opportunity.Apartment__r.Terrace_Area__c)+IF(Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c==null,0,Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c)+IF(Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c)}"/></apex:outputtext></td></tr>
+        <tr style="display:{!IF(Opportunity.Apartment__r.Project_Name__c='The Regent','','none')}"><td width="40%">Balcony and Utility Area</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!(IF(Opportunity.Apartment__r.Terrace_Area__c==null,0,Opportunity.Apartment__r.Terrace_Area__c)+IF(Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c==null,0,Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c)+IF(Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c))*0.093}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!IF(Opportunity.Apartment__r.Terrace_Area__c==null,0,Opportunity.Apartment__r.Terrace_Area__c)+IF(Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c==null,0,Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c)+IF(Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c)}"/></apex:outputtext></td></tr>
+        <tr><td width="40%">Total Area</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!(IF(Opportunity.Apartment__r.Terrace_Area__c==null,0,Opportunity.Apartment__r.Terrace_Area__c)+IF(Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c==null,0,Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c)+IF(Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Carpet_Area__c==null,0,Opportunity.Apartment__r.Carpet_Area__c))*0.093}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!IF(Opportunity.Apartment__r.Terrace_Area__c==null,0,Opportunity.Apartment__r.Terrace_Area__c)+IF(Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c==null,0,Opportunity.Apartment__r.Exclusive_Roof_Top_Area_For_Duplex_Sqft__c)+IF(Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Exclusive_Balcony_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c==null,0,Opportunity.Apartment__r.Balcony_Area_Utility_Area_Sq_ft__c)+IF(Opportunity.Apartment__r.Carpet_Area__c==null,0,Opportunity.Apartment__r.Carpet_Area__c)}"/></apex:outputtext></td></tr>
+       <tr><th width="40%">Saleable Area</th><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!(Opportunity.Apartment__r.Built_Up_Area__c)*0.093}"/></apex:outputtext></td><th align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!(Opportunity.Apartment__r.Built_Up_Area__c)}"/></apex:outputtext></th></tr>    
+    </table>
+    
+    
+    <!--                                                     Components     START                           -->
+    <apex:variable var="Cmp1" value="{!IF(Opportunity.Apartment_Rate_after_Discount__c=null,0,Opportunity.Apartment_Rate_after_Discount__c)}"/>
+    <apex:variable var="Cmp2" value="{!IF(Opportunity.Apartment__r.Floor_Rise_Charges_Per_Sqft__c=null,0,Opportunity.Apartment__r.Floor_Rise_Charges_Per_Sqft__c)}"/>
+    <apex:variable var="Cmp3" value="{!IF(Opportunity.Apartment__r.Premium_Charges__c=null,0,Opportunity.Apartment__r.Premium_Charges__c)+IF(Opportunity.Apartment__r.Premium_Rate2__c=null,0,Opportunity.Apartment__r.Premium_Rate2__c)}"/>
+    <apex:variable var="Cmp4" value="{!IF(Opportunity.Apartment__r.Premium_Rate3__c=null,0,Opportunity.Apartment__r.Premium_Rate3__c)}"/>
+    <apex:variable var="Cmp5" value="{!IF(Opportunity.Apartment__r.Car_Park_Rate__c=null,0,Opportunity.Apartment__r.Car_Park_Rate__c)}"/>
+    <apex:variable var="Cmp6" value="{!InfraRate}"/>
+    <apex:variable var="Cmp7" value="{!ClubHouseRate}"/>
+    <apex:variable var="Cmp8" value="{!MaintenanceRate}"/>
+    <apex:variable var="Cmp9" value="{!CorpusRate}"/>
+    <apex:variable var="Cmp10" value="{!LegalRate}"/>
+    
+    <apex:variable var="Cmp1Ar" value="{!(Cmp1)*(Opportunity.Apartment__r.Built_Up_Area__c)}"/>
+    <apex:variable var="Cmp2Ar" value="{!(Cmp2)*(Opportunity.Apartment__r.Built_Up_Area__c)}"/>
+    <apex:variable var="Cmp3Ar" value="{!(Cmp3)*(Opportunity.Apartment__r.Built_Up_Area__c)}"/>
+    <apex:variable var="Cmp4Ar" value="{!(Cmp4)*(Opportunity.Apartment__r.Built_Up_Area__c)}"/>
+    <apex:variable var="Cmp5Ar" value="{!Cmp5}"/>
+    <apex:variable var="Cmp6Ar" value="{!InfraRate*(Opportunity.Apartment__r.Built_Up_Area__c)}"/>
+    <apex:variable var="Cmp7Ar" value="{!ClubHouseRate}"/>
+    <apex:variable var="Cmp8Ar" value="{!MaintenanceRate*(Opportunity.Apartment__r.Built_Up_Area__c)}"/>
+    <apex:variable var="Cmp9Ar" value="{!CorpusRate*(Opportunity.Apartment__r.Built_Up_Area__c)}"/>
+    <apex:variable var="Cmp10Ar" value="{!LegalRate}"/>
+    
+    <apex:variable var="totalConsid" value="{!Cmp1Ar+Cmp2Ar+Cmp3Ar+Cmp4Ar+Cmp5Ar+Cmp6Ar+Cmp7Ar}"/>
+    <apex:variable var="GstAppl" value="{!totalConsid*0.05}"/>
+    <apex:variable var="totalConsidGST" value="{!totalConsid+GstAppl}"/>
+    <apex:variable var="totalPayable" value="{!Cmp8Ar+Cmp9Ar+Cmp10Ar}"/>
+
+    <!--                                                     Components     START                           -->
+ 
+   <table border="1" cellspacing="0" cellpadding="0" width="100%" >
+       <tr><th width="40%" align="center">Sale Consideration</th><th align="center" width="30%">Rate per sft/LS</th><th align="center" width="30%">Amount (In INR)</th></tr>
+ <tr><td width="40%">Basic Price</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp1}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp1Ar}"/></apex:outputtext></td></tr>
+<tr style="display:{!IF(Cmp2=0,'none','')}"><td width="40%">Floor Rise Premium</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp2}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp2Ar}"/></apex:outputtext></td></tr>
+<tr style="display:{!IF(Cmp3=0,'none','')}"><td width="40%">Facing Premium</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp3}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp3Ar}"/></apex:outputtext></td></tr>
+<tr style="display:{!IF(Cmp4=0,'none','')}"><td width="40%">Premium Location charges</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp4}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp4Ar}"/></apex:outputtext></td></tr>
+<tr><td width="40%">Car parking</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp5}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp5Ar}"/></apex:outputtext></td></tr>
+<!--<tr><td width="40%">Car parking No.2 in B3</td><td align="center" width="30%"></td><td align="center"></td></tr>
+<tr><td width="40%">Car parking No.3 in B2</td><td align="center" width="30%"></td><td align="center"></td></tr>-->
+<tr><td width="40%">Infrastructure Charges (Water/Electricity/Pipe Gas/Solar/DG Set etc.)</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp6}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp6Ar}"/></apex:outputtext></td></tr>
+<tr><td width="40%">Club House Charges</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp7}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp7Ar}"/></apex:outputtext></td></tr>
+<tr><th width="70%" colspan="2">Total Sale Consideration</th><th align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!totalConsid}"/></apex:outputtext></th></tr>
+<tr><td width="70%" colspan="2">GST as Applicable.</td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!GstAppl}"/></apex:outputtext></td></tr>
+<tr><th width="70%" colspan="2">Total Sale Consideration + GST (Applicable as per Govt norms)</th><th align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!totalConsidGST}"/></apex:outputtext></th></tr> 
+    </table>
+    
+ <table border="1" cellspacing="0" cellpadding="0" width="100%" >
+ <tr><th width="40%" align="center">Charges Payable on Registration</th><th align="center" width="30%">Rate per sft/LS</th><th align="center" width="30%">Amount (In INR)</th></tr>
+<tr><td width="40%">Maintenance Charges for 2 years in advance</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp8}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp8Ar}"/></apex:outputtext></td></tr>
+<tr><td width="40%">Corpus Fund</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp9}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp9Ar}"/></apex:outputtext></td></tr>
+<tr><td width="40%">Legal And Documentation charges</td><td align="center" width="30%"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp10}"/></apex:outputtext></td><td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!Cmp10Ar}"/></apex:outputtext></td></tr>
+<tr><th width="70%" colspan="2">Total Payable at the Time of Registration</th><th align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!totalPayable}"/></apex:outputtext></th></tr>    
+    </table>
+    
+ <table border="1" cellspacing="0" cellpadding="0" width="100%" >   
+     <tr><td style="font-size:16px;"><b>Note:</b> GST , Stamp Duty &amp; Registration charges extra and same is applicable as per Govt norms</td></tr>
+    </table>
+    <br/>
+     <table border="1" cellspacing="0" cellpadding="0" width="100%" >
+       <tr><th colspan="5" align="center">Payment Plans</th></tr>
+     <tr><th width="40%" align="center">Milestone</th><th width="15%" align="center">% of Total Sale Consideration</th><th width="15%" align="center">Amount (In INR)</th><th width="15%" align="center">TDS (1%)</th><th width="15%" align="center">Balance Amount</th></tr>
+         <apex:repeat value="{!TemplateList}" var="tmpL">
+      <tr><td>{!tmpL.Name}</td>
+       <td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!tmpL.Installment_Value__c}"/></apex:outputtext></td>      
+       <td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!IF(tmpL.Installment_Value__c!=0,totalConsidGST*tmpL.Installment_Value__c*0.01,totalPayable)}"/></apex:outputtext></td>
+       <td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!IF(tmpL.Installment_Value__c!=0,totalConsid*tmpL.Installment_Value__c*0.01*0.01,totalPayable*0.01)}"/></apex:outputtext></td>
+       <td align="center"><apex:outputtext value="{0, number, ##,##0.00}"><apex:param value="{!IF(tmpL.Installment_Value__c!=0,(totalConsidGST*tmpL.Installment_Value__c*0.01)-(totalConsid*tmpL.Installment_Value__c*0.01),(totalPayable)-(totalPayable*0.01))}"/></apex:outputtext></td>  
+       </tr>  
+         </apex:repeat>
+    </table>
+    
+    <apex:variable var="Sq1" value="{!Opportunity.Apartment__r.KPTCL_BWSSB_Charges_Q__c}"/>
+    <apex:variable var="Sq2" value="{!Opportunity.Apartment__r.Corpus_Q__c}"/>
+    <apex:variable var="Sq3" value="{!Opportunity.Apartment__r.Club_Memembership_Charges_Q__c}"/>
+    <apex:variable var="Sq4" value="{!Opportunity.Apartment__r.Generator_Charges_Q__c}"/>
+    <apex:variable var="Sq5" value="{!Opportunity.Apartment__r.Apt_Formula_field__c}"/>
+    <apex:variable var="Sq6" value="{!Opportunity.Apartment__r.Built_Up_Area__c}"/>
+    <apex:variable var="Sq7" value="{!Opportunity.Apartment__r.Apartment_rate__c}"/>
+    <apex:variable var="Sq8" value="{!Opportunity.Apartment__r.FOM_Bare_Shell__c}"/>
+    <apex:variable var="Sq9" value="{!Opportunity.Apartment__r.Maintenance_Charges_for_1_Year__c}"/>
+    <apex:variable var="Sq10" value="{!Opportunity.Apartment__r.Car_Park_Rate__c}"/>
+    <apex:variable var="Sq11" value="{!Opportunity.Apartment__r.ComponentMaster__c}"/>
+    <apex:variable var="Sq12" value="{!Opportunity.Apartment__r.Template_Master__c}"/>
+    <apex:variable var="Sq12" value="{!Opportunity.Component_Master__c}"/>
+
+    </div>
+    </apex:page>

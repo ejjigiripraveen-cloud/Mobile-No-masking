@@ -1,0 +1,112 @@
+<aura:component  controller="LeadMergeController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+    
+    <aura:attribute name="recordId" type="string"/>
+    <aura:attribute name="matchleads" type="object[]" default="[]"/>
+    <aura:attribute name="leads" type="object[]" default="[]"/>
+    <aura:attribute name="searchText" type="string" default=""/>
+    <aura:attribute name="leadName" type="string" default=""/>
+    <aura:attribute name="value" type="string" default=""/>
+    <aura:registerEvent name="oSelectedleadEvent" type="c:selectedLeadEvent" />
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:handler name="change" value="{!v.searchText}" action="{!c.searchText}"></aura:handler> 
+    
+    
+    <aura:html tag="style">
+        .slds-modal__container{ 
+        max-width: 85rem !important;
+        width:85% !important;
+        } 
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }
+        .slds-modal__content{
+        
+        height:unset !important;
+        max-height:unset !important;
+        }
+        .closeIcon{
+        display:none;
+        }
+        .slds-col{
+        margin-left:5px;
+        }
+        
+        .parentDiv{
+        display:flex;
+        }
+        .inline{
+        margin: 10px;
+        padding: inherit;
+        }
+    </aura:html>
+    
+    
+    <!-- Modal/Popup Box starts here-->
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            
+            <lightning:buttonIcon iconName="utility:close"
+                                  onclick="{! c.cancel }"
+                                  alternativeText="close"
+                                  variant="bare-inverse"
+                                  class="slds-modal__close"/>
+            
+            <header class="slds-modal__header">
+                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Lead Merge</h1>
+            </header>
+            
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <ul class="slds-lookup__list" role="listbox">
+                    <div class="slds-p-top_medium parentDiv" >
+                        <div style="width:90%">
+                        <lightning:input value="{!v.searchText}"  required="true" aura:id="enter-search" name="enter-search" label="Lead" type="search" messageWhenValueMissing="Select Lead"/>                                  
+                        </div>
+                        <div class="inline">
+                            <button class="slds-button slds-button_icon slds-button_icon-brand" title="Search">
+                                <lightning:icon iconName="standard:search" alternativeText="Utility image" title="Image" onclick="{!c.onSearch}"/>
+                                <span class="slds-assistive-text">Search</span>
+                            </button>
+                            <br/>    
+                    </div>
+                    </div>
+                    
+                    <aura:if isTrue="{!v.matchleads}">
+                        <div class="{!if(not(empty(v.matchleads)), 'result-buttom','')}">
+                            <aura:iteration items="{!v.matchleads}" var="item">
+                                <li role="presentation">
+                                    <span class="slds-lookup__item-action slds-media slds-media--center" role="option">
+                                        <div class="slds-media__body">
+                                            <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                <!--c:SVGComponent ariaHidden="true" class="slds-input__icon" xlinkHref="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#contact"/-->
+                                                <div class="slds-lookup__result-text" data-id="{!item.Id}" onclick="{!c.update }">
+                                                    <a role="option" >
+                                                        
+                                                        <lightning:icon iconName="standard:account" size="xx-small"/>&nbsp;  {!item.Lead_ID__c} - {!item.Name} -{!item.Phone__c}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </li>
+                            </aura:iteration>
+                        </div>
+                    </aura:if>     
+                </ul>
+                
+            </div>
+            
+            <footer class="slds-modal__footer">
+                <lightning:button label="Cancel" title="Cancel" onclick="{! c.cancel }" />
+                <lightning:button variant="brand" label="Merge" title="Merge" onclick="{! c.merge }" />
+                
+            </footer>
+            
+            
+        </div>
+    </div>
+    
+</aura:component>

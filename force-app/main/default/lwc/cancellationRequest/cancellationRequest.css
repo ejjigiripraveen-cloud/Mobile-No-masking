@@ -1,0 +1,245 @@
+/* ================= GLOBAL SAFE FIX ================= */
+:host {
+    display: block;
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ================= CONTAINER ================= */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 1.2rem;
+    overflow-x: hidden;
+}
+
+/* ================= HEADER ================= */
+.header {
+    background: #F58727;
+    padding: 1.2rem 1.5rem;
+    color: white;
+    /* border-radius: 10px; */
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    width: 100%;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* ================= INFO GRID ================= */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+.info-item {
+    background: #f8f9fb;
+    padding: 0.8rem;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.info-item label {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #5f6b7a;
+    text-transform: uppercase;
+}
+
+.info-item p {
+    font-size: 0.95rem;
+    margin-top: 4px;
+    word-wrap: break-word;
+}
+
+.highlight {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0176d3;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+/* ================= FORM GRID ================= */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+.form-item {
+    width: 100%;
+}
+
+/* ================= UPLOAD SECTION ================= */
+.upload-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #fafafa;
+    border-radius: 8px;
+    width: 100%;
+}
+
+/* ================= AUDIO ================= */
+.audio-section {
+    margin-top: 1.5rem;
+}
+
+.audio-card {
+    padding: 0.8rem;
+    background: #f4f6f9;
+    border-radius: 8px;
+    margin-bottom: 0.7rem;
+    width: 100%;
+}
+
+.audio-card audio {
+    width: 100%;
+}
+
+/* ================= ACTION BAR ================= */
+.action-bar {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.action-bar lightning-button {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* ================= APPROVAL ================= */
+.approval-container {
+    padding: 1rem;
+}
+
+.approval-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.approval-row lightning-button {
+    flex: 1;
+    min-width: 140px;
+}
+
+/* ================= SPINNER ================= */
+.spinner-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Derived / auto-filled read-only display boxes */
+.derived-field {
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    height: 2rem;
+    background-color: #f3f3f3;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: #3e3e3c;
+    font-weight: 500;
+    cursor: default;
+    user-select: none;
+}
+
+.derived-field lightning-icon {
+    color: #0176d3;
+}
+
+.derived-field_empty {
+    color: #aeaeae;
+    font-style: italic;
+    font-weight: 400;
+}
+
+/* Ensure hidden sync fields are invisible */
+.slds-hide {
+    display: none !important;
+}
+
+/* ================= MOBILE VIEW ================= */
+@media (max-width: 768px) {
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .title {
+        font-size: 1.2rem;
+    }
+
+    /* STACK EVERYTHING */
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+
+    /* FULL WIDTH BUTTONS */
+    .approval-row {
+        flex-direction: column;
+    }
+
+    .approval-row lightning-button {
+        width: 100%;
+    }
+
+    .action-bar {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .action-bar lightning-button {
+        width: 100%;
+    }
+
+    /* Prevent file upload overflow */
+    lightning-file-upload {
+        width: 100%;
+    }
+
+    /* Fix lightning base component overflow */
+    lightning-card {
+        width: 100%;
+    }
+
+}

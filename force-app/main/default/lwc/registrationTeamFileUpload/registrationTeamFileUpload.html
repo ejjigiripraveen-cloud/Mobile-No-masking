@@ -1,0 +1,297 @@
+<template>
+    <lightning-card title="Project Document Upload" icon-name="standard:opportunity">
+
+        <!-- SEARCH SECTION -->
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-gutters slds-wrap slds-grid_vertical-align-end">
+
+                <!-- Mobile Number Input -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <lightning-input
+                        type="tel"
+                        label="Mobile Number"
+                        placeholder="Enter customer mobile number"
+                        value={mobileNumber}
+                        onchange={handleMobileChange}
+                        maxlength="15"
+                        required>
+                    </lightning-input>
+                </div>
+
+                <!-- Search Button -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <div class="slds-m-bottom_xx-small">
+                        <lightning-button
+                            label="Find Opportunities"
+                            variant="brand"
+                            icon-name="utility:search"
+                            onclick={handleSearch}
+                            disabled={isSearchDisabled}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spinner while searching -->
+            <template if:true={isSearching}>
+                <div class="slds-m-top_medium slds-align_absolute-center">
+                    <lightning-spinner alternative-text="Searching..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- No record found -->
+            <template if:true={showNoRecord}>
+                <div class="slds-m-top_medium">
+                    <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+                        <span class="slds-m-right_x-small">
+                            <lightning-icon icon-name="utility:warning" size="x-small"></lightning-icon>
+                        </span>
+                        No Opportunity found for the entered mobile number.
+                    </div>
+                </div>
+            </template>
+
+            <!-- Multiple Opportunities Found - Selection Table -->
+            <template if:true={showOpportunityList}>
+                <div class="slds-m-top_medium">
+                    <div class="slds-box slds-theme_shade slds-p-around_small slds-m-bottom_small">
+                        <lightning-icon icon-name="utility:info" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        <strong>{opportunityList.length}</strong> opportunity/opportunities found. Please select one to upload documents.
+                    </div>
+
+                    <lightning-datatable
+                        key-field="Id"
+                        data={opportunityList}
+                        columns={opportunityColumns}
+                        max-row-selection="1"
+                        onrowselection={handleRowSelection}
+                        selected-rows={selectedRows}>
+                    </lightning-datatable>
+                </div>
+            </template>
+
+            <!-- Selected Opportunity Banner -->
+            <!-- Selected Opportunity Banner -->
+<template if:true={opportunityRecord}>
+    <div class="slds-m-top_medium opportunity-banner slds-p-around_small">
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-icon icon-name="standard:opportunity" size="small" class="slds-m-right_x-small"></lightning-icon>
+                <strong>Selected Opportunity:</strong>&nbsp;
+                <a href={oppRecordUrl} target="_blank">{opportunityRecord.Name}</a>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-m-top_xx-small">
+
+                <!-- Opportunity Fields -->
+                <span class="slds-badge slds-m-right_x-small">
+                    <lightning-icon icon-name="utility:home" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Project: {opportunityRecord.Project_Name__c}
+                </span>
+                <span class="slds-badge slds-m-right_x-small">
+                    <lightning-icon icon-name="utility:location" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Plot No: {opportunityRecord.Flat_No__c}
+                </span>
+
+                <!-- CRM__c Fields -->
+                <span class="slds-badge slds-m-right_x-small">
+                    <lightning-icon icon-name="utility:office365" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Sub Registrar Office: {opportunityRecord.Sub_Registrar_Office__c}
+                </span>
+                <span class="slds-badge slds-m-right_x-small">
+                    <lightning-icon icon-name="utility:document" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Reg Doc No: {opportunityRecord.Reg_Document_Number__c}
+                </span>
+                <span class="slds-badge slds-m-right_x-small">
+                    <lightning-icon icon-name="utility:event" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Year of Registration: {opportunityRecord.Year_Of_Registration__c}
+                </span>
+
+            </div>
+        </div>
+    </div>
+</template>
+        </div>
+
+        <!-- UPLOAD SECTION -->
+        <!-- UPLOAD SECTION -->
+        <template if:true={opportunityRecord}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <div class="section-header slds-m-bottom_small">
+                    <h3 class="slds-text-heading_small">Upload Documents</h3>
+                    <p class="slds-text-body_small slds-text-color_weak">Upload Sales Deed and Encumbrance Certificate for this opportunity.</p>
+                </div>
+
+                <div class="slds-grid slds-gutters slds-wrap">
+
+                    <!-- Sales Deed Upload (hidden if already uploaded) -->
+                    <template if:true={showSalesDeedUpload}>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="upload-box slds-p-around_medium">
+                                <div class="upload-label">
+                                    <lightning-icon icon-name="doctype:pdf" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    <strong>Sales Deed</strong>
+                                </div>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">Accepted: PDF, JPG, PNG</p>
+                                <lightning-input
+                                    type="file"
+                                    label="Choose Sales Deed File"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    onchange={handleSalesDeedUpload}
+                                    data-id="salesDeed">
+                                </lightning-input>
+                                <template if:true={salesDeedFile}>
+                                    <div class="file-chip slds-m-top_x-small">
+                                        <lightning-icon icon-name="utility:attach" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        {salesDeedFile.name}
+                                        <lightning-button-icon
+                                            icon-name="utility:close"
+                                            variant="bare"
+                                            size="xx-small"
+                                            onclick={clearSalesDeed}
+                                            alternative-text="Remove">
+                                        </lightning-button-icon>
+                                    </div>
+                                </template>
+                                <template if:true={isSalesDeedUploading}>
+                                    <lightning-spinner alternative-text="Uploading..." size="small" class="slds-m-top_small"></lightning-spinner>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Sales Deed Already Present Badge -->
+                    <template if:true={salesDeedExists}>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="upload-box slds-p-around_medium slds-theme_shade">
+                                <div class="upload-label slds-m-bottom_x-small">
+                                    <lightning-icon icon-name="utility:success" size="small" class="slds-m-right_x-small" variant="success"></lightning-icon>
+                                    <strong>Sales Deed</strong>
+                                </div>
+                                <p class="slds-text-body_small slds-text-color_success">
+                                    <lightning-icon icon-name="utility:check" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                    Already uploaded. See Attached Documents below.
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Encumbrance Certificate Upload (hidden if already uploaded) -->
+                    <template if:true={showEncumbranceUpload}>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="upload-box slds-p-around_medium">
+                                <div class="upload-label">
+                                    <lightning-icon icon-name="doctype:pdf" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    <strong>Encumbrance Certificate</strong>
+                                </div>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">Accepted: PDF, JPG, PNG</p>
+                                <lightning-input
+                                    type="file"
+                                    label="Choose Encumbrance Certificate File"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    onchange={handleEncumbranceUpload}
+                                    data-id="encumbrance">
+                                </lightning-input>
+                                <template if:true={encumbranceFile}>
+                                    <div class="file-chip slds-m-top_x-small">
+                                        <lightning-icon icon-name="utility:attach" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        {encumbranceFile.name}
+                                        <lightning-button-icon
+                                            icon-name="utility:close"
+                                            variant="bare"
+                                            size="xx-small"
+                                            onclick={clearEncumbrance}
+                                            alternative-text="Remove">
+                                        </lightning-button-icon>
+                                    </div>
+                                </template>
+                                <template if:true={isEncumbranceUploading}>
+                                    <lightning-spinner alternative-text="Uploading..." size="small" class="slds-m-top_small"></lightning-spinner>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Encumbrance Already Present Badge -->
+                    <template if:true={encumbranceExists}>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="upload-box slds-p-around_medium slds-theme_shade">
+                                <div class="upload-label slds-m-bottom_x-small">
+                                    <lightning-icon icon-name="utility:success" size="small" class="slds-m-right_x-small" variant="success"></lightning-icon>
+                                    <strong>Encumbrance Certificate</strong>
+                                </div>
+                                <p class="slds-text-body_small slds-text-color_success">
+                                    <lightning-icon icon-name="utility:check" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                    Already uploaded. See Attached Documents below.
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+
+                </div>
+
+                <!-- Save Button -->
+                <div class="slds-m-top_medium">
+                    <lightning-button
+                        label="Save Documents"
+                        variant="success"
+                        icon-name="utility:save"
+                        onclick={handleSave}
+                        disabled={isSaveDisabled}>
+                    </lightning-button>
+                </div>
+
+                <!-- Status Message -->
+                <template if:true={statusMessage}>
+                    <div class={statusClass} style="margin-top:12px; padding:10px 16px; border-radius:4px;">
+                        <lightning-icon icon-name={statusIcon} size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        {statusMessage}
+                    </div>
+                </template>
+            </div>
+
+            <!-- ATTACHED FILES SECTION -->
+            <template if:true={isLoadingFiles}>
+                <div class="slds-p-around_medium slds-align_absolute-center">
+                    <lightning-spinner alternative-text="Loading documents..." size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:true={hasAttachedFiles}>
+                <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                    <h3 class="slds-text-heading_small slds-theme_shade slds-p-around_x-small">
+                        <lightning-icon icon-name="utility:file" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        Attached Documents
+                    </h3>
+                    <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                        <template for:each={attachedFiles} for:item="file">
+                            <div key={file.Id} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3 slds-m-bottom_small">
+                                <div class="file-card slds-p-around_small">
+                                    <div class="slds-grid">
+                                        <lightning-icon icon-name={file.iconName} size="medium" class="slds-m-right_small"></lightning-icon>
+                                        <div>
+                                            <p class="file-card-title">{file.Title}</p>
+                                            <p class="slds-text-body_small slds-text-color_weak">{file.FileExtension} &bull; {file.formattedSize}</p>
+                                            <p class="slds-text-body_small slds-text-color_weak">Uploaded: {file.formattedDate}</p>
+                                        </div>
+                                    </div>
+                                    <div class="slds-m-top_small">
+                                        <lightning-button
+                                            label="Download"
+                                            variant="neutral"
+                                            icon-name="utility:download"
+                                            size="small"
+                                            data-url={file.downloadUrl}
+                                            onclick={handleDownload}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+        </template>
+
+    </lightning-card>
+</template>

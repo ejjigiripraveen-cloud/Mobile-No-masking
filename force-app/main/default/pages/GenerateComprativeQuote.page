@@ -1,0 +1,465 @@
+<apex:page sidebar="false" showHeader="false" controller="GenerateComprativeQuotePageController" renderAs="pdf"
+    action="{!Getfinaldata}" applyBodyTag="false" applyHtmlTag="false">
+
+
+    <head>
+        <style type="text/css" media="print">
+            @page :first {
+                @top-right {
+                    content: element(header);
+                }
+            }
+
+            @page {
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+                        
+            @page {
+
+                margin-top:140px;
+                margin-bottom:60px;
+                margin-right:0px;
+                margin-left:0px;
+                font-family:arial;
+            }
+  
+            @pageBreak{
+                page-break-after:always;
+            }
+
+            body {
+                margin-right: 80px;
+                margin-left: 80px;
+            }
+
+            div.header {
+                text-align: left;
+                position: running(header);
+                padding: 2px;
+                margin-right: 80px;
+                margin-left: 80px;
+                color: #000000;
+            }
+
+            div.footer {
+                padding: 2px;
+                position: running(header);
+                margin-right: 80px;
+                margin-left: 80px;
+
+                color: #000000;
+            }
+
+            .tableHead1 {
+                background: #BABABA;
+                vertical-align: text-top;
+                font-weight: bold;
+                border-left: 0px solid #FFFFFF;
+                border-right: 0px solid #FFFFFF;
+                border-top: 0px;
+                border-bottom: 0px;
+            }
+
+            table.gridtable {
+                font-family: verdana, arial, sans-serif;
+                font-size: 12px;
+                font-weight: 900;
+                color: #333333;
+                border-width: 1.5px;
+                border-style: solid;
+                border-color: black;
+                border-collapse: collapse;
+                text-shadow: 1px 0 #333333;;
+                letter-spacing:1px;    
+                color:#333333;    
+            }
+
+            table.gridtable th {
+                padding: 4px;
+                font-weight: 900; 
+                border-color: black;
+                border-width: 1.5px;
+                border-style: solid;
+                border-collapse: collapse;
+                text-shadow: 1px 0 #333333;;
+                letter-spacing:1px;
+                color:#333333;    
+
+            }
+            table.gridtable td {
+                padding: 4px;
+                font-weight: 900; 
+                border-color: black;
+                border-width: 1.5px;
+                border-style: solid;
+                width: 22%;
+                border-collapse: collapse;
+                color:#333333;    
+                text-shadow: 1px 0 #333333;;
+                letter-spacing:1px;
+            }
+
+            table.gridtablewithpage {
+                font-family: verdana, arial, sans-serif;
+                font-size: 12px;
+                font-weight: 900;
+                color: #333333;
+                border-width: 1px;
+                border-style: solid;
+                border-color: black;
+                border-collapse: collapse;
+                text-shadow: 1px 0 #333333;;
+                letter-spacing:1px;    
+                color:#333333; 
+                -fs-table-paginate: paginate; 
+            }
+
+            table.gridtablewithpage th {
+                padding: 4px;
+                font-weight: 900; 
+                border-color: black;
+                border-width: 1px;
+                border-style: solid;
+                border-collapse: collapse;
+                text-shadow: 1px 0 #333333;;
+                letter-spacing:1px;
+                color:#333333;    
+
+            }
+
+            table.gridtablewithpage td {
+                padding: 4px;
+                font-weight: 900; 
+                border-color: black;
+                border-width: 1px;
+                border-style: solid;
+                width: 22%;
+                border-collapse: collapse;
+                color:#333333;    
+                text-shadow: 1px 0 #333333;;
+                letter-spacing:1px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="header">
+            <apex:outputPanel >
+                <table width="100%" cellspacing="0">
+                    <tr>
+                        <td width="10%">
+                            <apex:image value="{!$Resource.OrgLogo}" width="400" height="70" />
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+        </div>
+
+        <!-- <h5>Svasa Homes Price Sheet</h5> -->
+        <table class = "gridtable" cellspacing="0" width="100%">
+            
+            <apex:outputPanel layout="none" rendered="{!isAptNoPopulated}">
+                <tr>
+                    <th>Unit No:</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td align="right">{!quDetails.apartment.Unit_Number__c}</td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+            
+            <apex:outputPanel layout="none" rendered="{!isAptFloorPopulated}">
+                <tr>
+                    <th>Floor:</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td align="right">{!quDetails.apartment.Floor_No__c}</td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!isAptTypePopulated}">
+                <tr>
+                    <th>Type:</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td align="right">{!quDetails.apartment.Apartment_Type__c}</td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!isAptTowerPopulated}">
+                <tr>
+                    <th>Tower Name: </th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td align="right">{!quDetails.apartment.Block__r.Name}</td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!isAptEntranceFacingPopulated}">
+                <tr>
+                    <th>Facing:</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td align="right">{!quDetails.apartment.Facing__c}</td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!isAptFinishPopulated}">
+               <!-- <tr>
+                    <th>Apartment Finish:</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td align="right">{!quDetails.apartment.FOM_Bare_Shell__c}</td>
+                    </apex:repeat>
+                </tr>-->
+            </apex:outputPanel>
+            
+
+            <apex:outputPanel layout="none" rendered="{!isAptCostPopulated}">
+                <tr>
+                    <th>Apartment Cost:</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td align="right">
+                            <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                                <apex:param value="{!quDetails.apartment.Apartment_Cost__c}" />
+                            </apex:outputtext>
+                        </td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+            
+            <apex:outputtext rendered="{!IF(ISNULL(quotationWrapperObj.quoteDetails[0].carpetAreaAmt) , false , true)}">  
+                <tr>
+                    <th style='border-bottom:none;border-top:none;font-weight: normal'>Carpet Area</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td style='border-left:none;border-bottom:none;border-top:none; font-weight: normal' align="right">
+                            <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                                <apex:param value="{!quDetails.carpetAreaAmt}" />
+                            </apex:outputtext>
+                        </td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputtext>
+
+            <tr>
+                <th style='border-bottom:none;border-top:none; font-weight: normal'>Saleable Area</th>
+                <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                    <td style='border-left:none;border-bottom:none;border-top:none; font-weight: normal' align="right">
+                        <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                            <apex:param value="{!quDetails.apartment.Super_Builtup_Area_in_Sft_Q__c}" />
+                        </apex:outputtext>
+                    </td>
+                </apex:repeat>
+            </tr>
+
+            <apex:outputPanel layout="none" rendered="{!isUndividedLandAreaPopulated}">
+                <tr>
+                    <th style='border-bottom:none;border-top:none; font-weight: normal'>Undivided Land Area</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td style='border-left:none;border-bottom:none;border-top:none; font-weight: normal' align="right">
+                            <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                                <apex:param value="{!quDetails.apartment.Undivided_Land_Area__c}" />
+                            </apex:outputtext>
+                        </td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!isCoveredCarParksPopulated}">
+                <tr>
+                    <th style='border-bottom:none;border-top:none; font-weight: normal'>Covered Car Parks</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td style='border-bottom:none;border-top:none; font-weight: normal' align="right">
+                            <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                                <apex:param value="{!quDetails.apartment.Covered_Car_Park_Q__c}" />
+                            </apex:outputtext>
+                        </td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!isGSTPopulated}">
+                <tr>
+                    <th style='border-bottom:none;border-top:none; font-weight: normal'>GST</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td style='border-bottom:none;border-top:none; font-weight: normal' align="right">
+                            <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                                <apex:param value="{!quDetails.apartment.Covered_Car_Park_Q__c}" />
+                            </apex:outputtext>
+                        </td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+
+            <apex:repeat value="{!subcompNameForAptA}" var="suDetails">
+              
+                <tr>
+                    <th style='border-bottom:none;border-top:none; font-weight: normal'>{!suDetails.subName}</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td style="border-left:none;border-bottom:none;border-top:none; font-weight: normal ; " align="right">
+                            <apex:outputtext value="{0,number,###,###,###,##0.00}" >
+                                <apex:param value="{!quDetails.quote[suDetails.fieldName]}" />
+                            </apex:outputtext>
+                        </td>
+                    </apex:repeat>
+                </tr>
+                 </apex:repeat>
+
+            <tr>
+                <th style='border-bottom:none;border-top:none; padding-bottom:15px;'>Apartment Cost Total A</th>
+                <apex:repeat value="{!apartmentCostTotalAList}" var="quDetails">
+                    <td style='border-bottom:none;border-top:none; padding-bottom:15px;' align="right">
+                        <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                            <apex:param value="{!quDetails}" />
+                        </apex:outputtext>
+                    </td>
+                </apex:repeat>
+            </tr>
+
+            <tr>
+                <th>Statutory And Other Charges:</th>
+                <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                    <td></td>
+                 </apex:repeat>
+            </tr>
+
+            <apex:repeat value="{!subcompNameForAptB}" var="suDetails">
+              
+                <tr>
+                    <th style='border-bottom:none;border-top:none; font-weight: normal'>{!suDetails.subName}</th>
+                    <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                        <td style='border-left:none;border-bottom:none;border-top:none; font-weight: normal' align="right">
+                            <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                                <apex:param value="{!quDetails.quote[suDetails.fieldName]}" />
+                            </apex:outputtext>
+                        </td>
+                    </apex:repeat>
+                </tr>
+            </apex:repeat>
+
+            <tr>
+                <th style='border-bottom:none;border-top:none;'>Statutory And Other Charges Total B</th>
+                <apex:repeat value="{!apartmentCostTotalBList}" var="quDetails">
+                    <td style='border-bottom:none;border-top:none; padding-bottom:10px;' align="right">
+                        <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                            <apex:param value="{!quDetails}" />
+                        </apex:outputtext>
+                    </td>
+                </apex:repeat>
+            </tr>
+
+            <tr>
+                <th style='border-bottom:none;border-top:none;'>GST Charges</th>
+                <apex:repeat value="{!TotalRoundCostList}" var="quDetails">
+                    <td style='border-bottom:none;border-top:none; padding-bottom:10px;' align="right">
+                        <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                            <apex:param value="{!quDetails.total_Tax}" />
+                        </apex:outputtext>
+                    </td>
+                </apex:repeat>
+            </tr>
+
+            <tr>
+                <th style='border-bottom:none;border-top:none; padding-bottom:15px; padding-top:15px;'>Total Cost (A+B)</th>
+                <apex:repeat value="{!apartmentCostTotalAandBList}" var="quDetails">
+                    <td style='border-bottom:none;border-top:none; padding-bottom:15px;' align="right">
+                        <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                            <apex:param value="{!quDetails}" />
+                        </apex:outputtext>
+                    </td>
+                </apex:repeat>
+            </tr>
+
+            <tr>
+                <th>Payment Schedule:</th>
+                <apex:repeat value="{!quotationWrapperObj.quoteDetails}" var="quDetails">
+                    <td></td>
+                 </apex:repeat>
+            </tr>
+
+        </table>
+
+       <table class = "gridtablewithpage" style="font-size: 12px" border="1px solid black"  cellspacing="0" width="100%">
+
+            <apex:repeat value="{!listInstallment}" var="installDet">
+                <tr>
+                    <th > {!installDet.instName}</th>
+                    <th align="right">{!installDet.InstValue}</th>
+
+                    <apex:repeat value="{!installDet.installmentAmounts}" var="amt">
+                        <td align="right" >
+                            <apex:outputText value="{0,number,###,###,###,##0.00}">
+                                <apex:param value="{!amt}" />
+                            </apex:outputText>
+                        </td>
+                    </apex:repeat>
+                </tr>
+            </apex:repeat>
+
+       
+            <tr>
+                <th >TOTAL COST (Rounded off):</th>
+                <th align="right">100%</th>
+
+                <apex:repeat value="{!TotalRoundCostList}" var="quDetails">
+                    <td align="right" >
+                        <apex:outputtext value="{0,number,###,###,###,##0.00}">
+                            <apex:param value="{!IF(quDetails.isTaxesRequired , quDetails.Total_Balance ,quDetails.Final_Inventory_Cost)}" />
+                        </apex:outputtext>
+                    </td>
+                </apex:repeat>
+            </tr>
+        </table>
+
+      <!--  <div>
+            <h5>Please note:</h5>
+            <p style="font-size: 12px;white-space: pre-line">
+                {!quotationWrapperObj.projectRec.Comparative_Quote_Notes__c}</p>
+        </div>-->
+
+        <div style="display: block;padding: 10px;"
+            rendered="{!IF(ISNULL(quotationWrapperObj.userRec) , false , true)} ">
+
+            <div style="float: left">
+                <h5>Prepared by:</h5>
+               <table style="font-size: 12px">
+                    <tr>
+                        <td>Name: {!quotationWrapperObj.userRec.Name}</td>
+                    </tr>
+                    <tr>
+                        <td>Email : {!quotationWrapperObj.userRec.Email}</td>
+                    </tr>
+                    <tr>
+                        <td>Mobile : {!quotationWrapperObj.userRec.MobilePhone}</td>
+                    </tr>
+                    <tr>
+                        <td>Date:
+                            <apex:outputText value="{0, date, MMMM d','  yyyy}">
+                                <apex:param value="{!TODAY()}" />
+                            </apex:outputText>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="float: right">
+                <h5>Customer Details:</h5>
+               <table style="font-size: 12px">
+                    <tr>
+                        <td>Name : {!quotationWrapperObj.opp.Name}</td>
+                    </tr>
+                 <!--   <tr>
+                        <td>Company : {!quotationWrapperObj.opp.Company_Name__c}</td>
+                    </tr>-->
+                    <tr>
+                        <td>Email : {!quotationWrapperObj.opp.Email__c}</td>
+                    </tr>
+                    <tr>
+                        <td> Mobile : {!quotationWrapperObj.opp.Mobile__c}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</apex:page>

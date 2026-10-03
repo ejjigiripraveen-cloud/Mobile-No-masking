@@ -1,0 +1,448 @@
+/* ══════════════════════════════════════════════════════════════════════
+   G Square Customer Portal — Opportunity Detail Card
+   Brand theme: navy/blue + white
+   ══════════════════════════════════════════════════════════════════════ */
+
+:host {
+    --g2-navy:        #0B2F6B;
+    --g2-blue:        #1E50C8;
+    --g2-blue-mid:    #3B82F6;
+    --g2-blue-light:  #EAF1FF;
+    --g2-blue-border: #D6E4FB;
+    --g2-ink:         #14213D;
+    --g2-slate:       #5B6B85;
+    --g2-muted:       #94A3B8;
+    --g2-white:       #FFFFFF;
+    --g2-green:       #16A34A;
+    --g2-green-bg:    #E3FAEA;
+    --g2-amber:       #B45309;
+    --g2-amber-bg:    #FEF3C7;
+    --g2-red:         #DC2626;
+    --g2-red-bg:      #FEE2E2;
+    --g2-radius:      12px;
+    --g2-radius-sm:   8px;
+    --g2-shadow:      0 1px 2px rgba(11,47,107,0.06), 0 4px 14px rgba(11,47,107,0.06);
+    --g2-shadow-hover:0 4px 10px rgba(11,47,107,0.10), 0 10px 24px rgba(11,47,107,0.10);
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────── */
+.container {
+    padding: 1.1rem 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    background: linear-gradient(180deg, #F7FAFF 0%, #FFFFFF 220px);
+}
+
+/* ── Header Banner ──────────────────────────────────────────────────── */
+.headerBanner {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: linear-gradient(120deg, var(--g2-navy) 0%, var(--g2-blue) 65%, var(--g2-blue-mid) 100%);
+    border-radius: var(--g2-radius);
+    padding: 1.1rem 1.35rem;
+    box-shadow: var(--g2-shadow);
+    position: relative;
+    overflow: hidden;
+}
+.headerBanner::after {
+    content: "";
+    position: absolute;
+    top: -40%;
+    right: -8%;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    pointer-events: none;
+}
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    z-index: 1;
+}
+.headerIconBadge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.22);
+    flex-shrink: 0;
+}
+.propertyInfo { display: flex; flex-direction: column; gap: 0.3rem; }
+.unitName     {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--g2-white);
+    letter-spacing: 0.2px;
+}
+.virtualCodeBox {
+    display: inline-block;
+    width: fit-content;
+    background: rgba(255,255,255,0.16);
+    color: var(--g2-white);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    letter-spacing: 0.6px;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+.area {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.85);
+}
+.area lightning-icon {
+    --slds-c-icon-color-foreground: #ffffff;
+    --slds-c-icon-color-foreground-default: #ffffff;
+}
+
+/* ── Header Right: Project Bank Card ──────────────────────────────────── */
+.headerRight {
+    flex-shrink: 0;
+    z-index: 1;
+}
+.bankCard {
+    background: rgba(255,255,255,0.97);
+    border-radius: var(--g2-radius-sm);
+    padding: 0.7rem 0.9rem 0.8rem;
+    min-width: 280px;
+    box-shadow: 0 6px 18px rgba(11,47,107,0.18);
+}
+.bankCardTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--g2-blue);
+    background: var(--g2-blue-light);
+    margin: -0.7rem -0.9rem 0.65rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--g2-radius-sm) var(--g2-radius-sm) 0 0;
+    border-bottom: 1px solid var(--g2-blue-border);
+}
+.bankCardTitle lightning-icon {
+    --slds-c-icon-color-foreground: var(--g2-blue);
+    --slds-c-icon-color-foreground-default: var(--g2-blue);
+}
+.bankInfoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 0.55rem 1.1rem;
+}
+.bankInfoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.bankInfoItem--wide { grid-column: 1 / -1; }
+.bankLabel {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--g2-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.bankValue {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--g2-ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.2px;
+}
+
+/* ── KPI Grid ────────────────────────────────────────────────────────── */
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+.detailBox {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-blue-border);
+    border-left: 4px solid var(--g2-muted);
+    border-radius: var(--g2-radius-sm);
+    padding: 0.7rem 0.9rem;
+    box-shadow: var(--g2-shadow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: visible;
+}
+.tax-badge {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: #f5f5f5;
+    color: #222;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    border: 1px solid #e5e5e5;
+    z-index: 10;
+}
+.detailBox:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--g2-shadow-hover);
+}
+.detailBox--neutral  { border-left-color: var(--g2-blue-mid); }
+.detailBox--primary  { border-left-color: var(--g2-blue);   background: linear-gradient(180deg, var(--g2-blue-light) 0%, #fff 70%); }
+.detailBox--primary  .value { color: var(--g2-blue); }
+.detailBox--warning  { border-left-color: var(--g2-amber);  background: linear-gradient(180deg, var(--g2-amber-bg) 0%, #fff 70%); }
+.detailBox--warning  .value { color: var(--g2-amber); }
+.detailBox--success  { border-left-color: var(--g2-green);  background: linear-gradient(180deg, var(--g2-green-bg) 0%, #fff 70%); }
+.detailBox--success  .value { color: var(--g2-green); }
+
+/* ── Section Cards ───────────────────────────────────────────────────── */
+.sectionCard {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-blue-border);
+    border-radius: var(--g2-radius);
+    padding: 0.95rem 1.1rem;
+    box-shadow: var(--g2-shadow);
+}
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #EEF2F8;
+}
+.sectionTitle {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--g2-ink);
+    flex: 1;
+}
+.editBtn { margin-left: auto; }
+
+/* ── Icon badges ─────────────────────────────────────────────────────── */
+.iconBadge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+.iconBadge--blue { background: linear-gradient(135deg, var(--g2-blue), var(--g2-blue-mid)); }
+.iconBadge--navy { background: linear-gradient(135deg, var(--g2-navy), var(--g2-blue)); }
+.iconBadge lightning-icon {
+    --slds-c-icon-color-foreground: #ffffff;
+    --slds-c-icon-color-foreground-default: #ffffff;
+}
+
+/* ── Labels / Values ─────────────────────────────────────────────────── */
+.label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--g2-slate);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.22rem;
+}
+.value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--g2-ink);
+}
+
+/* ── Contact Grid ────────────────────────────────────────────────────── */
+.contactGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.9rem;
+}
+.contactItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    background: #FAFCFF;
+    border: 1px solid #EEF2F8;
+    border-radius: var(--g2-radius-sm);
+    padding: 0.55rem 0.7rem;
+}
+.checkboxItem { justify-content: flex-end; padding-bottom: 0.25rem; }
+
+/* ── Mail Validated Badge ────────────────────────────────────────────── */
+.validBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+.validBadge--yes { background: var(--g2-green-bg); color: #166534; }
+.validBadge--no  { background: var(--g2-red-bg); color: #991b1b; }
+
+/* ── Edit Actions ────────────────────────────────────────────────────── */
+.editActions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.85rem;
+}
+.errorMsg {
+    margin-top: 0.5rem;
+    color: var(--g2-red);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ── Notes ───────────────────────────────────────────────────────────── */
+.notesList { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.noteItem  { border-left: 3px solid var(--g2-blue-mid); padding: 0.5rem 0.75rem; background: var(--g2-blue-light); border-radius: 0 6px 6px 0; }
+.noteTitle { font-weight: 700; font-size: 0.85rem; color: var(--g2-ink); }
+.noteBody  { font-size: 0.8rem; color: var(--g2-slate); margin-top: 0.2rem; }
+.noteMeta  { font-size: 0.7rem; color: var(--g2-muted); margin-top: 0.25rem; }
+
+/* ── Documents ───────────────────────────────────────────────────────── */
+.docList { display: flex; flex-direction: column; gap: 0.5rem; }
+.docItem {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.7rem;
+    background: #FAFCFF;
+    border: 1px solid var(--g2-blue-border);
+    border-radius: var(--g2-radius-sm);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.docItem:hover {
+    background: var(--g2-blue-light);
+    border-color: var(--g2-blue-mid);
+}
+.docIconWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--g2-blue), var(--g2-blue-mid));
+    flex-shrink: 0;
+}
+.docLink { font-size: 0.85rem; font-weight: 700; color: var(--g2-blue); text-decoration: none; flex: 1; }
+.docLink:hover { text-decoration: underline; }
+.docMeta {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--g2-slate);
+    white-space: nowrap;
+    background: var(--g2-blue-light);
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+}
+
+/* ── VF iframe ───────────────────────────────────────────────────────── */
+.vfWrapper {
+    width: 100%;
+    border-radius: var(--g2-radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--g2-blue-border);
+}
+.vfFrame {
+    width: 100%;
+    height: 450px;
+    border: none;
+    display: block;
+}
+
+/* ── Credentials ─────────────────────────────────────────────────────── */
+.credCenter { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem 0; }
+.credMsg    { font-size: 0.85rem; color: var(--g2-slate); margin: 0; }
+.credBox    { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.8rem 0.9rem; border-radius: var(--g2-radius-sm); margin-bottom: 0.5rem; }
+.credBox--success    { background: var(--g2-green-bg); border: 1px solid #BBF0CC; }
+.credBox--error      { background: var(--g2-red-bg); border: 1px solid #FCC; }
+.credBox--shade      { background: var(--g2-blue-light); border: 1px solid var(--g2-blue-border); }
+.credAlreadyTitle    { font-size: 0.88rem; font-weight: 700; color: var(--g2-ink); margin: 0 0 0.2rem; }
+.credAlreadySub      { font-size: 0.78rem; color: var(--g2-slate); margin: 0; }
+.credSuccessText     { color: #166534; font-size: 0.85rem; font-weight: 700; margin: 0; }
+.credErrorText       { color: #991b1b; font-size: 0.85rem; font-weight: 700; margin: 0; }
+.credActions         { display: flex; justify-content: flex-end; }
+
+/* ── Empty / Loading ─────────────────────────────────────────────────── */
+.emptyMsg  { font-size: 0.82rem; color: var(--g2-muted); margin: 0; padding: 0.5rem 0; }
+.loadingBox { display: flex; justify-content: center; padding: 2rem; }
+
+/* ── Related Opportunities ──────────────────────────────────────────── */
+.relatedOppList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.relatedOppItem {
+    border: 1px solid var(--g2-blue-border);
+    border-radius: var(--g2-radius-sm);
+    padding: 0.65rem 0.85rem;
+    cursor: pointer;
+    background: #FAFCFF;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.relatedOppItem:hover {
+    background-color: var(--g2-blue-light);
+    border-color: var(--g2-blue-mid);
+    transform: translateY(-1px);
+}
+
+.relatedOppMain {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    color: var(--g2-ink);
+}
+
+.relatedOppStage {
+    font-weight: 700;
+    color: var(--g2-blue);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: var(--g2-blue-light);
+    border: 1px solid var(--g2-blue-border);
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+}
+
+.relatedOppSub {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    font-size: 0.78rem;
+    color: var(--g2-slate);
+    margin-top: 0.35rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .detailsGrid { grid-template-columns: repeat(2, 1fr); }
+    .contactGrid { grid-template-columns: 1fr 1fr; }
+    .bankInfoGrid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+    .detailsGrid { grid-template-columns: 1fr; }
+    .contactGrid { grid-template-columns: 1fr; }
+    .headerBanner { flex-direction: column; }
+    .bankCard { min-width: 0; width: 100%; }
+}
