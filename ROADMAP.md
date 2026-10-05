@@ -40,9 +40,16 @@ Every build part follows the same 5 checkpoints:
 | Sandbox refreshed | ✅ |
 | Read-only impact inventory of existing components | ✅ |
 | Baseline v1.0.0 retrieved and tagged (local git) | ✅ |
+| Requirements & working rules listed (REQUIREMENTS.md) | ✅ |
+| Roadmap tracker (this file) | ✅ |
 | Decision 1 – hide Contact & Opportunity numbers in phase 1? | ⏸️ |
 | Decision – 360CTI users: stay unmasked until vendor delivers, or wait? | ⏸️ |
 | Decision – POC test users: new or existing? Which Sales profile to copy? | ⏸️ |
+| Decision – GitHub remote on this folder: keep or remove? (MCube token in baseline) | ⏸️ |
+| Decision – sandbox login: keep ejjigiripraveen or switch to own login? | ⏸️ |
+| Remaining read-only inventory: reports, email templates, existing triggers on Task / Call_Detail__c / FeedItem / feedback objects, managed-package screens | ⬜ |
+| Update baseline with anything new from the inventory / Decision 1 (needs explicit OK) | ⬜ |
+| Refresh CLAUDE.md status section | ⬜ |
 
 ## Part 1 – Foundations (v1.1.0) ⬜
 
