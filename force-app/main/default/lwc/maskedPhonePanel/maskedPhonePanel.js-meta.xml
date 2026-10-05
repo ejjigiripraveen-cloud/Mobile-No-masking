@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Masked Phone Panel</masterLabel>
+    <description>Shows the record's phone numbers masked (98XXXXXX21). Optional click-to-dial through the user's Open CTI softphone; the real number is resolved on the server.</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="title" type="String" label="Title" default="Phone Numbers" />
+            <property
+                name="enableClickToDial"
+                type="Boolean"
+                label="Enable click-to-dial"
+                default="false"
+                description="Desktop only. Turn on only after the user's softphone adapter supports masked click-to-dial."
+            />
+            <objects>
+                <object>Lead</object>
+            </objects>
+            <supportedFormFactors>
+                <supportedFormFactor type="Large" />
+                <supportedFormFactor type="Small" />
+            </supportedFormFactors>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

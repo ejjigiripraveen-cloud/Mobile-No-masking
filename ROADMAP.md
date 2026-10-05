@@ -13,7 +13,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|---|---|
 | 0 | v1.0.0 | Preparation & baseline | 🟡 |
 | 1 | v1.1.0 | Foundations (masking engine, dial service, audit) | 🟡 |
-| 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | ⬜ |
+| 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | 🟡 |
 | 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | ⬜ |
 | 4 | v1.4.0 | Lead creation with hidden numbers | ⬜ |
 | 5 | v1.5.0 | Mask existing screens that leak numbers | ⬜ |
@@ -64,15 +64,15 @@ Every build part follows the same 5 checkpoints:
 | Test (deploy status, tests >85%, masking results, nothing changed for users) | 🟡 deploy ✅, scripts 1–2 ✅, script 3 + permission set + user check pending |
 | Tag v1.1.0 + access sheet | ⬜ |
 
-## Part 2 – Masked phone panel (v1.2.0) ⬜
+## Part 2 – Masked phone panel (v1.2.0) 🟡
 
-**New:** `maskedPhonePanel` LWC, "POC Masked Rep" profile, 2 test users.
-**Existing changed:** `Lead_Record_Page` (panel visible to POC profile only). **User impact:** POC users only.
+**New:** `MaskedPhonePanelController` (+ test), `maskedPhonePanel` LWC (+ Jest), page `Sales_Lead_Record_Page_Masked_POC` (copy of `Sales_Lead_Record_Page` + panel), "POC Masked Rep" profile (clone of Presales outbound, 25 phone fields hidden), 2 new test users (MCube + SlashRTC).
+**Existing changed:** `Pre_Sales` (Gsquare Housing) app – one new page-assignment row for the POC profile (Pre Sales Leads, desktop). `Sales_Lead_Record_Page` is NOT changed. **User impact:** POC users only.
 
 | Checkpoint | Status |
 |---|---|
-| Build locally | ⬜ |
-| Approval – Lead record page | ⬜ |
+| Build locally | ✅ |
+| Approval – clone page + app assignment row | ✅ (approved 2026-10-05) |
 | Deploy to sandbox | ⬜ |
 | Test (masked display, no raw fields, no number in browser, other users unchanged) | ⬜ |
 | Tag v1.2.0 + access sheet | ⬜ |

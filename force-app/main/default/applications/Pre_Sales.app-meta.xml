@@ -40,6 +40,16 @@
     <navType>Standard</navType>
     <profileActionOverrides>
         <actionName>View</actionName>
+        <comment>POC (mobile number masking): masked Lead page for the POC Masked Rep profile only.</comment>
+        <content>Sales_Lead_Record_Page_Masked_POC</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+        <recordType>Lead.Pre_Sales</recordType>
+        <type>Flexipage</type>
+        <profile>POC Masked Rep</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
         <content>Sales_Lead_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Lead</pageOrSobjectType>

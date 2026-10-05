@@ -1,0 +1,52 @@
+<template>
+    <lightning-card title={title} icon-name="standard:call">
+        <div class="slds-p-horizontal_medium">
+            <template lwc:if={isLoading}>
+                <div class="spinner-holder">
+                    <lightning-spinner size="small" alternative-text="Loading phone numbers"></lightning-spinner>
+                </div>
+            </template>
+            <template lwc:elseif={errorMessage}>
+                <p class="slds-text-color_error" role="alert" data-id="error">{errorMessage}</p>
+            </template>
+            <template lwc:elseif={hasRows}>
+                <ul>
+                    <template for:each={displayRows} for:item="row">
+                        <li
+                            key={row.fieldKey}
+                            class="slds-grid slds-grid_vertical-align-center slds-p-vertical_xx-small"
+                            data-field={row.fieldKey}
+                        >
+                            <span class="slds-col slds-size_1-of-3 slds-text-color_weak">{row.label}</span>
+                            <span class="slds-col slds-size_2-of-3">
+                                <template lwc:if={row.showDial}>
+                                    <lightning-click-to-dial
+                                        value={row.maskedNumber}
+                                        record-id={recordId}
+                                        params={row.params}
+                                    ></lightning-click-to-dial>
+                                </template>
+                                <template lwc:elseif={row.showMasked}>
+                                    <span class="masked-number" data-id="masked">{row.maskedNumber}</span>
+                                    <lightning-icon
+                                        icon-name="utility:call"
+                                        size="xx-small"
+                                        class="slds-m-left_x-small call-disabled"
+                                        alternative-text={callHint}
+                                        title={callHint}
+                                    ></lightning-icon>
+                                </template>
+                                <template lwc:else>
+                                    <span class="slds-text-color_weak" data-id="empty">{row.emptyText}</span>
+                                </template>
+                            </span>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="slds-text-color_weak" data-id="none">No phone numbers configured.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

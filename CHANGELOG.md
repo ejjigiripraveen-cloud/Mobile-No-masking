@@ -5,6 +5,37 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.2.0 – Masked phone panel, POC users only (built locally 2026-10-05 · NOT deployed)
+
+- **Commit Version:** v1.2.0
+- **Type:** feat + permission-update
+- **Branch:** `ejjigiripraveen/v1.2.0-masked-panel` (from v1.1.0)
+- **Modified Assets:**
+  - New: Apex `MaskedPhonePanelController` + `MaskedPhonePanelControllerTest`; LWC `maskedPhonePanel` (+ 2 Jest test files); FlexiPage `Sales_Lead_Record_Page_Masked_POC` (copy of `Sales_Lead_Record_Page` + panel at the top of the left column); profile overlay `POC Masked Rep` (25 phone fields hidden, class access to the panel controller).
+  - Existing (approved): `Pre_Sales` app ("Gsquare Housing") – **one new row**: Lead · View · Pre Sales record type · desktop · profile POC Masked Rep → `Sales_Lead_Record_Page_Masked_POC`. No existing row changed. Pre-change snapshot committed as `1adf63f`.
+  - Untouched: `Sales_Lead_Record_Page`, `Lead_Record_Page`, all other profiles, users and code.
+- **Changelog:**
+  - Panel shows Primary / Secondary masked (`98XXXXXX21`), "No secondary number" when empty, error and empty states; reloads when the record is saved.
+  - Apex returns masked values only (1 query, no DML, `with sharing`, object access check). The real number never reaches the browser.
+  - Click-to-dial is an App Builder option, **off** on the POC page until Part 3; never shown on mobile.
+- **Deploy order:**
+  1. Admin clones **Presales outbound** → **POC Masked Rep** in Setup → Profiles (manual, new profile).
+  2. `sf project deploy start --manifest manifest/v1.2.0/package-code.xml --test-level RunSpecifiedTests --tests MaskedPhonePanelControllerTest`
+  3. `sf project deploy start --manifest manifest/v1.2.0/package-access.xml --test-level NoTestRun` (re-retrieve `Pre_Sales` first if anyone edited the app since 2026-10-05).
+  4. Create 2 test users (Salesforce licence, profile POC Masked Rep): one with the MCube call center, one with SlashRTC.
+- **Rollback:** redeploy the pre-change app (`git show 1adf63f:force-app/main/default/applications/Pre_Sales.app-meta.xml`), then `sf project deploy start --manifest manifest/v1.2.0/package-empty.xml --post-destructive-changes manifest/v1.2.0/destructiveChanges.xml`, then move test users off the POC profile and delete it in Setup.
+- **Not yet run:** Apex tests (run in the org at validation) and Jest tests (Node.js is not installed on this machine).
+
+### Access sheet – v1.2.0
+
+| Item | Who | Action |
+|---|---|---|
+| Apex `MaskedPhonePanelController` | POC Masked Rep | Granted by the profile overlay (step 3). Reps get it at go-live. |
+| LWC `maskedPhonePanel` | — | No access setting; it shows only on the cloned page. |
+| Page `Sales_Lead_Record_Page_Masked_POC` | POC Masked Rep, Gsquare Housing app, Pre Sales Leads, desktop | One app assignment row (step 3). |
+| Phone fields (25) | POC Masked Rep | Read and edit removed (step 3). All other profiles unchanged. |
+| Test users (2) | New users | Profile POC Masked Rep; call center MCube / SlashRTC (step 4). |
+
 ## v1.1.0 – Foundations (built locally 2026-10-05 · NOT deployed)
 
 - **Commit Version:** v1.1.0

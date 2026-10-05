@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.2.0 rollback (run AFTER redeploying the pre-change Pre_Sales app, see CHANGELOG):
+     removes the cloned page, the panel and its controller. The POC profile is removed by hand in Setup
+     once no user is assigned to it. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Sales_Lead_Record_Page_Masked_POC</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members>maskedPhonePanel</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>MaskedPhonePanelControllerTest</members>
+        <members>MaskedPhonePanelController</members>
+        <name>ApexClass</name>
+    </types>
+    <version>66.0</version>
+</Package>
