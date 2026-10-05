@@ -12,7 +12,7 @@
     <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
-    <enableStreamingApi>false</enableStreamingApi>
+    <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>Private</externalSharingModel>
     <label>Phone Access Audit</label>
     <nameField>

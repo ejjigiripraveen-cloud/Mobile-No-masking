@@ -9,7 +9,8 @@ Reverting local files is immediate. Reverting the sandbox means redeploying the 
 
 - **Commit Version:** v1.1.0
 - **Type:** feat
-- **Status:** built locally. Deploy to sandbox only when told. Git tag `v1.1.0` is added after the sandbox test passes.
+- **Status:** built locally and **validated (check-only) in sandbox 2026-10-05** – validation 0Afft000000LMITCA4, 42 tests passed, 0 failures. Nothing saved to the org. Deploy only when told; git tag `v1.1.0` is added after the sandbox test passes.
+- **Coverage (validation):** PhoneMaskUtil 100% · MaskedDialService 100% · PhoneMaskingConfig 98.2% · MaskedDialServiceCTI 93.5%
 - **Modified Assets (all new – no existing component changed):**
   - Apex: `PhoneMaskingConfig`, `PhoneMaskUtil`, `MaskedDialService`, `MaskedDialServiceCTI`
   - Apex tests: `PhoneTestDataFactory`, `PhoneMaskingConfigTest`, `PhoneMaskUtilTest`, `MaskedDialServiceTest`, `MaskedDialServiceCTITest`
@@ -22,6 +23,7 @@ Reverting local files is immediate. Reverting the sandbox means redeploying the 
   - Open CTI entry point (`global webservice`) for the SlashRTC softphone.
 - **Changes vs. the plan presented before building:** added `PhoneMaskingConfig` (shared settings reader); kill switch named `Resolve_Enabled__c` ("Real Number Lookup Enabled") – it stops number lookups and never un-masks anything; added `Message__c` to the audit object; added `Phone_Access_Audit_Viewer` permission set instead of editing the existing System Administrator profile.
 - **Deploy:** `sf project deploy start --manifest manifest/v1.1.0/package.xml --test-level RunSpecifiedTests --tests PhoneMaskingConfigTest PhoneMaskUtilTest MaskedDialServiceTest MaskedDialServiceCTITest`
+- **Validation fixes:** audit object Bulk/Streaming/Sharing flags aligned; plain `Database.insert(rows, false)` for audit rows; test assertion fixes (`===` instead of non-existent `Assert.areSame`, non-null assert messages).
 - **Rollback:** `sf project deploy start --manifest manifest/v1.1.0/package-empty.xml --post-destructive-changes manifest/v1.1.0/destructiveChanges.xml` (removes only the new components; audit data, if any, is deleted with the object).
 
 ### Access sheet – v1.1.0

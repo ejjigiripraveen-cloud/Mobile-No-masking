@@ -65,7 +65,7 @@ private class MaskedDialServiceTest {
         }
         Test.stopTest();
 
-        Assert.isTrue(result.success, result.message);
+        Assert.isTrue(result.success, 'Message: ' + result.message);
         Assert.areEqual(MaskedDialService.OUTCOME_SUCCESS, result.outcome);
         Assert.areEqual(ownLead.Phone__c, result.phoneNumber, 'Real number returned to the server-side caller');
         Assert.areEqual(PhoneMaskUtil.mask(ownLead.Phone__c), result.maskedNumber);
@@ -93,7 +93,7 @@ private class MaskedDialServiceTest {
             result = MaskedDialService.resolveOne(ownLead.Id, PhoneTestDataFactory.FIELD_KEY_SECONDARY, 'SlashRTC');
         }
 
-        Assert.isTrue(result.success, result.message);
+        Assert.isTrue(result.success, 'Message: ' + result.message);
         Assert.areEqual(ownLead.Secondary_Phone__c, result.phoneNumber);
     }
 
@@ -107,7 +107,7 @@ private class MaskedDialServiceTest {
             result = MaskedDialService.resolveOne(ownLead.Id, '  lead.PHONE__c ', 'MCube');
         }
 
-        Assert.isTrue(result.success, result.message);
+        Assert.isTrue(result.success, 'Message: ' + result.message);
     }
 
     @IsTest
@@ -211,7 +211,7 @@ private class MaskedDialServiceTest {
         }
 
         Assert.isFalse(results[0].success, 'Reveal not allowed on primary in this configuration');
-        Assert.isTrue(results[1].success, results[1].message);
+        Assert.isTrue(results[1].success, 'Message: ' + results[1].message);
         List<Phone_Access_Audit__c> rows = [
             SELECT Action__c, Reason__c FROM Phone_Access_Audit__c WHERE Outcome__c = :MaskedDialService.OUTCOME_SUCCESS
         ];
@@ -338,7 +338,7 @@ private class MaskedDialServiceTest {
             result = MaskedDialService.resolveOne(ownLead.Id, PhoneTestDataFactory.FIELD_KEY_PRIMARY, 'MCube');
         }
 
-        Assert.isTrue(result.success, result.message);
+        Assert.isTrue(result.success, 'Message: ' + result.message);
         Assert.areEqual(0, audits().size());
     }
 
@@ -391,7 +391,7 @@ private class MaskedDialServiceTest {
 
         Assert.areEqual(200, results.size());
         for (Integer i = 0; i < results.size(); i++) {
-            Assert.isTrue(results[i].success, results[i].message);
+            Assert.isTrue(results[i].success, 'Message: ' + results[i].message);
             Assert.areEqual(bulkLeads[i].Phone__c, results[i].phoneNumber, 'Results keep request order');
         }
         Assert.areEqual(1, queriesUsed, 'One query for all 200 Leads');

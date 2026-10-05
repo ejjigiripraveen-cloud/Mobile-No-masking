@@ -4,7 +4,7 @@ private class PhoneMaskingConfigTest {
     static void returnsSettingFromMetadataOrDefaults() {
         Phone_Masking_Setting__mdt setting = PhoneMaskingConfig.getSetting();
         Assert.isNotNull(setting, 'A setting is always available (record or built-in defaults)');
-        Assert.areSame(setting, PhoneMaskingConfig.getSetting(), 'Setting is cached per transaction');
+        Assert.isTrue(setting === PhoneMaskingConfig.getSetting(), 'Setting is cached per transaction');
     }
 
     @IsTest
@@ -50,7 +50,7 @@ private class PhoneMaskingConfigTest {
     static void readsDeployedFieldListAndCachesIt() {
         Map<String, Masked_Phone_Field__mdt> first = PhoneMaskingConfig.getActiveFields();
         Assert.isNotNull(first);
-        Assert.areSame(first, PhoneMaskingConfig.getActiveFields(), 'Field list is cached per transaction');
+        Assert.isTrue(first === PhoneMaskingConfig.getActiveFields(), 'Field list is cached per transaction');
     }
 
     @IsTest

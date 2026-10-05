@@ -30,7 +30,7 @@ private class MaskedDialServiceCTITest {
         Test.stopTest();
 
         Map<String, Object> body = parse(response);
-        Assert.areEqual(true, body.get('success'), String.valueOf(body.get('message')));
+        Assert.areEqual(true, body.get('success'), 'Message: ' + body.get('message'));
         Assert.areEqual(testLead.Phone__c, body.get('phoneNumber'));
         Assert.areEqual(PhoneMaskUtil.mask(testLead.Phone__c), body.get('maskedNumber'));
         Assert.areEqual(MaskedDialService.OUTCOME_SUCCESS, body.get('outcome'));

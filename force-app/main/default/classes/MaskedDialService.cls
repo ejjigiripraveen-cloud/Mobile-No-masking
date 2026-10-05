@@ -229,7 +229,7 @@ public with sharing class MaskedDialService {
      *              without any phone number.
      */
     private static void writeAudits(List<Phone_Access_Audit__c> audits) {
-        List<Database.SaveResult> saveResults = Database.insert(audits, false, AccessLevel.SYSTEM_MODE);
+        List<Database.SaveResult> saveResults = Database.insert(audits, false);
         for (Database.SaveResult saveResult : saveResults) {
             if (!saveResult.isSuccess()) {
                 System.debug(LoggingLevel.ERROR, 'Phone Access Audit insert failed: ' + saveResult.getErrors()[0].getMessage());
