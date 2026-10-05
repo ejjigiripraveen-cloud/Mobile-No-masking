@@ -197,10 +197,11 @@ private class MaskedPhonePanelControllerTest {
         PhoneTestDataFactory.useTestConfig(true, true);
         Lead lead = leadNamed('Panel Both Numbers');
 
-        Integer before = Limits.getQueries();
+        Integer queriesBefore = Limits.getQueries();
+        Integer dmlBefore = Limits.getDmlStatements();
         MaskedPhonePanelController.getMaskedNumbers(lead.Id);
 
-        Assert.areEqual(1, Limits.getQueries() - before);
-        Assert.areEqual(0, Limits.getDmlStatements(), 'Panel never writes data');
+        Assert.areEqual(1, Limits.getQueries() - queriesBefore);
+        Assert.areEqual(0, Limits.getDmlStatements() - dmlBefore, 'Panel never writes data');
     }
 }

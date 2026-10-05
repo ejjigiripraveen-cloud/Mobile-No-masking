@@ -73,7 +73,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally | ✅ |
 | Approval – clone page + app assignment row | ✅ (approved 2026-10-05) |
-| Deploy to sandbox | ⬜ |
+| Deploy to sandbox | 🟡 step 2 ✅ 2026-10-05 (0Afft000000LRq1CAG: 4/4, 11 tests, 100%) · step 1 profile clone + step 3 access pending |
 | Test (masked display, no raw fields, no number in browser, other users unchanged) | ⬜ |
 | Tag v1.2.0 + access sheet | ⬜ |
 
