@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resolve_Enabled__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Kill switch. When unchecked, MaskedDialService refuses every request, so no real number is released to any dialer.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Real Number Lookup Enabled</label>
+    <type>Checkbox</type>
+</CustomField>

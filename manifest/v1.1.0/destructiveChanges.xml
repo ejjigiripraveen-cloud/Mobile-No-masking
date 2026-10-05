@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Rollback of v1.1.0: removes every component this version added. Nothing existing is touched. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>MaskedDialServiceCTITest</members>
+        <members>MaskedDialServiceTest</members>
+        <members>PhoneMaskUtilTest</members>
+        <members>PhoneMaskingConfigTest</members>
+        <members>PhoneTestDataFactory</members>
+        <members>MaskedDialServiceCTI</members>
+        <members>MaskedDialService</members>
+        <members>PhoneMaskUtil</members>
+        <members>PhoneMaskingConfig</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit_Viewer</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit__c</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Masked_Phone_Field.Lead_Phone</members>
+        <members>Masked_Phone_Field.Lead_Secondary_Phone</members>
+        <members>Phone_Masking_Setting.Default</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>Masked_Phone_Field__mdt</members>
+        <members>Phone_Access_Audit__c</members>
+        <members>Phone_Masking_Setting__mdt</members>
+        <name>CustomObject</name>
+    </types>
+    <version>66.0</version>
+</Package>

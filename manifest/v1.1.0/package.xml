@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>MaskedDialService</members>
+        <members>MaskedDialServiceCTI</members>
+        <members>MaskedDialServiceCTITest</members>
+        <members>MaskedDialServiceTest</members>
+        <members>PhoneMaskUtil</members>
+        <members>PhoneMaskUtilTest</members>
+        <members>PhoneMaskingConfig</members>
+        <members>PhoneMaskingConfigTest</members>
+        <members>PhoneTestDataFactory</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Masked_Phone_Field.Lead_Phone</members>
+        <members>Masked_Phone_Field.Lead_Secondary_Phone</members>
+        <members>Phone_Masking_Setting.Default</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>Masked_Phone_Field__mdt</members>
+        <members>Phone_Access_Audit__c</members>
+        <members>Phone_Masking_Setting__mdt</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit__c</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit_Viewer</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>66.0</version>
+</Package>

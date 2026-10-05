@@ -12,7 +12,7 @@ Every build part follows the same 5 checkpoints:
 | Part | Version | Name | Status |
 |---|---|---|---|
 | 0 | v1.0.0 | Preparation & baseline | 🟡 |
-| 1 | v1.1.0 | Foundations (masking engine, dial service, audit) | ⬜ |
+| 1 | v1.1.0 | Foundations (masking engine, dial service, audit) | 🟡 |
 | 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | ⬜ |
 | 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | ⬜ |
 | 4 | v1.4.0 | Lead creation with hidden numbers | ⬜ |
@@ -51,14 +51,14 @@ Every build part follows the same 5 checkpoints:
 | Update baseline with anything new from the inventory / Decision 1 (needs explicit OK) | ⬜ |
 | Refresh CLAUDE.md status section | ⬜ |
 
-## Part 1 – Foundations (v1.1.0) ⬜
+## Part 1 – Foundations (v1.1.0) 🟡
 
-**New:** `PhoneMaskUtil`, `MaskedDialService` (+ Open CTI global entry point), `Masked_Phone_Field__mdt` (2 records), `Phone_Masking_Setting__mdt` (1 record), `Phone_Access_Audit__c`, `PhoneTestDataFactory` + test classes.
+**New:** `PhoneMaskingConfig`, `PhoneMaskUtil`, `MaskedDialService`, `MaskedDialServiceCTI` (Open CTI entry point), `Masked_Phone_Field__mdt` (2 records), `Phone_Masking_Setting__mdt` (1 record), `Phone_Access_Audit__c` + tab, `Phone_Access_Audit_Viewer` permission set, `PhoneTestDataFactory` + 4 test classes.
 **Existing changed:** none. **User impact:** none.
 
 | Checkpoint | Status |
 |---|---|
-| Build locally | ⬜ |
+| Build locally | ✅ |
 | Approval | ➖ (new components only) |
 | Deploy to sandbox | ⬜ |
 | Test (deploy status, tests >85%, masking results, nothing changed for users) | ⬜ |
