@@ -73,7 +73,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally | ✅ |
 | Approval – clone page + app assignment row | ✅ (approved 2026-10-05) |
-| Deploy to sandbox | 🟡 step 1 profile clone ✅ · step 2 code ✅ (0Afft000000LRq1CAG) · step 3a profile ✅ (0Afft000000LRzhCAG) · step 3b page activation in App Builder (manual) ⬜ · step 4 test users ✅ (POC MCube Rep 005ft000000YFsfAAG, POC SlashRTC Rep 005ft000000YFuHAAW) |
+| Deploy to sandbox | ✅ step 1 profile clone ✅ · step 2 code ✅ (0Afft000000LRq1CAG) · step 3a profile ✅ (0Afft000000LRzhCAG) · step 3b page activation in App Builder ✅ (verified: 1 row added, 0 changed) · step 4 test users ✅ (POC MCube Rep 005ft000000YFsfAAG, POC SlashRTC Rep 005ft000000YFuHAAW) |
 | Test (masked display, no raw fields, no number in browser, other users unchanged) | ⬜ |
 | Tag v1.2.0 + access sheet | ⬜ |
 
