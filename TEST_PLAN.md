@@ -38,7 +38,7 @@ Before testing: Setup → **Login Access Policies** → "Administrators Can Log 
    ```apex
    System.debug(PhoneMaskUtil.mask('9876543221'));    // 98XXXXXX21
    System.debug(PhoneMaskUtil.mask('919876543221'));  // 98XXXXXX21
-   System.debug(PhoneMaskUtil.mask('+971501234567')); // 97XXXXXXXXX67 style – first 2 + last 2
+   System.debug(PhoneMaskUtil.mask('+971501234567')); // 97XXXXXXXX67 (first 2 + last 2)
    System.debug(PhoneMaskUtil.mask(''));              // blank, no error
    ```
    Tick **Open Log** → filter **Debug Only** → results match.
