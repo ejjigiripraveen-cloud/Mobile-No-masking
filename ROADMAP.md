@@ -73,7 +73,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally | ⬜ |
 | Approval – Lead record page | ⬜ |
-| Deploy to sandbox | ✅ 2026-10-05 (0Afft000000LO8zCAG, 44/44) |
+| Deploy to sandbox | ⬜ |
 | Test (masked display, no raw fields, no number in browser, other users unchanged) | ⬜ |
 | Tag v1.2.0 + access sheet | ⬜ |
 
@@ -86,7 +86,7 @@ Every build part follows the same 5 checkpoints:
 | Prerequisites: agent logins for test users, test Lead with tester's number | ⬜ |
 | Build locally | ⬜ |
 | Approval – adapters, `leadOp`, SlashRTC URL | ⬜ |
-| Deploy to sandbox | ✅ 2026-10-05 (0Afft000000LO8zCAG, 44/44) |
+| Deploy to sandbox | ⬜ |
 | Test – Q1 masked click reaches dialer | ⬜ |
 | Test – Q2 real number dialed, call log + audit row created | ⬜ |
 | Test – Q3 inbound screen pop still works | ⬜ |
@@ -104,7 +104,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally | ⬜ |
 | Approval | ⬜ |
-| Deploy to sandbox | ✅ 2026-10-05 (0Afft000000LO8zCAG, 44/44) |
+| Deploy to sandbox | ⬜ |
 | Test (create lead, primary locked, secondary editable, duplicates blocked, website/portal APIs, 200-record load) | ⬜ |
 | Tag v1.4.0 + access sheet | ⬜ |
 
@@ -117,7 +117,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally | ⬜ |
 | Approval | ⬜ |
-| Deploy to sandbox | ✅ 2026-10-05 (0Afft000000LO8zCAG, 44/44) |
+| Deploy to sandbox | ⬜ |
 | Test (each screen masked; MakeCall, G-Talk, Yotel/bulk push, WhatsApp, merge still work; `log__c` clean) | ⬜ |
 | Tag v1.5.0 + access sheet | ⬜ |
 
@@ -129,7 +129,7 @@ Every build part follows the same 5 checkpoints:
 | Checkpoint | Status |
 |---|---|
 | Build locally | ⬜ |
-| Deploy to sandbox | ✅ 2026-10-05 (0Afft000000LO8zCAG, 44/44) |
+| Deploy to sandbox | ⬜ |
 | Test (TL/Head reveal 30 s + audit row; reps no button; purge deletes only >1 year) | ⬜ |
 | Tag v1.6.0 + access sheet | ⬜ |
 
@@ -143,7 +143,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally | ⬜ |
 | Approval | ⬜ |
-| Deploy to sandbox | ✅ 2026-10-05 (0Afft000000LO8zCAG, 44/44) |
+| Deploy to sandbox | ⬜ |
 | Test (typed numbers masked on save; vendor call-log number fields untouched; 200-record save) | ⬜ |
 | Tag v1.7.0 + access sheet | ⬜ |
 
@@ -185,7 +185,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally (profile + permission set metadata) | ⬜ |
 | Approval | ⬜ |
-| Deploy to sandbox | ✅ 2026-10-05 (0Afft000000LO8zCAG, 44/44) |
+| Deploy to sandbox | ⬜ |
 | Full test as Rep / TL / Admin / Integration user (pages, list views, reports, export, search, mobile, API, all integrations) | ⬜ |
 | Tag v2.0.0 + final access sheet | ⬜ |
 
