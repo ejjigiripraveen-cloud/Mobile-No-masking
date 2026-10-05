@@ -9,7 +9,8 @@ Reverting local files is immediate. Reverting the sandbox means redeploying the 
 
 - **Commit Version:** v1.1.0
 - **Type:** feat
-- **Status:** built locally and **validated (check-only) in sandbox 2026-10-05** – validation 0Afft000000LMITCA4, 42 tests passed, 0 failures. Nothing saved to the org. Deploy only when told; git tag `v1.1.0` is added after the sandbox test passes.
+- **Deployed to sandbox 2026-10-05** – quick deploy 0Afft000000LO8zCAG, 44/44 components. Read-only tests 1–2 passed (11/11 masking cases, all settings as expected).
+- **Status (before deploy):** built locally and **validated (check-only) in sandbox 2026-10-05** – validation 0Afft000000LMITCA4, 42 tests passed, 0 failures. Nothing saved to the org. Deploy only when told; git tag `v1.1.0` is added after the sandbox test passes.
 - **Coverage (validation):** PhoneMaskUtil 100% · MaskedDialService 100% · PhoneMaskingConfig 98.2% · MaskedDialServiceCTI 93.5%
 - **Modified Assets (all new – no existing component changed):**
   - Apex: `PhoneMaskingConfig`, `PhoneMaskUtil`, `MaskedDialService`, `MaskedDialServiceCTI`
