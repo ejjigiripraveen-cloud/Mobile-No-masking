@@ -21,7 +21,8 @@ Reverting local files is immediate. Reverting the sandbox means redeploying the 
 - **Deploy order:**
   1. Admin clones **Presales outbound** → **POC Masked Rep** in Setup → Profiles (manual, new profile).
   2. `sf project deploy start --manifest manifest/v1.2.0/package-code.xml --test-level RunSpecifiedTests --tests MaskedPhonePanelControllerTest`
-  3. `sf project deploy start --manifest manifest/v1.2.0/package-access.xml --test-level NoTestRun` (re-retrieve `Pre_Sales` first if anyone edited the app since 2026-10-05).
+  3a. `sf project deploy start --manifest manifest/v1.2.0/package-profile.xml --test-level NoTestRun` – ✅ deployed 2026-10-05 (0Afft000000LRzhCAG).
+  3b. **Manual, Lightning App Builder:** open `Sales_Lead_Record_Page_Masked_POC` → Activation → App, Record Type, and Profile → app *Gsquare Housing*, form factor *Desktop*, record type *Pre Sales*, profile *POC Masked Rep* → Save. (The `Pre_Sales` app cannot be deployed by metadata: two pairs of same-named "Analytics Cloud" profiles appear as duplicate rows. `package-access.xml` is kept for reference only.)
   4. Create 2 test users (Salesforce licence, profile POC Masked Rep): one with the MCube call center, one with SlashRTC.
 - **Rollback:** redeploy the pre-change app (`git show 1adf63f:force-app/main/default/applications/Pre_Sales.app-meta.xml`), then `sf project deploy start --manifest manifest/v1.2.0/package-empty.xml --post-destructive-changes manifest/v1.2.0/destructiveChanges.xml`, then move test users off the POC profile and delete it in Setup.
 - **Not yet run:** Apex tests (run in the org at validation) and Jest tests (Node.js is not installed on this machine).

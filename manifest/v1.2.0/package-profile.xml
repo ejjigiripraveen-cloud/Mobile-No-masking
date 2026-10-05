@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.2.0 step 3a: POC Masked Rep profile overlay only (25 phone fields hidden, panel controller access).
+     The Gsquare Housing (Pre_Sales) app cannot be deployed by metadata: the org has two profiles named
+     "Analytics Cloud Integration User" and two named "Analytics Cloud Security User", which the app file
+     shows as duplicate assignment rows. The POC page assignment (step 3b) is therefore done in
+     Lightning App Builder. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>POC Masked Rep</members>
+        <name>Profile</name>
+    </types>
+    <version>66.0</version>
+</Package>
