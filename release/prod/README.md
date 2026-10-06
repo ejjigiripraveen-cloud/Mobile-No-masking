@@ -125,7 +125,7 @@ Notes for production:
 
 ## Part 4 – v1.4.0 (built 2026-10-06)
 
-### part4-lead-entry (deploy fourth)
+### part4-lead-entry (deploy fourth) – tested in sandbox 0Afft000000Lc77CAC · 20 tests · LeadPhoneEntryHandler 100%
 | Type | Components | Change |
 |---|---|---|
 | Custom fields | `Lead.Phone_Entry__c`, `Lead.Secondary_Phone_Entry__c` | New – always empty after save |

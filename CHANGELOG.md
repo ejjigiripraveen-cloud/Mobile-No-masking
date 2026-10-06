@@ -5,11 +5,14 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.4.0 – Lead creation with hidden numbers (built locally 2026-10-06 · NOT deployed)
+## v1.4.0 – Lead creation with hidden numbers (deployed to sandbox 2026-10-06)
 
 - **Commit Version:** v1.4.0
 - **Type:** feat
 - **Branch:** `ejjigiripraveen/v1.4.0-lead-entry`
+- **Sandbox deploys:** code 0Afft000000Lc77CAC (7/7, **20 tests passed** incl. existing LeadTriggerTest + LeadTriggerHandlerTest) · pilot 0Afft000000LcALCA0 (POC profile + POC page).
+- **Coverage:** LeadPhoneEntryHandler 100% · LeadTrigger 80.1% (whole trigger).
+- **Observed after deploy:** Salesforce automatically gave **read-only** access to the two new entry fields to 22 existing profiles (e.g. Sales, Presales TL, Presales Head, MIS). Harmless – the fields are always empty and on no page – and left as is; reviewed again with all profiles at go-live (Part 11).
 - **Backup of originals (before any change):** `backup/v1.4.0-pre-change` (commit `9b32c8c`, SHA256SUMS)
 - **Modified Assets:**
   - New: `Lead.Phone_Entry__c` (label "Phone"), `Lead.Secondary_Phone_Entry__c` (label "Secondary Phone"), `LeadPhoneEntryHandler`, `LeadPhoneEntryHandlerTest` (11 tests).

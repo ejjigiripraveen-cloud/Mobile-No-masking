@@ -104,7 +104,7 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Build locally | ✅ 2026-10-06 |
 | Approval | ✅ 2026-10-06 |
-| Deploy to sandbox | ⬜ |
+| Deploy to sandbox | ✅ 2026-10-06 code 0Afft000000Lc77CAC (20 tests) · pilot 0Afft000000LcALCA0 |
 | Test (create lead, primary locked, secondary editable, duplicates blocked, website/portal APIs, 200-record load) | ⬜ |
 | Tag v1.4.0 + access sheet | ⬜ |
 
