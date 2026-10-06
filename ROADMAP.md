@@ -14,7 +14,7 @@ Every build part follows the same 5 checkpoints:
 | 0 | v1.0.0 | Preparation & baseline | 🟡 |
 | 1 | v1.1.0 | Foundations (masking engine, dial service, audit) | 🟡 |
 | 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | 🟡 |
-| 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | ⬜ |
+| 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | 🟡 |
 | 4 | v1.4.0 | Lead creation with hidden numbers | ⬜ |
 | 5 | v1.5.0 | Mask existing screens that leak numbers | ⬜ |
 | 6 | v1.6.0 | Reveal for TL / Head / Admin + audit cleanup | ⬜ |
@@ -77,15 +77,15 @@ Every build part follows the same 5 checkpoints:
 | Test (masked display, no raw fields, no number in browser, other users unchanged) | ⬜ |
 | Tag v1.2.0 + access sheet | ⬜ |
 
-## Part 3 – Dialer adapters, POC (v1.3.0) ⬜
+## Part 3 – Dialer adapters, POC (v1.3.0) 🟡
 
 **Existing changed:** `mcubeSoftphoneCTIAddOn` + `McubeSoftphoneAddOnController`, `index` + `slashPhone`, `leadOp`, SlashRTC call center URL (sandbox only). **User impact:** POC users only.
 
 | Checkpoint | Status |
 |---|---|
 | Prerequisites: agent logins for test users, test Lead with tester's number | ⬜ |
-| Build locally | ⬜ |
-| Approval – adapters, `leadOp`, SlashRTC URL | ⬜ |
+| Build locally | ✅ 2026-10-06 (backup of originals: backup/v1.3.0-pre-change) |
+| Approval – adapters, SlashRTC URL | ✅ 2026-10-06 (`leadOp` needs no change) |
 | Deploy to sandbox | ⬜ |
 | Test – Q1 masked click reaches dialer | ⬜ |
 | Test – Q2 real number dialed, call log + audit row created | ⬜ |

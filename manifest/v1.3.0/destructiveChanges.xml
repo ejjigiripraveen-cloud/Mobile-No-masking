@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.3.0 rollback step 2: remove the new test class (after restoring the originals, see CHANGELOG). -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>McubeMaskedClickToCallTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>66.0</version>
+</Package>

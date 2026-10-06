@@ -28,6 +28,21 @@ global with sharing class MaskedDialServiceCTI {
         return JSON.serialize(new Response(MaskedDialService.resolveOne(parsedId, fieldKey, currentChannel())));
     }
 
+    /**
+     * @description Resolves the real number for a click on the masked phone panel. Uses fieldKey when the
+     *              click carries it; otherwise identifies the field from the masked value shown on screen.
+     * @param recordId     15 or 18 character record Id
+     * @param fieldKey     approved field key, e.g. 'Lead.Phone__c' (may be blank)
+     * @param maskedNumber the masked value that was clicked, e.g. '98XXXXXX21' (used when fieldKey is blank)
+     */
+    webservice static String resolveMaskedClick(String recordId, String fieldKey, String maskedNumber) {
+        Id parsedId = parseId(recordId);
+        if (parsedId != null && String.isBlank(fieldKey)) {
+            fieldKey = MaskedDialService.fieldKeyForMaskedNumber(parsedId, maskedNumber);
+        }
+        return resolveForDial(recordId, fieldKey);
+    }
+
     private static Id parseId(String value) {
         if (String.isBlank(value)) {
             return null;

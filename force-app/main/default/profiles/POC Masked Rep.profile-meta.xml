@@ -4,6 +4,10 @@
         <apexClass>MaskedPhonePanelController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <classAccesses>
+        <apexClass>MaskedDialServiceCTI</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <custom>true</custom>
     <description>POC only (mobile number masking). Clone of Presales outbound without access to customer phone fields. Assign to test users only.</description>
     <fieldPermissions>

@@ -26,6 +26,12 @@ public with sharing class MaskedDialService {
     @TestVisible
     private static final Integer MAX_REQUESTS = 200;
 
+    // Deferred audit: callers that make an HTTP callout after resolving (e.g. MCube) must not write
+    // to the database before the callout, so they defer the audit write and flush it afterwards.
+    private static Boolean deferAudits = false;
+    @TestVisible
+    private static List<Phone_Access_Audit__c> pendingAudits = new List<Phone_Access_Audit__c>();
+
     /**
      * @description One request for a real number.
      */
@@ -60,6 +66,84 @@ public with sharing class MaskedDialService {
      */
     public static DialResult resolveOne(Id recordId, String fieldKey, String channel) {
         return resolve(new List<DialRequest>{ new DialRequest(recordId, fieldKey, channel) }, ACTION_DIAL)[0];
+    }
+
+    /**
+     * @description Holds audit rows in memory instead of writing them, until flushAudits() is called.
+     *              Use when an HTTP callout follows the lookup in the same transaction.
+     */
+    public static void deferAuditWrites() {
+        deferAudits = true;
+    }
+
+    /**
+     * @description Writes the held audit rows (one insert) and stops deferring.
+     * @param note optional text added to the Message of rows that have none, e.g. the call result
+     */
+    public static void flushAudits(String note) {
+        deferAudits = false;
+        if (pendingAudits.isEmpty()) {
+            return;
+        }
+        if (String.isNotBlank(note)) {
+            for (Phone_Access_Audit__c audit : pendingAudits) {
+                if (String.isBlank(audit.Message__c)) {
+                    audit.Message__c = note.left(255);
+                }
+            }
+        }
+        List<Phone_Access_Audit__c> toWrite = pendingAudits;
+        pendingAudits = new List<Phone_Access_Audit__c>();
+        writeAudits(toWrite);
+    }
+
+    /**
+     * @description Finds which approved dial field of the record shows the given masked value, for clicks
+     *              that carry only the masked number (no field key). Returns null when no field or more than
+     *              one field matches. The user must be able to see the record (with sharing). One query.
+     */
+    public static String fieldKeyForMaskedNumber(Id recordId, String maskedNumber) {
+        if (recordId == null || String.isBlank(maskedNumber)) {
+            return null;
+        }
+        Schema.DescribeSObjectResult objectDescribe =
+            recordId.getSObjectType().getDescribe(Schema.SObjectDescribeOptions.DEFERRED);
+        if (!objectDescribe.isAccessible()) {
+            return null;
+        }
+        Map<String, Schema.SObjectField> fieldMap = objectDescribe.fields.getMap();
+        Map<String, String> keyByField = new Map<String, String>();
+        for (Masked_Phone_Field__mdt config : PhoneMaskingConfig.getActiveFields().values()) {
+            Schema.SObjectField field = fieldMap.get(config.Field_API_Name__c);
+            if (config.Allow_Dial__c == true && field != null
+                    && objectDescribe.getName().equalsIgnoreCase(config.Object_API_Name__c)) {
+                String fieldName = field.getDescribe().getName();
+                keyByField.put(fieldName, objectDescribe.getName() + '.' + fieldName);
+            }
+        }
+        if (keyByField.isEmpty()) {
+            return null;
+        }
+        String soql = 'SELECT Id, ' + String.join(new List<String>(keyByField.keySet()), ', ')
+            + ' FROM ' + objectDescribe.getName() + ' WHERE Id = :recordId LIMIT 1';
+        List<SObject> records = Database.queryWithBinds(
+            soql, new Map<String, Object>{ 'recordId' => recordId }, AccessLevel.SYSTEM_MODE
+        );
+        if (records.isEmpty()) {
+            return null;
+        }
+        String target = maskedNumber.trim();
+        String match;
+        for (String fieldName : keyByField.keySet()) {
+            String value = (String) records[0].get(fieldName);
+            if (String.isNotBlank(value) && PhoneMaskUtil.mask(value) == target) {
+                if (match != null) {
+                    return null; // ambiguous: two fields show the same masked value
+                }
+                match = keyByField.get(fieldName);
+            }
+        }
+        return match;
     }
 
     /**
@@ -169,7 +253,11 @@ public with sharing class MaskedDialService {
         }
 
         if (PhoneMaskingConfig.isAuditEnabled()) {
-            writeAudits(audits);
+            if (deferAudits) {
+                pendingAudits.addAll(audits);
+            } else {
+                writeAudits(audits);
+            }
         }
         return results;
     }

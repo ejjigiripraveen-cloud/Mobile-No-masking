@@ -52,9 +52,13 @@ N $P2 $V2 'User (data)' 'POC MCube Rep' '' 'Test user, MCube call center' '' 'Sa
 N $P2 $V2 'User (data)' 'POC SlashRTC Rep' '' 'Test user, SlashRTC call center' '' 'Sandbox only' '005ft000000YFuHAAW' 'No' ''
 
 $P3 = 'Part 3'; $V3 = 'v1.3.0'
-N $P3 $V3 'Apex Class (test)' 'McubeMaskedClickToCallTest' '' 'Tests the new MCube masked click-to-dial method (mocked callout)' '' 'Planned' '' 'Yes' 'New class so the existing test class stays untouched'
-N $P3 $V3 'Profile (update of new)' 'POC Masked Rep' '' 'Add class access: MaskedDialServiceCTI (SlashRTC runApex)' '' 'Planned' '' 'Pilot only (decide)' ''
-N $P3 $V3 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Turn panel property Enable click-to-dial = true' '' 'Planned' '' 'Pilot only' ''
+N $P3 $V3 'Apex Class (test)' 'McubeMaskedClickToCallTest' '' 'Tests the new MCube masked click-to-dial method (mocked callout)' '' 'Built (Local)' '' 'Yes' 'New class so the existing test class stays untouched'
+N $P3 $V3 'Apex Class (update of new)' 'MaskedDialService' '' 'Adds deferred audit (callout-safe) + field lookup from masked value' 'MaskedDialServiceTest' 'Built (Local)' '' 'Yes' 'Part 1 component updated'
+N $P3 $V3 'Apex Class (update of new)' 'MaskedDialServiceCTI' '' 'Adds resolveMaskedClick (SlashRTC masked click)' 'MaskedDialServiceCTITest' 'Built (Local)' '' 'Yes' 'Part 1 component updated'
+N $P3 $V3 'Apex Class (test, update)' 'MaskedDialServiceTest' '' '+5 tests' '' 'Built (Local)' '' 'Yes' ''
+N $P3 $V3 'Apex Class (test, update)' 'MaskedDialServiceCTITest' '' '+3 tests' '' 'Built (Local)' '' 'Yes' ''
+N $P3 $V3 'Profile (update of new)' 'POC Masked Rep' '' 'Add class access: MaskedDialServiceCTI (SlashRTC runApex)' '' 'Built (Local)' '' 'Pilot only (decide)' ''
+N $P3 $V3 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Turn panel property Enable click-to-dial = true' '' 'Built (Local)' '' 'Pilot only' ''
 N $P3 $V3 'Lightning Message Channel' 'MaskedDialRequest__c' '' 'Fallback Option A only: panel sends {recordId, fieldKey} to adapters' '' 'Conditional' '' 'Conditional' 'Only if POC shows masked click-to-dial fails'
 
 $P4 = 'Part 4'; $V4 = 'v1.4.0'
@@ -100,10 +104,10 @@ function E($part, $ver, $type, $api, $change, $why, $approval, $backup, $status,
     [void]$ex.Add(@($part, $ver, $type, $api, $change, $why, $approval, $backup, $status, $prod, $notes))
 }
 E $P2 $V2 'Lightning App (assignment)' 'Pre_Sales (Gsquare Housing)' 'One new page-assignment row: Lead, Pre Sales, desktop, POC Masked Rep -> masked page' 'Show the masked page to POC users only' 'Approved 2026-10-05' 'Commit 1adf63f (snapshot)' 'Done (Sandbox, App Builder)' 'Pilot only (manual)' 'App cannot be deployed by metadata (duplicate Analytics Cloud profile names)'
-E $P3 $V3 'Visualforce Page' 'mcubeSoftphoneCTIAddOn' 'In onClickToDial: if the click comes from the masked panel, call the new server method with recordId + fieldKey' 'MCube receives 98XXXXXX21, which it cannot dial' 'Pending approval' 'backup/v1.3.0-pre-change' 'Planned' 'Yes' 'Normal clicks unchanged'
-E $P3 $V3 'Apex Class' 'McubeSoftphoneAddOnController' 'Add new @RemoteAction clickToCallMasked(recordId, fieldKey): resolves via MaskedDialService, then reuses clickToCallRemote' 'Real number resolved on the server, never in the browser' 'Pending approval' 'backup/v1.3.0-pre-change' 'Planned' 'Yes' 'Existing methods not edited'
-E $P3 $V3 'Aura Component' 'slashPhone (slashPhoneHelper.js)' 'In onClickToDial listener: if masked click, runApex MaskedDialServiceCTI.resolveForDial, then continue existing flow' 'SlashRTC receives 98XXXXXX21' 'Pending approval' 'backup/v1.3.0-pre-change' 'Planned' 'Yes' 'Number exists briefly inside the SlashRTC softphone (vendor limitation)'
-E $P3 $V3 'Call Center' 'SlashRTCAdapter' 'Adapter URL -> sandbox index page' 'Sandbox adapter points to production' 'Pending approval' 'backup/v1.3.0-pre-change' 'Sandbox only' 'No' 'Production URL is already correct'
+E $P3 $V3 'Visualforce Page' 'mcubeSoftphoneCTIAddOn' 'In onClickToDial: if the click comes from the masked panel, call the new server method with recordId + fieldKey' 'MCube receives 98XXXXXX21, which it cannot dial' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Built (Local)' 'Yes' 'Normal clicks unchanged'
+E $P3 $V3 'Apex Class' 'McubeSoftphoneAddOnController' 'Add new @RemoteAction clickToCallMasked(recordId, fieldKey): resolves via MaskedDialService, then reuses clickToCallRemote' 'Real number resolved on the server, never in the browser' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Built (Local)' 'Yes' 'Existing methods not edited'
+E $P3 $V3 'Aura Component' 'slashPhone (slashPhoneHelper.js)' 'In onClickToDial listener: if masked click, runApex MaskedDialServiceCTI.resolveForDial, then continue existing flow' 'SlashRTC receives 98XXXXXX21' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Built (Local)' 'Yes' 'Number exists briefly inside the SlashRTC softphone (vendor limitation)'
+E $P3 $V3 'Call Center' 'SlashRTCAdapter' 'Adapter URL -> sandbox index page' 'Sandbox adapter points to production' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Sandbox only' 'No' 'Production URL is already correct'
 E $P3 $V3 'User (data)' 'POC MCube Rep' 'Set MobilePhone = agent number registered with MCube' 'MCube rings the agent on User.MobilePhone first' 'Pending' '' 'Sandbox only' 'No' ''
 E $P4 $V4 'Aura Component' 'NewLeadCmp' 'Phone inputs use entry fields' 'Phone__c input disappears for masked users' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
 E $P4 $V4 'Aura Component' 'NewRefLeadCmp' 'Phone inputs use entry fields' 'Same' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
@@ -217,7 +221,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
-    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Pending approval'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Planned'),
+    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Built (Local)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Planned'),
     @('Part 5', 'v1.5.0', 'Mask leaking screens', 'Planned'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
@@ -244,7 +248,7 @@ $exRows = @(); $n = 0; foreach ($r in $ex) { $n++; $exRows += , (@("$n") + $r) }
 Add-Sheet 'Existing Components' 'Existing Components that Change' 'Changed only after approval; original backed up first' @('#', 'Part', 'Version', 'Metadata Type', 'API Name', 'What changes', 'Why', 'Approval', 'Original backup', 'Status', 'Needed in Production', 'Notes') @(5, 11, 9, 22, 36, 50, 34, 20, 26, 20, 16, 34) $exRows @(9)
 
 # Production list: rows needed in production, ordered by part then by type dependency order
-$typeRank = @{ 'Custom Metadata Type' = 1; 'Custom Object' = 2; 'Custom Field' = 3; 'Custom Metadata Record' = 4; 'List View' = 5; 'Custom Tab' = 6; 'Custom Permission' = 7; 'Named Credential' = 8; 'Lightning Message Channel' = 9; 'Apex Class' = 10; 'Apex Class (test)' = 11; 'Apex Trigger' = 12; 'Apex Trigger / Class' = 12; 'Visualforce Page' = 13; 'Aura Component' = 14; 'Lightning Web Component' = 15; 'Lightning Web Component (update)' = 15; 'Quick Action' = 16; 'Lightning Page' = 17; 'Lightning Page (update of new)' = 17; 'Permission Set' = 18; 'Profile' = 19; 'Profile (update of new)' = 19; 'Lightning App (assignment)' = 20 }
+$typeRank = @{ 'Custom Metadata Type' = 1; 'Custom Object' = 2; 'Custom Field' = 3; 'Custom Metadata Record' = 4; 'List View' = 5; 'Custom Tab' = 6; 'Custom Permission' = 7; 'Named Credential' = 8; 'Lightning Message Channel' = 9; 'Apex Class' = 10; 'Apex Class (test)' = 11; 'Apex Class (update of new)' = 10; 'Apex Class (test, update)' = 11; 'Apex Trigger' = 12; 'Apex Trigger / Class' = 12; 'Visualforce Page' = 13; 'Aura Component' = 14; 'Lightning Web Component' = 15; 'Lightning Web Component (update)' = 15; 'Quick Action' = 16; 'Lightning Page' = 17; 'Lightning Page (update of new)' = 17; 'Permission Set' = 18; 'Profile' = 19; 'Profile (update of new)' = 19; 'Lightning App (assignment)' = 20 }
 $partRank = @{ 'Part 1' = 1; 'Part 2' = 2; 'Part 3' = 3; 'Part 4' = 4; 'Part 5' = 5; 'Part 6' = 6; 'Part 7' = 7; 'Part 8' = 8; 'Part 9' = 9; 'Part 11' = 11; 'Security fix' = 12; 'Part 13' = 13 }
 $prodItems = @()
 foreach ($r in $new) { if ($r[9] -notmatch '^No') { $prodItems += [pscustomobject]@{ Part = $r[0]; Ver = $r[1]; Type = $r[2]; Api = $r[3]; Parent = $r[4]; Kind = 'New'; Method = $(if ($r[2] -match 'User') { 'Manual' } else { 'Change set' }); Tests = $r[6]; Needed = $r[9]; Notes = $r[10] } } }

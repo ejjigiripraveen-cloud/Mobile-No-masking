@@ -391,6 +391,43 @@ public class McubeSoftphoneAddOnController {
         }
     }
     
+    /**
+* Masked click-to-dial (mobile number masking, v1.3.0). Called when the agent clicks a masked number
+* (e.g. 98XXXXXX21) on the masked phone panel. The page sends only the record Id plus the field key
+* (or the masked value); the real number is resolved here through MaskedDialService, which checks the
+* approved field list and the user's record access and audits the request, and is then dialed through
+* the existing clickToCallRemote. The real number is never returned to the page.
+*
+* @param  recordId      The record the call is placed from.
+* @param  fieldKey      Approved field key, e.g. Lead.Phone__c; may be blank.
+* @param  maskedNumber  The masked value clicked; used to identify the field when fieldKey is blank.
+* @return ClickToCallResult { success, message } — same shape as clickToCallRemote.
+*/
+    @RemoteAction
+    public static ClickToCallResult clickToCallMasked(String recordId, String fieldKey, String maskedNumber) {
+        Id parsedId;
+        try {
+            parsedId = Id.valueOf(recordId);
+        } catch (Exception e) {
+            return new ClickToCallResult(false, 'Invalid record.');
+        }
+        if (String.isBlank(fieldKey)) {
+            fieldKey = MaskedDialService.fieldKeyForMaskedNumber(parsedId, maskedNumber);
+        }
+        // The audit row is written after the MCube callout: no DML is allowed before a callout.
+        MaskedDialService.deferAuditWrites();
+        ClickToCallResult result;
+        try {
+            MaskedDialService.DialResult resolved = MaskedDialService.resolveOne(parsedId, fieldKey, 'MCube');
+            result = resolved.success
+                ? clickToCallRemote(recordId, resolved.phoneNumber)
+                : new ClickToCallResult(false, resolved.message);
+        } finally {
+            MaskedDialService.flushAudits(result == null ? null : 'MCube: ' + result.message);
+        }
+        return result;
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────
     
     /**

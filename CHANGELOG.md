@@ -5,6 +5,41 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.3.0 – Dialer adapters MCube + SlashRTC, POC (built locally 2026-10-06 · NOT deployed)
+
+- **Commit Version:** v1.3.0
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.3.0-dialer-adapters`
+- **Backup of originals (before any change):** `backup/v1.3.0-pre-change` (commit `f2c7e4f`, SHA256SUMS)
+- **Modified Assets:**
+  - Existing (approved 2026-10-06):
+    - `McubeSoftphoneAddOnController` – **added** `clickToCallMasked(recordId, fieldKey, maskedNumber)`; +37 lines, 0 removed; existing methods untouched.
+    - `mcubeSoftphoneCTIAddOn` (page) – `getMaskedClick()` helper + one branch in `onClickToDial`; the original `clickToCallRemote` call is unchanged in the "normal click" branch.
+    - `slashPhone` (`slashPhoneHelper.js`) – masked-click step in front of the original flow (`continueClickToDial`, unchanged); only 2 blank lines removed.
+  - Updated (our components): `MaskedDialService` (deferred audit for callouts, `fieldKeyForMaskedNumber`), `MaskedDialServiceCTI` (`resolveMaskedClick`), `MaskedDialServiceTest` (+5), `MaskedDialServiceCTITest` (+3), POC Masked Rep (+ `MaskedDialServiceCTI` access), `Sales_Lead_Record_Page_Masked_POC` (click-to-dial ON).
+  - New: `McubeMaskedClickToCallTest` (7 tests, MCube mocked).
+  - Sandbox only: `sandbox-only/v1.3.0-slashrtc-adapter-url` – SlashRTC adapter URL `/apex/index` (production URL untouched).
+- **Changelog:**
+  - Masked click detected by `fieldKey=` in the click params **or** an `X` in the clicked number (real numbers never contain X). If the softphone does not pass the params, the field is identified from the masked value (`fieldKeyForMaskedNumber`).
+  - MCube: real number resolved and dialed on the server – never sent to the page. Audit row written after the MCube callout, with the call result (`MCube: Call initiated.`).
+  - SlashRTC: real number resolved through Open CTI `runApex` and handed to the existing dialer flow (number exists briefly in the softphone – vendor limitation).
+  - Normal `Phone__c` clicks follow the original code for every dialer.
+- **Deploy:**
+  1. `sf project deploy start --manifest manifest/v1.3.0/package.xml --test-level RunSpecifiedTests --tests MaskedDialServiceTest --tests MaskedDialServiceCTITest --tests McubeMaskedClickToCallTest --tests McubeSoftphoneAddOnControllerTest`
+  2. `sf project deploy start --manifest manifest/v1.3.0/package-pilot.xml --test-level NoTestRun`
+  3. Sandbox only: `sf project deploy start --metadata-dir sandbox-only/v1.3.0-slashrtc-adapter-url`
+- **Rollback:** deploy `backup/v1.3.0-pre-change` (page, controller, slashPhone, call center) and the v1.2.0 versions of the Part 1 classes (`git show ejjigiripraveen/v1.2.0-masked-panel:<path>`), then `manifest/v1.3.0/destructiveChanges.xml` to remove `McubeMaskedClickToCallTest`.
+- **Before testing:** POC MCube Rep needs `MobilePhone` = agent number registered with MCube; SlashRTC agent for the POC SlashRTC Rep email and sandbox origin allowed; a Pre Sales test Lead per test user.
+
+### Access sheet – v1.3.0
+
+| Item | Who | Action |
+|---|---|---|
+| `MaskedDialServiceCTI` | POC Masked Rep | Granted by the profile overlay (pilot manifest) |
+| `McubeSoftphoneAddOnController` | POC Masked Rep | Already granted (inherited from Presales outbound) |
+| Click-to-dial on the panel | POC Masked Rep (masked page) | Page property in the pilot manifest |
+| Other users | – | No change |
+
 ## v1.2.0 – Masked phone panel, POC users only (built locally 2026-10-05 · NOT deployed)
 
 - **Commit Version:** v1.2.0

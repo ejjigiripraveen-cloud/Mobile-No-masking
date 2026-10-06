@@ -305,6 +305,33 @@
         // =================================================================
  
         /**
+         * Mobile number masking (v1.3.0). Returns { fieldKey, maskedNumber } when the click came from
+         * the masked phone panel (params contain fieldKey=..., or the number is masked with X),
+         * otherwise null. Real phone numbers never contain X.
+         *
+         * @param {Object} result — the onClickToDial payload.
+         */
+        function getMaskedClick(result) {
+            var fieldKey = '';
+            var params = result && result.params;
+            if (params && typeof params === 'object' && params.fieldKey) {
+                fieldKey = String(params.fieldKey);
+            } else if (typeof params === 'string') {
+                params.split(',').forEach(function(pair) {
+                    var parts = pair.split('=');
+                    if (parts.length === 2 && parts[0].trim() === 'fieldKey') {
+                        fieldKey = parts[1].trim();
+                    }
+                });
+            }
+            var number = (result && result.number) ? String(result.number) : '';
+            if (!fieldKey && !/[xX]/.test(number)) {
+                return null;
+            }
+            return { fieldKey: fieldKey, maskedNumber: number };
+        }
+
+        /**
          * Enable Click-to-Dial across all Salesforce pages.
          * When enabled, phone number fields become clickable links that
          * trigger our onClickToDial listener.
@@ -339,26 +366,46 @@
                 currentCall.objectType  = result.objectType;
                 currentCall.direction   = 'outbound';
  
+                // Mobile number masking (v1.3.0): a click on the masked phone panel carries a masked
+                // value (e.g. 98XXXXXX21) and a field key. The real number is resolved on the server
+                // by clickToCallMasked and is never sent to this page. Every other click is unchanged.
+                var maskedClick = getMaskedClick(result);
+                var remoteAction = maskedClick
+                    ? '{!$RemoteAction.McubeSoftphoneAddOnController.clickToCallMasked}'
+                    : '{!$RemoteAction.McubeSoftphoneAddOnController.clickToCallRemote}';
+                var onCallResult = function(res, event) {
+                    if (event.status && res && res.success) {
+                        log('Click-to-Dial outbound call placed: ' + result.number);
+                    } else {
+                        var msg = (res && res.message) ? res.message
+                            : (event && event.message ? event.message : 'call failed');
+                        log('Click-to-Dial outbound call failed: ' + msg);
+                        updateStatus('Call failed: ' + msg, 'error');
+                    }
+                };
+
                 // Place the outbound call through the MCube outbound API
                 // (the same path as the mcubeClick2Call Aura quick action)
                 // instead of sending a DIAL envelope to the widget.
                 updateStatus('Dialing: ' + result.number, 'default');
-                Visualforce.remoting.Manager.invokeAction(
-                    '{!$RemoteAction.McubeSoftphoneAddOnController.clickToCallRemote}',
-                    result.recordId || '',
-                    result.number,
-                    function(res, event) {
-                        if (event.status && res && res.success) {
-                            log('Click-to-Dial outbound call placed: ' + result.number);
-                        } else {
-                            var msg = (res && res.message) ? res.message
-                                : (event && event.message ? event.message : 'call failed');
-                            log('Click-to-Dial outbound call failed: ' + msg);
-                            updateStatus('Call failed: ' + msg, 'error');
-                        }
-                    },
-                    { escape: false }
-                );
+                if (maskedClick) {
+                    Visualforce.remoting.Manager.invokeAction(
+                        remoteAction,
+                        result.recordId || '',
+                        maskedClick.fieldKey,
+                        maskedClick.maskedNumber,
+                        onCallResult,
+                        { escape: false }
+                    );
+                } else {
+                    Visualforce.remoting.Manager.invokeAction(
+                        remoteAction,
+                        result.recordId || '',
+                        result.number,
+                        onCallResult,
+                        { escape: false }
+                    );
+                }
  
                 // Ensure the softphone panel is visible
                 sforce.opencti.setSoftphonePanelVisibility({

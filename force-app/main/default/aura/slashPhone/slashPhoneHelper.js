@@ -9,10 +9,61 @@
   handleOutgoingCalls : function(cmp) {
     console.log("handleOutgoingCalls");
 
+    // Mobile number masking (v1.3.0): returns { fieldKey, maskedNumber } when the click came from the
+    // masked phone panel (params contain fieldKey=..., or the number is masked with X), otherwise null.
+    var getMaskedClick = function(payload) {
+      var fieldKey = '';
+      var params = payload && payload.params;
+      if (params && typeof params === 'object' && params.fieldKey) {
+        fieldKey = String(params.fieldKey);
+      } else if (typeof params === 'string') {
+        params.split(',').forEach(function(pair) {
+          var parts = pair.split('=');
+          if (parts.length === 2 && parts[0].trim() === 'fieldKey') {
+            fieldKey = parts[1].trim();
+          }
+        });
+      }
+      var number = (payload && payload.number) ? String(payload.number) : '';
+      if (!fieldKey && !/[xX]/.test(number)) {
+        return null;
+      }
+      return { fieldKey: fieldKey, maskedNumber: number };
+    };
+
     // This function will run when Click-to-Call is triggered
     var listener = function(payload) {
-        
-        
+      var maskedClick = getMaskedClick(payload);
+      if (!maskedClick) {
+        continueClickToDial(payload);
+        return;
+      }
+      // Masked click: ask Salesforce for the real number (access check + audit), then dial as usual.
+      sforce.opencti.runApex({
+        apexClass: 'MaskedDialServiceCTI',
+        methodName: 'resolveMaskedClick',
+        methodParams: 'recordId=' + (payload.recordId || '')
+          + '&fieldKey=' + maskedClick.fieldKey
+          + '&maskedNumber=' + maskedClick.maskedNumber,
+        callback: function(response) {
+          var body = null;
+          try {
+            body = JSON.parse(response && response.returnValue ? response.returnValue.runApex : '');
+          } catch (e) {
+            body = null;
+          }
+          if (!response || !response.success || !body || body.success !== true) {
+            console.log('Slash ::', 'masked click-to-dial refused', body ? body.message : response);
+            return;
+          }
+          payload.number = body.phoneNumber;
+          continueClickToDial(payload);
+        }
+      });
+    };
+
+    // Original click-to-dial flow (unchanged): leadOp lookup, then send the call to the SlashRTC dialer.
+    var continueClickToDial = function(payload) {
          sforce.opencti.runApex({
               apexClass: 'leadOp',
               methodName: 'getValues',
