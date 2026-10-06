@@ -116,6 +116,7 @@ Every build part follows the same 5 checkpoints:
 | Checkpoint | Status |
 |---|---|
 | Build locally | 🟡 5a ✅ 2026-10-06 (backup/v1.5.0-part5a-pre-change) · 5b–5e ⬜ |
+| Deploy 5a | ✅ 2026-10-06 code 0Afft000000Lf3NCAS (45 tests) · pilot 0Afft000000Lf4zCAC · call panels postponed (new approach pending approval) |
 | Approval | 🟡 5a ✅ 2026-10-06 · 5b–5e ⬜ |
 | Deploy to sandbox | ⬜ |
 | Test (each screen masked; MakeCall, G-Talk, Yotel/bulk push, WhatsApp, merge still work; `log__c` clean) | ⬜ |

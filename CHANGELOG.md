@@ -5,11 +5,15 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.5.0 (5a) – Calling screens masked (built locally 2026-10-06 · NOT deployed)
+## v1.5.0 (5a) – Calling screens masked (deployed to sandbox 2026-10-06, call panels postponed)
 
 - **Commit Version:** v1.5.0 (Part 5a)
 - **Type:** feat
 - **Branch:** `ejjigiripraveen/v1.5.0-part5a-calling`
+- **Sandbox deploys:** code 0Afft000000Lf3NCAS (7/7, **45 tests passed** incl. existing MakeCallControllerTest, OfflineCallAppAPITest, MaskedDialServiceTest) · pilot 0Afft000000Lf4zCAC (POC profile reads Phone_Masked__c).
+- **Coverage:** PhoneDisplayService 100% · MaskedDialService 99.5% · MakeCallController 93.1% · OfflineCallAppAPI 78.5% (whole class).
+- **Call panels postponed:** attempts 0Afft000000Lf09CAC and 0Afft000000Lf1lCAC failed and rolled back – the Aura `lightning:recordViewForm` has no `onload` event (it exists only in LWC). `CallPanel` / `CallPanel_Outbound` restored locally to the original; a new approach is proposed for approval. Masked users still see an empty Phone line on the call panels until then (no leak).
+- **Observed:** Salesforce gave read on `Phone_Masked__c` to the same 22 profiles as the entry fields (23 incl. POC). Harmless – the field only shows the masked number.
 - **Backup of originals (before any change):** `backup/v1.5.0-part5a-pre-change` (commit `3c0330b`, 33 files identical to baseline)
 - **Modified Assets:**
   - New: `PhoneDisplayService` (one masking rule for all screens; resolves a masked number on the server with record-access check + audit), `PhoneDisplayServiceTest`, `PhoneMaskingCallScreensTest`, `Lead.Phone_Masked__c` (formula).

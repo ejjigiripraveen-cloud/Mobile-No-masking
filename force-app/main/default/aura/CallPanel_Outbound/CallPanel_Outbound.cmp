@@ -8,8 +8,6 @@
     
     <!-- Attributes-->
     <aura:attribute name="recordId" type="string" default="" />
-    <!-- Mobile number masking (v1.5.0): true when the user cannot see Phone__c; set in handlePanelLoad -->
-    <aura:attribute name="isMaskedUser" type="boolean" default="false"/>
    <!-- <aura:attribute name="objectName" type="string" default="" />-->
     <aura:attribute name="callType" type="string" default="" />
    <!-- added to achive the field dependency on call details -->
@@ -79,16 +77,11 @@
                     </div>
                   </div>
                 </div>  
-           <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Lead" onload="{!c.handlePanelLoad}">
+           <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Lead">
         <div class="slds-box">
             <lightning:outputField fieldName="Lead_Id__c" />
             <lightning:outputField fieldName="Name" />
-            <aura:if isTrue="{!v.isMaskedUser}">
-                <lightning:outputField fieldName="Phone_Masked__c" />
-                <aura:set attribute="else">
-                    <lightning:outputField fieldName="Phone__c" />
-                </aura:set>
-            </aura:if>
+            <lightning:outputField fieldName="Phone__c" />
         </div>
     </lightning:recordViewForm>
     </div>

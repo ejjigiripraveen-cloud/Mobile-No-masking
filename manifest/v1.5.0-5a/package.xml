@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- v1.5.0 Part 5a (calling screens). Run tests: PhoneDisplayServiceTest PhoneMaskingCallScreensTest MakeCallControllerTest OfflineCallAppAPITest MaskedDialServiceTest -->
+<!-- v1.5.0 Part 5a (calling screens; CallPanel / CallPanel_Outbound postponed - Aura view form has no onload). Run tests: PhoneDisplayServiceTest PhoneMaskingCallScreensTest MakeCallControllerTest OfflineCallAppAPITest MaskedDialServiceTest -->
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>MakeCallController</members>
@@ -9,11 +9,6 @@
         <members>PhoneDisplayServiceTest</members>
         <members>PhoneMaskingCallScreensTest</members>
         <name>ApexClass</name>
-    </types>
-    <types>
-        <members>CallPanel</members>
-        <members>CallPanel_Outbound</members>
-        <name>AuraDefinitionBundle</name>
     </types>
     <types>
         <members>Lead.Phone_Masked__c</members>

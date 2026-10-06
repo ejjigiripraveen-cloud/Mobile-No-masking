@@ -10,11 +10,6 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>CallPanel</members>
-        <members>CallPanel_Outbound</members>
-        <name>AuraDefinitionBundle</name>
-    </types>
-    <types>
         <members>Lead.Phone_Masked__c</members>
         <name>CustomField</name>
     </types>

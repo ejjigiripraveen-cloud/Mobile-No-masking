@@ -1,14 +1,4 @@
 ({
-    // Mobile number masking (v1.5.0): a user who cannot see Phone__c does not get it in the form's object info,
-    // so the panel shows the masked formula Phone_Masked__c instead of an empty Phone line.
-    handlePanelLoad : function(component, event, helper) {
-        var recordUi = event.getParam("recordUi");
-        var leadInfo = recordUi && ((recordUi.objectInfos && recordUi.objectInfos.Lead) || recordUi.objectInfo);
-        if (leadInfo && leadInfo.fields) {
-            component.set("v.isMaskedUser", !Object.prototype.hasOwnProperty.call(leadInfo.fields, "Phone__c"));
-        }
-    },
-
     doInit : function(component, event, helper) {
        
        /*Beed sound */
