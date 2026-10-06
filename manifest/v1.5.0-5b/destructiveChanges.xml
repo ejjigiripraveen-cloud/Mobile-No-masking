@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part 5b rollback step 2 (after redeploying mCubeController and LeadHistoryandActivityController from
+     backup/v1.5.0-part5b-pre-change and PhoneDisplayService from the 5a branch). -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>PhoneMaskingHistoryTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Call_Detail__c.Call_To_Masked__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>66.0</version>
+</Package>

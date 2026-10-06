@@ -49,6 +49,35 @@ public with sharing class PhoneDisplayService {
         return PhoneMaskUtil.mask(trimmed);
     }
 
+    // Lead fields whose history values are phone numbers (v1.5.0 5b). Approved fields from
+    // Masked_Phone_Field__mdt are added automatically.
+    private static final Set<String> PHONE_HISTORY_FIELDS = new Set<String>{
+        'phone__c', 'secondary_phone__c', 'phone', 'mobilephone', 'whatsapp_number__c',
+        'secondary_phones__c', 'merge_lead_phone_no__c', 'phone_entry__c', 'secondary_phone_entry__c'
+    };
+
+    /**
+     * @description A number for display: masked for masked users, unchanged for everyone else (v1.5.0 5b).
+     */
+    public static String forDisplay(String value) {
+        return isMaskedUser() ? maskForDisplay(value) : value;
+    }
+
+    /**
+     * @description A Lead field-history value for display (v1.5.0 5b): for masked users, values of phone fields
+     *              are masked (every number inside the text); other fields and other users are unchanged.
+     * @param fieldName API name of the tracked field (LeadHistory.Field)
+     * @param value     old or new value as text
+     */
+    public static String historyValueForDisplay(String fieldName, String value) {
+        if (value == null || String.isBlank(fieldName) || !isMaskedUser()) {
+            return value;
+        }
+        Boolean isPhoneField = PHONE_HISTORY_FIELDS.contains(fieldName.toLowerCase())
+            || PhoneMaskingConfig.getActiveFields().containsKey(PhoneMaskingConfig.fieldKey('Lead', fieldName));
+        return isPhoneField ? PhoneMaskUtil.maskInText(value) : value;
+    }
+
     /**
      * @description Masks a list for display, keeping the order. Null-safe.
      */

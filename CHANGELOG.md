@@ -5,6 +5,31 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.5.0 (5b) – Call history and logs masked (built locally 2026-10-06 · NOT deployed)
+
+- **Commit Version:** v1.5.0 (Part 5b)
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.5.0-part5b-history`
+- **Backup of originals (before any change):** `backup/v1.5.0-part5b-pre-change` (commit `d21280f`, 23 files; `LeadHistoryandActivityCmp` first backed up here)
+- **Found:** `Lead.Phone__c` and `Lead.Secondary_Phone__c` are field-history tracked, and the History & Activity screen returned old / new numbers.
+- **Modified Assets:**
+  - New: `PhoneMaskingHistoryTest`, `Call_Detail__c.Call_To_Masked__c` (formula).
+  - Updated (ours): `PhoneDisplayService` (+ `forDisplay`, `historyValueForDisplay`).
+  - Existing (approved 2026-10-06):
+    - `mCubeController` – `callRecords`: +7 lines, masks Call From / Call To for masked users (in memory only). `makeCall` / `makeCallZetta`: the 3 `log__c.Request__c` and 2 `Response__c` assignments wrapped in `PhoneMaskUtil.maskInText` – numbers in MCube logs are masked **for everyone**.
+    - `LeadHistoryandActivityController` – `GetData`: +3 lines masking phone history values, 2 lines changed to mask call numbers, for masked users.
+  - No change: `mCubeLightningPage`, `LeadHistoryandActivityCmp`.
+  - Later (Part 7): numbers typed into Task subject / description.
+- **Deploy:** `sf project deploy start --manifest manifest/v1.5.0-5b/package.xml --test-level RunSpecifiedTests --tests PhoneMaskingHistoryTest --tests PhoneDisplayServiceTest --tests mCubeController_Test --tests mCubeControllerTestExtended --tests LeadHistoryandActivityControllerTest`
+- **Rollback:** redeploy `mCubeController`, `LeadHistoryandActivityController` from `backup/v1.5.0-part5b-pre-change` and `PhoneDisplayService` from the 5a branch, then `manifest/v1.5.0-5b/destructiveChanges.xml`.
+
+### Access sheet – v1.5.0 (5b)
+
+| Item | Who | Action |
+|---|---|---|
+| `Call_Detail__c.Call_To_Masked__c` (read) | Rep profiles | At go-live (Part 11), with the call list views |
+| Changed classes | Existing users | Already granted; no change |
+
 ## v1.5.0 (5a) – Calling screens masked (deployed to sandbox 2026-10-06, call panels postponed)
 
 - **Commit Version:** v1.5.0 (Part 5a)

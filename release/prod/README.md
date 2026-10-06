@@ -167,3 +167,25 @@ sf project deploy validate --metadata-dir release/prod/part5a-calling --target-o
 sf project deploy quick --job-id <validation id> --target-org <prod>
 ```
 Go-live: read access to `Lead.Phone_Masked__c` for all rep profiles (Part 11).
+
+---
+
+## Part 5b – v1.5.0 call history and logs (built 2026-10-06)
+
+### part5b-history (deploy after part5a-calling)
+| Type | Components | Change |
+|---|---|---|
+| Apex | `PhoneDisplayService` | Updated (`forDisplay`, `historyValueForDisplay`) – also in part5a-calling |
+| Apex | `mCubeController` | **Existing** – `callRecords` masked for masked users; 5 `log__c` Request / Response lines masked for everyone |
+| Apex | `LeadHistoryandActivityController` | **Existing** – `GetData` masks phone history values and call numbers for masked users |
+| Apex test | `PhoneMaskingHistoryTest` | New |
+| Field | `Call_Detail__c.Call_To_Masked__c` (formula) | New |
+
+Originals: `backup/v1.5.0-part5b-pre-change`.
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part5b-history --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingHistoryTest --tests PhoneDisplayServiceTest \
+  --tests mCubeController_Test --tests mCubeControllerTestExtended --tests LeadHistoryandActivityControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```

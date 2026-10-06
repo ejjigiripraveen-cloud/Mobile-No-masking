@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Call_To_Masked__c</fullName>
+        <description>Mobile number masking (v1.5.0 5b): called number with only the first 2 and last 2 characters visible. For list views and reports of users who cannot see Call_To__c.</description>
+        <externalId>false</externalId>
+        <formula>IF(
+    ISBLANK(Call_To__c),
+    &quot;&quot;,
+    IF(
+        LEN(Call_To__c) &lt;= 4,
+        LPAD(&quot;&quot;, LEN(Call_To__c), &quot;X&quot;),
+        LEFT(Call_To__c, 2) &amp; LPAD(&quot;&quot;, LEN(Call_To__c) - 4, &quot;X&quot;) &amp; RIGHT(Call_To__c, 2)
+    )
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Call To (Masked)</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>
