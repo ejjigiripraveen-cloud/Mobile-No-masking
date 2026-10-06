@@ -29,6 +29,14 @@ Every build part follows the same 5 checkpoints:
 
 ---
 
+## Deferred items (raise after all build parts are done, before go-live)
+
+| # | Item | Why deferred | Proposed fix | Status |
+|---|---|---|---|---|
+| D1 | Call panels `CallPanel`, `CallPanel_Outbound` show an empty Phone line for masked users | Aura `lightning:recordViewForm` has no `onload` event – two 5a deploys rolled back; owner asked to skip for now (2026-10-06) | New LWC `maskedPhoneField` (Phone__c for users who can see it, Phone_Masked__c otherwise); replace the one Phone line in each panel | ⏸️ Remind owner after Parts 5b–7 |
+
+---
+
 ## Part 0 – Preparation & baseline (v1.0.0) 🟡
 
 | Item | Status |
