@@ -959,7 +959,7 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>enableClickToDial</name>
-                    <value>false</value>
+                    <value>true</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>

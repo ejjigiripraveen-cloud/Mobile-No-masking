@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.3.0 for PRODUCTION: masked click-to-dial in the MCube and SlashRTC adapters.
+     Deploy after part1-foundations (which already contains the v1.3.0 MaskedDialService / MaskedDialServiceCTI).
+     Run tests: McubeMaskedClickToCallTest McubeSoftphoneAddOnControllerTest -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>McubeMaskedClickToCallTest</members>
+        <members>McubeSoftphoneAddOnController</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>mcubeSoftphoneCTIAddOn</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>slashPhone</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <version>66.0</version>
+</Package>

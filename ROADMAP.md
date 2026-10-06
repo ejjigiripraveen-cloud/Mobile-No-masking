@@ -86,7 +86,7 @@ Every build part follows the same 5 checkpoints:
 | Prerequisites: agent logins for test users, test Lead with tester's number | ⬜ |
 | Build locally | ✅ 2026-10-06 (backup of originals: backup/v1.3.0-pre-change) |
 | Approval – adapters, SlashRTC URL | ✅ 2026-10-06 (`leadOp` needs no change) |
-| Deploy to sandbox | ⬜ |
+| Deploy to sandbox | ✅ 2026-10-06 code 0Afft000000LY6jCAG (60 tests) · pilot 0Afft000000LYBZCA4 · CTI Adapter URL: manual by you ⬜ |
 | Test – Q1 masked click reaches dialer | ⬜ |
 | Test – Q2 real number dialed, call log + audit row created | ⬜ |
 | Test – Q3 inbound screen pop still works | ⬜ |

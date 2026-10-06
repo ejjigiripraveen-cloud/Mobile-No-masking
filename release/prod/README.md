@@ -1,4 +1,4 @@
-# Production Release Bundle – Parts 1 and 2
+# Production Release Bundle – Parts 1 to 3
 
 Deploy-ready copies (Metadata API format) of the exact source that was deployed and tested in the
 sandbox. At the end of the project, deploy these folders to production in the order below, after any
@@ -6,9 +6,10 @@ later parts that change them have been rebuilt (see "Rebuild").
 
 | Folder | Part | For | Sandbox deploy (tested) |
 |---|---|---|---|
-| `part1-foundations/` | Part 1 – v1.1.0 | **Production – everyone** | 0Afft000000LO8zCAG · 42 tests · 93.5–100% |
+| `part1-foundations/` | Part 1 – v1.1.0 (+ v1.3.0 updates of MaskedDialService / MaskedDialServiceCTI) | **Production – everyone** | 0Afft000000LO8zCAG, updated 0Afft000000LY6jCAG · MaskedDialService 100%, MaskedDialServiceCTI 94.4% |
 | `part2-panel/` | Part 2 – v1.2.0 | **Production – everyone** | 0Afft000000LRq1CAG · 11 tests · 100% |
-| `part2-pilot/` | Part 2 – v1.2.0 | **Production pilot only** (removed after go-live) | 0Afft000000LRq1CAG (page) · 0Afft000000LRzhCAG (profile) |
+| `part2-pilot/` | Part 2 + 3 | **Production pilot only** (removed after go-live) | 0Afft000000LRq1CAG / 0Afft000000LRzhCAG / 0Afft000000LYBZCA4 (v1.3.0: click-to-dial on, softphone class access) |
+| `part3-dialers/` | Part 3 – v1.3.0 | **Production – everyone** (MCube + SlashRTC adapters) | 0Afft000000LY6jCAG · 60 tests · McubeSoftphoneAddOnController 87.9% |
 
 Checksums of every file: `SHA256SUMS`. Full component list and order: `docs/Mobile_Masking_Component_Register.xlsx` → sheet *Prod Deployment List*.
 
@@ -94,3 +95,28 @@ Later parts change some of these components (for example Part 6 adds Reveal to `
 bash scripts/release/build-prod-release.sh
 ```
 Each new part adds its own folder (`part3-…`, `part4-…`) and a line to that script.
+
+---
+
+## Part 3 – v1.3.0 (added 2026-10-06)
+
+### part3-dialers (deploy third, after part1-foundations and part2-panel)
+| Type | Components | Change |
+|---|---|---|
+| Apex | `McubeSoftphoneAddOnController` | **Existing** – adds `clickToCallMasked` only |
+| Apex test | `McubeMaskedClickToCallTest` | New (MCube mocked) |
+| Visualforce | `mcubeSoftphoneCTIAddOn` | **Existing** – masked-click branch; normal clicks unchanged |
+| Aura | `slashPhone` | **Existing** – masked-click step; normal clicks unchanged |
+
+Originals: `backup/v1.3.0-pre-change`. Rollback: `part3-dialers-rollback-README.md`.
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part3-dialers --target-org <prod> \
+  --test-level RunSpecifiedTests --tests McubeMaskedClickToCallTest --tests McubeSoftphoneAddOnControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+
+Notes for production:
+- The SlashRTC **CTI Adapter URL change is sandbox only** – production keeps `https://gsquaregroup.lightning.force.com/apex/index`.
+- Click-to-dial on the panel is switched on by the Lightning page property (pilot page in `part2-pilot`; real pages at go-live, Part 11).
+- Pilot MCube users need `User.MobilePhone` = agent number registered with MCube; SlashRTC users need a SlashRTC agent for their email.

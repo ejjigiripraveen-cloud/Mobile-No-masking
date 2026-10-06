@@ -101,6 +101,49 @@ private class MaskedDialServiceCTITest {
     }
 
     @IsTest
+    static void resolvesMaskedClickWithFieldKey() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        Lead testLead = [SELECT Id, Phone__c FROM Lead LIMIT 1];
+
+        Map<String, Object> body;
+        System.runAs(rep()) {
+            body = parse(MaskedDialServiceCTI.resolveMaskedClick(testLead.Id, PhoneTestDataFactory.FIELD_KEY_PRIMARY, null));
+        }
+
+        Assert.areEqual(true, body.get('success'), 'Message: ' + body.get('message'));
+        Assert.areEqual(testLead.Phone__c, body.get('phoneNumber'));
+    }
+
+    @IsTest
+    static void resolvesMaskedClickFromMaskedValueOnly() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        Lead testLead = [SELECT Id, Secondary_Phone__c FROM Lead LIMIT 1];
+
+        Map<String, Object> body;
+        System.runAs(rep()) {
+            body = parse(MaskedDialServiceCTI.resolveMaskedClick(testLead.Id, '', PhoneMaskUtil.mask(testLead.Secondary_Phone__c)));
+        }
+
+        Assert.areEqual(true, body.get('success'), 'Message: ' + body.get('message'));
+        Assert.areEqual(testLead.Secondary_Phone__c, body.get('phoneNumber'));
+    }
+
+    @IsTest
+    static void deniesMaskedClickThatMatchesNoField() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        Lead testLead = [SELECT Id FROM Lead LIMIT 1];
+
+        Map<String, Object> body;
+        System.runAs(rep()) {
+            body = parse(MaskedDialServiceCTI.resolveMaskedClick(testLead.Id, null, '11XXXXXX00'));
+        }
+
+        Assert.areEqual(false, body.get('success'));
+        Assert.isNull(body.get('phoneNumber'));
+        Assert.areEqual(false, parse(MaskedDialServiceCTI.resolveMaskedClick('bad', null, '11XXXXXX00')).get('success'));
+    }
+
+    @IsTest
     static void usesDefaultChannelWithoutCallCenter() {
         String channel;
         System.runAs(rep()) {

@@ -398,4 +398,102 @@ private class MaskedDialServiceTest {
         Assert.areEqual(1, dmlUsed, 'One insert for all 200 audit rows');
         Assert.areEqual(200, [SELECT COUNT() FROM Phone_Access_Audit__c]);
     }
+
+    // ---------------- v1.3.0: deferred audit + field from masked value ----------------
+
+    @IsTest
+    static void deferredAuditsAreWrittenOnFlushWithNote() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        Lead ownLead = leadNamed('Rep Owned Lead');
+
+        System.runAs(rep()) {
+            MaskedDialService.deferAuditWrites();
+            Integer dmlBefore = Limits.getDmlStatements();
+            MaskedDialService.DialResult result =
+                MaskedDialService.resolveOne(ownLead.Id, PhoneTestDataFactory.FIELD_KEY_PRIMARY, 'MCube');
+            Assert.isTrue(result.success, 'Message: ' + result.message);
+            Assert.areEqual(dmlBefore, Limits.getDmlStatements(), 'No DML while deferred (callout allowed)');
+            Assert.areEqual(1, MaskedDialService.pendingAudits.size());
+            MaskedDialService.flushAudits('MCube: Call initiated.');
+        }
+
+        List<Phone_Access_Audit__c> rows = audits();
+        Assert.areEqual(1, rows.size());
+        Assert.areEqual('MCube: Call initiated.', rows[0].Message__c);
+        Assert.areEqual(0, MaskedDialService.pendingAudits.size());
+    }
+
+    @IsTest
+    static void flushKeepsExistingMessageAndHandlesEmpty() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        MaskedDialService.flushAudits('nothing pending');
+        Assert.areEqual(0, audits().size());
+
+        MaskedDialService.deferAuditWrites();
+        MaskedDialService.resolveOne(UserInfo.getUserId(), PhoneTestDataFactory.FIELD_KEY_PRIMARY, 'MCube');
+        MaskedDialService.flushAudits(null);
+
+        List<Phone_Access_Audit__c> rows = audits();
+        Assert.areEqual(1, rows.size());
+        Assert.isTrue(rows[0].Message__c.contains('does not belong'), 'Denial message kept');
+    }
+
+    @IsTest
+    static void findsFieldKeyFromMaskedValue() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        Lead ownLead = leadNamed('Rep Owned Lead');
+
+        String primaryKey;
+        String secondaryKey;
+        String unknownKey;
+        System.runAs(rep()) {
+            Integer queriesBefore = Limits.getQueries();
+            primaryKey = MaskedDialService.fieldKeyForMaskedNumber(ownLead.Id, ' ' + PhoneMaskUtil.mask(ownLead.Phone__c) + ' ');
+            Assert.areEqual(1, Limits.getQueries() - queriesBefore, 'One query');
+            secondaryKey = MaskedDialService.fieldKeyForMaskedNumber(ownLead.Id, PhoneMaskUtil.mask(ownLead.Secondary_Phone__c));
+            unknownKey = MaskedDialService.fieldKeyForMaskedNumber(ownLead.Id, '11XXXXXX00');
+        }
+
+        Assert.areEqual('Lead.Phone__c', primaryKey);
+        Assert.areEqual('Lead.Secondary_Phone__c', secondaryKey);
+        Assert.isNull(unknownKey);
+    }
+
+    @IsTest
+    static void fieldKeyFromMaskIsNullWhenAmbiguousOrNotAllowed() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        List<Lead> sameNumbers = PhoneTestDataFactory.buildLeads(1, UserInfo.getUserId());
+        sameNumbers[0].LastName = 'Same Numbers Lead';
+        sameNumbers[0].Phone__c = PhoneTestDataFactory.primaryNumber(900);
+        sameNumbers[0].Secondary_Phone__c = PhoneTestDataFactory.primaryNumber(900);
+        PhoneTestDataFactory.insertLeads(sameNumbers);
+        String masked = PhoneMaskUtil.mask(sameNumbers[0].Phone__c);
+
+        Assert.isNull(MaskedDialService.fieldKeyForMaskedNumber(sameNumbers[0].Id, masked), 'Ambiguous');
+        Assert.isNull(MaskedDialService.fieldKeyForMaskedNumber(null, masked));
+        Assert.isNull(MaskedDialService.fieldKeyForMaskedNumber(sameNumbers[0].Id, ' '));
+
+        PhoneMaskingConfig.fieldsOverride = new List<Masked_Phone_Field__mdt>{
+            PhoneTestDataFactory.approvedField('Lead_Phone', 'Lead', 'Phone__c', 'Primary', 1, false, true, true)
+        };
+        Assert.isNull(MaskedDialService.fieldKeyForMaskedNumber(sameNumbers[0].Id, masked), 'Dial not allowed');
+    }
+
+    @IsTest
+    static void fieldKeyFromMaskRespectsAccess() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        Lead ownLead = leadNamed('Rep Owned Lead');
+        String masked = PhoneMaskUtil.mask(ownLead.Phone__c);
+
+        String key;
+        System.runAs(noAccessUser()) {
+            key = MaskedDialService.fieldKeyForMaskedNumber(ownLead.Id, masked);
+        }
+        Assert.isNull(key, 'No object access');
+
+        Utility.bypassLeadTrigger = true;
+        delete ownLead;
+        Utility.bypassLeadTrigger = false;
+        Assert.isNull(MaskedDialService.fieldKeyForMaskedNumber(ownLead.Id, masked), 'Deleted record');
+    }
 }

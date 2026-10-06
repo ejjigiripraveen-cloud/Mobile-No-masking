@@ -5,11 +5,15 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.3.0 – Dialer adapters MCube + SlashRTC, POC (built locally 2026-10-06 · NOT deployed)
+## v1.3.0 – Dialer adapters MCube + SlashRTC, POC (deployed to sandbox 2026-10-06)
 
 - **Commit Version:** v1.3.0
 - **Type:** feat
 - **Branch:** `ejjigiripraveen/v1.3.0-dialer-adapters`
+- **Sandbox deploys:** code 0Afft000000LY6jCAG (8/8, **60 tests passed** incl. existing McubeSoftphoneAddOnControllerTest) · pilot 0Afft000000LYBZCA4 (page click-to-dial ON, POC profile + MaskedDialServiceCTI). First attempt 0Afft000000LY57CAG failed and rolled back (missing `McubeMaskedClickToCallTest.cls-meta.xml`, added).
+- **Coverage:** MaskedDialService 100% · MaskedDialServiceCTI 94.4% · McubeSoftphoneAddOnController 87.9%
+- **SlashRTC CTI Adapter URL:** changed **manually in Setup by the project owner** (sandbox only) – the `sandbox-only/` file is kept as reference, not deployed.
+- **Production bundle:** `release/prod/part3-dialers` (+ part1-foundations rebuilt with the updated MaskedDialService / MaskedDialServiceCTI).
 - **Backup of originals (before any change):** `backup/v1.3.0-pre-change` (commit `f2c7e4f`, SHA256SUMS)
 - **Modified Assets:**
   - Existing (approved 2026-10-06):

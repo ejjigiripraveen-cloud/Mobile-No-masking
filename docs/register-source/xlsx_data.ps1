@@ -52,13 +52,13 @@ N $P2 $V2 'User (data)' 'POC MCube Rep' '' 'Test user, MCube call center' '' 'Sa
 N $P2 $V2 'User (data)' 'POC SlashRTC Rep' '' 'Test user, SlashRTC call center' '' 'Sandbox only' '005ft000000YFuHAAW' 'No' ''
 
 $P3 = 'Part 3'; $V3 = 'v1.3.0'
-N $P3 $V3 'Apex Class (test)' 'McubeMaskedClickToCallTest' '' 'Tests the new MCube masked click-to-dial method (mocked callout)' '' 'Built (Local)' '' 'Yes' 'New class so the existing test class stays untouched'
-N $P3 $V3 'Apex Class (update of new)' 'MaskedDialService' '' 'Adds deferred audit (callout-safe) + field lookup from masked value' 'MaskedDialServiceTest' 'Built (Local)' '' 'Yes' 'Part 1 component updated'
-N $P3 $V3 'Apex Class (update of new)' 'MaskedDialServiceCTI' '' 'Adds resolveMaskedClick (SlashRTC masked click)' 'MaskedDialServiceCTITest' 'Built (Local)' '' 'Yes' 'Part 1 component updated'
-N $P3 $V3 'Apex Class (test, update)' 'MaskedDialServiceTest' '' '+5 tests' '' 'Built (Local)' '' 'Yes' ''
-N $P3 $V3 'Apex Class (test, update)' 'MaskedDialServiceCTITest' '' '+3 tests' '' 'Built (Local)' '' 'Yes' ''
-N $P3 $V3 'Profile (update of new)' 'POC Masked Rep' '' 'Add class access: MaskedDialServiceCTI (SlashRTC runApex)' '' 'Built (Local)' '' 'Pilot only (decide)' ''
-N $P3 $V3 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Turn panel property Enable click-to-dial = true' '' 'Built (Local)' '' 'Pilot only' ''
+N $P3 $V3 'Apex Class (test)' 'McubeMaskedClickToCallTest' '' 'Tests the new MCube masked click-to-dial method (mocked callout)' '' 'Deployed (Sandbox)' '0Afft000000LY6jCAG' 'Yes' 'New class so the existing test class stays untouched'
+N $P3 $V3 'Apex Class (update of new)' 'MaskedDialService' '' 'Adds deferred audit (callout-safe) + field lookup from masked value' 'MaskedDialServiceTest' 'Deployed (Sandbox)' '0Afft000000LY6jCAG' 'Yes' 'Part 1 component updated'
+N $P3 $V3 'Apex Class (update of new)' 'MaskedDialServiceCTI' '' 'Adds resolveMaskedClick (SlashRTC masked click)' 'MaskedDialServiceCTITest' 'Deployed (Sandbox)' '0Afft000000LY6jCAG' 'Yes' 'Part 1 component updated'
+N $P3 $V3 'Apex Class (test, update)' 'MaskedDialServiceTest' '' '+5 tests' '' 'Deployed (Sandbox)' '0Afft000000LY6jCAG' 'Yes' ''
+N $P3 $V3 'Apex Class (test, update)' 'MaskedDialServiceCTITest' '' '+3 tests' '' 'Deployed (Sandbox)' '0Afft000000LY6jCAG' 'Yes' ''
+N $P3 $V3 'Profile (update of new)' 'POC Masked Rep' '' 'Add class access: MaskedDialServiceCTI (SlashRTC runApex)' '' 'Deployed (Sandbox)' '0Afft000000LYBZCA4' 'Pilot only (decide)' ''
+N $P3 $V3 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Turn panel property Enable click-to-dial = true' '' 'Deployed (Sandbox)' '0Afft000000LYBZCA4' 'Pilot only' ''
 N $P3 $V3 'Lightning Message Channel' 'MaskedDialRequest__c' '' 'Fallback Option A only: panel sends {recordId, fieldKey} to adapters' '' 'Conditional' '' 'Conditional' 'Only if POC shows masked click-to-dial fails'
 
 $P4 = 'Part 4'; $V4 = 'v1.4.0'
@@ -104,10 +104,10 @@ function E($part, $ver, $type, $api, $change, $why, $approval, $backup, $status,
     [void]$ex.Add(@($part, $ver, $type, $api, $change, $why, $approval, $backup, $status, $prod, $notes))
 }
 E $P2 $V2 'Lightning App (assignment)' 'Pre_Sales (Gsquare Housing)' 'One new page-assignment row: Lead, Pre Sales, desktop, POC Masked Rep -> masked page' 'Show the masked page to POC users only' 'Approved 2026-10-05' 'Commit 1adf63f (snapshot)' 'Done (Sandbox, App Builder)' 'Pilot only (manual)' 'App cannot be deployed by metadata (duplicate Analytics Cloud profile names)'
-E $P3 $V3 'Visualforce Page' 'mcubeSoftphoneCTIAddOn' 'In onClickToDial: if the click comes from the masked panel, call the new server method with recordId + fieldKey' 'MCube receives 98XXXXXX21, which it cannot dial' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Built (Local)' 'Yes' 'Normal clicks unchanged'
-E $P3 $V3 'Apex Class' 'McubeSoftphoneAddOnController' 'Add new @RemoteAction clickToCallMasked(recordId, fieldKey): resolves via MaskedDialService, then reuses clickToCallRemote' 'Real number resolved on the server, never in the browser' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Built (Local)' 'Yes' 'Existing methods not edited'
-E $P3 $V3 'Aura Component' 'slashPhone (slashPhoneHelper.js)' 'In onClickToDial listener: if masked click, runApex MaskedDialServiceCTI.resolveForDial, then continue existing flow' 'SlashRTC receives 98XXXXXX21' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Built (Local)' 'Yes' 'Number exists briefly inside the SlashRTC softphone (vendor limitation)'
-E $P3 $V3 'Call Center' 'SlashRTCAdapter' 'Adapter URL -> sandbox index page' 'Sandbox adapter points to production' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Sandbox only' 'No' 'Production URL is already correct'
+E $P3 $V3 'Visualforce Page' 'mcubeSoftphoneCTIAddOn' 'In onClickToDial: if the click comes from the masked panel, call the new server method with recordId + fieldKey' 'MCube receives 98XXXXXX21, which it cannot dial' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Deployed (Sandbox) 0Afft000000LY6jCAG' 'Yes' 'Normal clicks unchanged'
+E $P3 $V3 'Apex Class' 'McubeSoftphoneAddOnController' 'Add new @RemoteAction clickToCallMasked(recordId, fieldKey): resolves via MaskedDialService, then reuses clickToCallRemote' 'Real number resolved on the server, never in the browser' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Deployed (Sandbox) 0Afft000000LY6jCAG' 'Yes' 'Existing methods not edited'
+E $P3 $V3 'Aura Component' 'slashPhone (slashPhoneHelper.js)' 'In onClickToDial listener: if masked click, runApex MaskedDialServiceCTI.resolveForDial, then continue existing flow' 'SlashRTC receives 98XXXXXX21' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Deployed (Sandbox) 0Afft000000LY6jCAG' 'Yes' 'Number exists briefly inside the SlashRTC softphone (vendor limitation)'
+E $P3 $V3 'Call Center' 'SlashRTCAdapter' 'Adapter URL -> sandbox index page' 'Sandbox adapter points to production' 'Manual by you (Setup)' 'backup/v1.3.0-pre-change' 'Sandbox only - manual' 'No' 'Production URL is already correct'
 E $P3 $V3 'User (data)' 'POC MCube Rep' 'Set MobilePhone = agent number registered with MCube' 'MCube rings the agent on User.MobilePhone first' 'Pending' '' 'Sandbox only' 'No' ''
 E $P4 $V4 'Aura Component' 'NewLeadCmp' 'Phone inputs use entry fields' 'Phone__c input disappears for masked users' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
 E $P4 $V4 'Aura Component' 'NewRefLeadCmp' 'Phone inputs use entry fields' 'Same' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
@@ -156,7 +156,7 @@ $manual = @(
     @('M5', $P2, 'Create Pre Sales test Leads owned by each test user (tester or dummy numbers)', 'Leads', 'Not done', 'No'),
     @('M6', $P3, 'Set POC MCube Rep MobilePhone = agent number registered with MCube', 'Setup > Users', 'Not done', 'No'),
     @('M7', $P3, 'SlashRTC agent exists for POC SlashRTC Rep email (tptUniqueId = user email); sandbox origin allowed by SlashRTC', 'SlashRTC admin / vendor', 'Not done', 'No'),
-    @('M8', $P3, 'SlashRTC call center adapter URL -> sandbox index page', 'Setup > Call Centers', 'Not done', 'No'),
+    @('M8', $P3, 'SlashRTC call center CTI Adapter URL -> /apex/index (sandbox only, done manually by you)', 'Setup > Call Centers > SlashRTC Call Center Adapter > Edit', 'Manual - pending', 'No'),
     @('M9', $P6, 'Schedule PhoneAuditPurgeBatch nightly', 'Setup > Apex Classes > Schedule Apex', 'Not started', 'Yes'),
     @('M10', $P6, 'Assign Phone_Number_Reveal to TLs, Heads, Admins', 'Setup > Permission Sets', 'Not started', 'Yes'),
     @('M11', $P11, 'Assign Phone_Number_Full_Access to integration users (MCube, Yotel, Zetta, website/portal, SlashRTC log user)', 'Setup > Permission Sets', 'Not started', 'Yes'),
@@ -172,7 +172,9 @@ $tests = @(
     @('MaskedDialServiceCTITest', 'MaskedDialServiceCTI', $P1, '6', '93.5%', 'Deployed (Sandbox)'),
     @('PhoneTestDataFactory', '(test data utility)', $P1, '-', '-', 'Deployed (Sandbox)'),
     @('MaskedPhonePanelControllerTest', 'MaskedPhonePanelController', $P2, '11', '100%', 'Deployed (Sandbox)'),
-    @('McubeMaskedClickToCallTest', 'McubeSoftphoneAddOnController.clickToCallMasked', $P3, '', 'target > 85%', 'Planned'),
+    @('McubeMaskedClickToCallTest + McubeSoftphoneAddOnControllerTest', 'McubeSoftphoneAddOnController', $P3, '-', '87.9%', 'Deployed (Sandbox)'),
+    @('MaskedDialServiceTest (v1.3.0, +5)', 'MaskedDialService', $P3, '23', '100%', 'Deployed (Sandbox)'),
+    @('MaskedDialServiceCTITest (v1.3.0, +3)', 'MaskedDialServiceCTI', $P3, '9', '94.4%', 'Deployed (Sandbox)'),
     @('LeadPhoneEntryHandlerTest', 'LeadPhoneEntryHandler', $P4, '', 'target > 85%', 'Planned'),
     @('(existing test classes of Part 5 components)', 'Part 5 changed classes', $P5, '', 'keep >= current', 'Planned'),
     @('PhoneRevealServiceTest', 'PhoneRevealService', $P6, '', 'target > 85%', 'Planned'),
@@ -221,7 +223,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
-    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Built (Local)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Planned'),
+    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Planned'),
     @('Part 5', 'v1.5.0', 'Mask leaking screens', 'Planned'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
@@ -274,9 +276,10 @@ $sumFile = Join-Path $releaseDir 'SHA256SUMS'
 $bundleMeta = @{
     'part1-foundations' = @('1', 'Part 1', 'v1.1.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part1-foundations --test-level RunSpecifiedTests --tests PhoneMaskingConfigTest --tests PhoneMaskUtilTest --tests MaskedDialServiceTest --tests MaskedDialServiceCTITest', 'Deployed (Sandbox) 0Afft000000LO8zCAG')
     'part2-panel'       = @('2', 'Part 2', 'v1.2.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part2-panel --test-level RunSpecifiedTests --tests MaskedPhonePanelControllerTest', 'Deployed (Sandbox) 0Afft000000LRq1CAG')
-    'part2-pilot'       = @('3', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
+    'part3-dialers'     = @('3', 'Part 3', 'v1.3.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part3-dialers --test-level RunSpecifiedTests --tests McubeMaskedClickToCallTest --tests McubeSoftphoneAddOnControllerTest', 'Deployed (Sandbox) 0Afft000000LY6jCAG')
+    'part2-pilot'       = @('4', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
 }
-$typeOf = @{ 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }
+$typeOf = @{ 'pages' = 'Visualforce Page'; 'aura' = 'Aura Component'; 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }
 $relRows = @()
 if (Test-Path $sumFile) {
     foreach ($line in (Get-Content $sumFile)) {
@@ -298,9 +301,10 @@ $stepRows = @(
     @('1', 'part1-foundations', 'Validate in production, then quick deploy', $bundleMeta['part1-foundations'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
     @('2', 'part2-panel', 'Validate in production, then quick deploy', $bundleMeta['part2-panel'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
     @('3', 'part2-pilot', 'Pilot only: clone Presales outbound -> POC Masked Rep in Setup, then deploy', $bundleMeta['part2-pilot'][4] + ' --target-org <prod>', 'Not deployed'),
+    @('3b', 'part3-dialers', 'Validate in production, then quick deploy', $bundleMeta['part3-dialers'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
     @('4', '(manual)', 'Assign Phone Access Audit Viewer to admins', 'Setup > Permission Sets', 'Not deployed'),
     @('5', '(manual, pilot)', 'Activate masked POC page: Gsquare Housing / Desktop / Pre Sales / POC Masked Rep', 'Lightning App Builder > Activation', 'Not deployed'),
     @('6', '(check)', 'Run scripts/apex/v1.1.0-1 and -2 (read-only)', 'Developer Console > Execute Anonymous', 'Not deployed')
 )
-Add-Sheet 'Release Bundle P1-P2' 'Production Release Bundle - Parts 1 and 2 (built components)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
-Add-Sheet 'Release Steps P1-P2' 'Production Deploy Steps - Parts 1 and 2' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
+Add-Sheet 'Release Bundle' 'Production Release Bundle - built components (Parts 1-3)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
+Add-Sheet 'Release Steps' 'Production Deploy Steps (Parts 1-3)' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
