@@ -70,7 +70,10 @@ N $P4 $V4 'Profile (update of new)' 'POC Masked Rep' '' 'Edit access to Phone_En
 N $P4 $V4 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Add Secondary_Phone_Entry__c (New secondary number) to the details' '' 'Deployed (Sandbox)' '0Afft000000LcALCA0' 'Pilot only' ''
 
 $P5 = 'Part 5'; $V5 = 'v1.5.0'
-N $P5 $V5 'Custom Field' 'Phone_Masked__c' 'Lead' 'Formula: masked primary for layouts / list views / reports' '' 'Planned' '' 'Yes' ''
+N $P5 $V5 'Apex Class' 'PhoneDisplayService' '' '5a: one rule for all screens - is this user masked? masks numbers for display; resolves a masked number back to the real one (with sharing, audited)' 'PhoneDisplayServiceTest' 'Pending approval' '' 'Yes' ''
+N $P5 $V5 'Apex Class (test)' 'PhoneDisplayServiceTest' '' '' '' 'Pending approval' '' 'Yes' ''
+N $P5 $V5 'Apex Class (update of new)' 'MaskedDialService' '' '5a: + logAccess (audit rows for MakeCall / G-Talk, deferred when a callout follows)' 'MaskedDialServiceTest' 'Pending approval' '' 'Yes' ''
+N $P5 $V5 'Custom Field' 'Phone_Masked__c' 'Lead' '5a: Formula: masked primary (call panels; later list views / reports)' '' 'Pending approval' '' 'Yes' ''
 N $P5 $V5 'Custom Field' 'Secondary_Phone_Masked__c' 'Lead' 'Formula: masked secondary' '' 'Planned' '' 'Yes' ''
 N $P5 $V5 'Custom Field' 'Call_To_Masked__c' 'Call_Detail__c' 'Formula: masked call number' '' 'Planned' '' 'Yes' ''
 
@@ -118,9 +121,9 @@ E $P4 $V4 'Apex Class' 'LeadTriggerHandler / RelatedSourceHandler' 'No change (e
 E $P11 $V11 'Lightning Page' 'New_Lead_Page' 'Swap phone fields for entry fields' 'Fields vanish for masked users' 'Not requested yet' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
 E $P11 $V11 'Lightning Page' 'New_Lead_Page1_sales' 'Swap phone fields for entry fields' 'Same' 'Not requested yet' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
 foreach ($c in @(
-    @('Aura Component','MakeCall','Masked numbers on screen'), @('Apex Class','MakeCallController','Return masked values; number resolved server-side'),
-    @('Lightning Web Component','utilityCallComponent','G-Talk: send recordId only'), @('Lightning Web Component','offlineCallQuickActionCmp','G-Talk: send recordId only'),
-    @('Apex Class','OfflineCallAppAPI','Server-side number lookup'), @('Aura Component','CallPanel','Show masked field'), @('Aura Component','CallPanel_Outbound','Show masked field'),
+    @('Aura Component','MakeCall','5a: NO CHANGE needed - shows what readContacts returns and sends it back'), @('Apex Class','MakeCallController','5a: readContacts returns masked for masked users; callCustomer resolves a masked number on the server'),
+    @('Lightning Web Component','utilityCallComponent','5a: NO CHANGE needed - sends the number back to triggerCall, resolved on the server'), @('Lightning Web Component','offlineCallQuickActionCmp','5a: NO CHANGE needed (same as utilityCallComponent)'),
+    @('Apex Class','OfflineCallAppAPI','5a: getLeadPhone / getOppPhone masked for masked users; triggerCall resolves a masked number on the server'), @('Aura Component','CallPanel','5a: show Phone_Masked__c for masked users'), @('Aura Component','CallPanel_Outbound','5a: show Phone_Masked__c for masked users'),
     @('Aura Component','mCubeLightningPage','Show Call_To__c masked'), @('Apex Class','LeadHistoryandActivityController','Return Call_To__c masked'),
     @('Apex Class','mCubeController','Mask numbers before writing log__c'), @('Aura Component','LeadMergeCmp','Masked numbers'), @('Apex Class','LeadMergeController','Return masked values'),
     @('Aura Component','UpdateContactDetails','Primary read-only masked; secondary masked entry'), @('Apex Class','updateContactDetails','Same'),
@@ -191,7 +194,7 @@ $backups = @(
     @('Pre_Sales app snapshot', 'Gsquare Housing app before the POC row', 'force-app/main/default/applications (commit 1adf63f)', '2026-10-05', '1adf63f', 'Backed up'),
     @('Part 3 pre-change backup', 'mcubeSoftphoneCTIAddOn, McubeSoftphoneAddOnController (+Test), index, slashPhone, slashPhoneApp, leadOp (+Test), 3 call centers', 'backup/v1.3.0-pre-change (with SHA256SUMS)', '2026-10-06', 'f2c7e4f', 'Backed up'),
     @('Part 4 pre-change backup', 'LeadTrigger, NewLeadCmp, NewRefLeadCmp, RelatedSourceHandler, LeadTriggerHandler (+tests), New_Lead_Page, New_Lead_Page1_sales (changed since baseline: +8 lines tab display), Lead.New_Referral_Lead', 'backup/v1.4.0-pre-change (with SHA256SUMS)', '2026-10-06', '9b32c8c', 'Backed up'),
-    @('Before Part 5', 'Re-retrieve Part 5 components and compare with baseline', 'backup/v1.5.0-pre-change', '', '', 'Planned'),
+    @('Part 5a pre-change backup', 'MakeCall + MakeCallController (+Test), OfflineCallAppAPI (+Test), utilityCallComponent, offlineCallQuickActionCmp, CallPanel, CallPanel_Outbound - identical to baseline', 'backup/v1.5.0-part5a-pre-change (with SHA256SUMS)', '2026-10-06', '3c0330b', 'Backed up'),
     @('Before Part 7', 'TaskTrigger, CallDetailTrigger and handlers (not in baseline)', 'backup/v1.7.0-pre-change', '', '', 'Planned'),
     @('Before Part 11', 'All rep profiles, Lead_Record_Page3', 'backup/v2.0.0-pre-change', '', '', 'Planned')
 )
@@ -329,3 +332,16 @@ $p4 = @(
     @('Unaffected', 'Integrations', 'Website / portals / MCube / LeadCreationAPI', 'Still write Phone__c directly; entry fields not used', 'No change', '-')
 )
 Add-Sheet 'Part 4 Plan' 'Part 4 (v1.4.0) - Lead creation with hidden numbers' 'Explained before implementation; originals backed up in backup/v1.4.0-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(18, 20, 36, 70, 50, 34) $p4 @()
+
+# ---------------- PART 5a PLAN ----------------
+$p5a = @(
+    @('New', 'Apex Class', 'PhoneDisplayService (+ PhoneDisplayServiceTest)', 'isMaskedUser(): true when the user cannot read Lead.Phone__c. maskForDisplay(): "+91 9876543221" -> "+91 98XXXXXX21". resolve(recordId, maskedValue, candidates): finds the real number on the server (with sharing) and writes an audit row.', 'Same masking rule on every screen', 'Low'),
+    @('New', 'Custom Field (formula)', 'Lead.Phone_Masked__c', 'LEFT 2 + X + RIGHT 2 of Phone__c', 'Masked number on the call panels', 'None'),
+    @('Updated (ours)', 'Apex Class', 'MaskedDialService', '+ logAccess(): one audit row per MakeCall / G-Talk dial (deferred when a callout follows)', 'Every masked call is audited', 'Low'),
+    @('Existing', 'Apex Class', 'MakeCallController', 'readContacts: masked list for masked users (Lead + Related Source numbers). callCustomer: if the number contains X, find the real one on the server, then call MCube exactly as today.', 'Current users: no change. Masked users: masked list, call still placed.', 'Low-medium'),
+    @('Existing', 'Apex Class', 'OfflineCallAppAPI', 'getLeadPhone / getOppPhone: masked for masked users. triggerCall: if the number contains X, find the real one on the server before the G-Talk callout.', 'Same', 'Low-medium'),
+    @('Existing', 'Aura Component', 'CallPanel, CallPanel_Outbound', 'Show Phone_Masked__c instead of the blank Phone__c for masked users (detected on load).', 'Masked users see 98XXXXXX21 instead of an empty line', 'Low'),
+    @('No change', 'Aura / LWC', 'MakeCall, utilityCallComponent, offlineCallQuickActionCmp', 'They display what Apex returns and send it back; Apex now handles masked values.', '-', '-'),
+    @('Note', 'LWC', 'offlineCallQuickActionCmp', 'Existing issue found (not changed): treats the getLeadPhone result (a map) as a text number and shows a debug alert.', 'Report to the owner of this component', '-')
+)
+Add-Sheet 'Part 5a Plan' 'Part 5a (v1.5.0) - Calling screens' 'Explained before implementation; originals in backup/v1.5.0-part5a-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(16, 20, 40, 80, 44, 14) $p5a @()
