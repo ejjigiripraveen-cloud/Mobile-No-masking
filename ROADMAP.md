@@ -79,7 +79,7 @@ Every build part follows the same 5 checkpoints:
 
 ## Part 3 – Dialer adapters, POC (v1.3.0) 🟡
 
-**Existing changed:** `mcubeSoftphoneCTIAddOn` + `McubeSoftphoneAddOnController`, `index` + `slashPhone`, `leadOp`, SlashRTC call center URL (sandbox only). **User impact:** POC users only.
+**Existing changed:** `mcubeSoftphoneCTIAddOn` (one branch), `McubeSoftphoneAddOnController` (one new method), `slashPhone` helper (one step), SlashRTC call center URL (sandbox only). `index` and `leadOp` unchanged. **New:** `McubeMaskedClickToCallTest`. **User impact:** POC users only.
 
 | Checkpoint | Status |
 |---|---|
