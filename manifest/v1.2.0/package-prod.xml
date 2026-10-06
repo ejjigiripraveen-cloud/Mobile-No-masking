@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.2.0 for PRODUCTION (all users at go-live): the panel and its controller.
+     The POC page and POC profile are pilot-only and live in release/prod/part2-pilot. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>MaskedPhonePanelController</members>
+        <members>MaskedPhonePanelControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>maskedPhonePanel</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <version>66.0</version>
+</Package>

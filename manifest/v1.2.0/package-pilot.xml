@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.2.0 PILOT only: masked POC Lead page + POC profile overlay. Deploy the profile overlay only
+     after "POC Masked Rep" has been cloned from "Presales outbound" in the target org. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Sales_Lead_Record_Page_Masked_POC</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members>POC Masked Rep</members>
+        <name>Profile</name>
+    </types>
+    <version>66.0</version>
+</Package>

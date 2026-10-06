@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Settings for mobile number masking: mask format, reveal duration, audit retention and kill switches. Read by PhoneMaskingConfig.</description>
+    <label>Phone Masking Setting</label>
+    <pluralLabel>Phone Masking Settings</pluralLabel>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>Audit_Enabled__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>When checked, every dial, reveal and search is written to Phone Access Audit.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Audit Enabled</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Audit_Retention_Days__c</fullName>
+        <description>Phone Access Audit records older than this are purged.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Audit Retention Days</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Country_Code_To_Strip__c</fullName>
+        <description>Country code removed from 10-digit national numbers before masking (91 for India).</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Country Code To Strip</label>
+        <length>4</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Mask_Character__c</fullName>
+        <description>Character used for hidden digits.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Mask Character</label>
+        <length>1</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Resolve_Enabled__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>Kill switch. When unchecked, MaskedDialService refuses every request, so no real number is released to any dialer.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Real Number Lookup Enabled</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Reveal_Seconds__c</fullName>
+        <description>How long a revealed number stays visible (used by Reveal).</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Reveal Seconds</label>
+        <precision>4</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Visible_Prefix_Digits__c</fullName>
+        <description>Digits left visible at the start of a masked number (98XXXXXX21 = 2).</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Visible Prefix Digits</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Visible_Suffix_Digits__c</fullName>
+        <description>Digits left visible at the end of a masked number (98XXXXXX21 = 2).</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Visible Suffix Digits</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>
