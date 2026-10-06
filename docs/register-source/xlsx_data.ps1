@@ -62,10 +62,12 @@ N $P3 $V3 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '
 N $P3 $V3 'Lightning Message Channel' 'MaskedDialRequest__c' '' 'Fallback Option A only: panel sends {recordId, fieldKey} to adapters' '' 'Conditional' '' 'Conditional' 'Only if POC shows masked click-to-dial fails'
 
 $P4 = 'Part 4'; $V4 = 'v1.4.0'
-N $P4 $V4 'Custom Field' 'Phone_Entry__c' 'Lead' 'Entry field for primary number; copied to Phone__c and cleared' '' 'Planned' '' 'Yes' ''
-N $P4 $V4 'Custom Field' 'Secondary_Phone_Entry__c' 'Lead' 'Entry field for secondary number' '' 'Planned' '' 'Yes' ''
-N $P4 $V4 'Apex Class' 'LeadPhoneEntryHandler' '' 'Copies entry fields, locks primary after creation' 'LeadPhoneEntryHandlerTest' 'Planned' '' 'Yes' ''
-N $P4 $V4 'Apex Class (test)' 'LeadPhoneEntryHandlerTest' '' 'Tests incl. 200-record bulk' '' 'Planned' '' 'Yes' ''
+N $P4 $V4 'Custom Field' 'Phone_Entry__c' 'Lead' 'Entry field for primary number; copied to Phone__c and cleared' '' 'Pending approval' '' 'Yes' ''
+N $P4 $V4 'Custom Field' 'Secondary_Phone_Entry__c' 'Lead' 'Entry field for secondary number' '' 'Pending approval' '' 'Yes' ''
+N $P4 $V4 'Apex Class' 'LeadPhoneEntryHandler' '' 'Copies entry fields, locks primary after creation' 'LeadPhoneEntryHandlerTest' 'Pending approval' '' 'Yes' ''
+N $P4 $V4 'Apex Class (test)' 'LeadPhoneEntryHandlerTest' '' 'Tests incl. 200-record bulk' '' 'Pending approval' '' 'Yes' ''
+N $P4 $V4 'Profile (update of new)' 'POC Masked Rep' '' 'Edit access to Phone_Entry__c, Secondary_Phone_Entry__c' '' 'Pending approval' '' 'Pilot only (decide)' 'Reps get it at go-live (Part 11)'
+N $P4 $V4 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Add Secondary_Phone_Entry__c (New secondary number) to the details' '' 'Pending approval' '' 'Pilot only' ''
 
 $P5 = 'Part 5'; $V5 = 'v1.5.0'
 N $P5 $V5 'Custom Field' 'Phone_Masked__c' 'Lead' 'Formula: masked primary for layouts / list views / reports' '' 'Planned' '' 'Yes' ''
@@ -109,12 +111,12 @@ E $P3 $V3 'Apex Class' 'McubeSoftphoneAddOnController' 'Add new @RemoteAction cl
 E $P3 $V3 'Aura Component' 'slashPhone (slashPhoneHelper.js)' 'In onClickToDial listener: if masked click, runApex MaskedDialServiceCTI.resolveForDial, then continue existing flow' 'SlashRTC receives 98XXXXXX21' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Deployed (Sandbox) 0Afft000000LY6jCAG' 'Yes' 'Number exists briefly inside the SlashRTC softphone (vendor limitation)'
 E $P3 $V3 'Call Center' 'SlashRTCAdapter' 'Adapter URL -> sandbox index page' 'Sandbox adapter points to production' 'Manual by you (Setup)' 'backup/v1.3.0-pre-change' 'Sandbox only - manual' 'No' 'Production URL is already correct'
 E $P3 $V3 'User (data)' 'POC MCube Rep' 'Set MobilePhone = agent number registered with MCube' 'MCube rings the agent on User.MobilePhone first' 'Pending' '' 'Sandbox only' 'No' ''
-E $P4 $V4 'Aura Component' 'NewLeadCmp' 'Phone inputs use entry fields' 'Phone__c input disappears for masked users' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
-E $P4 $V4 'Aura Component' 'NewRefLeadCmp' 'Phone inputs use entry fields' 'Same' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
-E $P4 $V4 'Apex Trigger' 'LeadTrigger' 'Call LeadPhoneEntryHandler before insert / update' 'Copy entry fields' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
-E $P4 $V4 'Apex Class' 'LeadTriggerHandler' 'Hook for entry-field copy (if routed through handler)' 'Keep trigger thin' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
-E $P4 $V4 'Lightning Page' 'New_Lead_Page' 'Swap phone fields for entry fields' 'Fields vanish for masked users' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
-E $P4 $V4 'Lightning Page' 'New_Lead_Page1_sales' 'Swap phone fields for entry fields' 'Same' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes' ''
+E $P4 $V4 'Aura Component' 'NewLeadCmp' 'On form load: if the user cannot see Phone__c, show Phone (entry) + Secondary Phone (entry) inputs instead' 'Phone__c input disappears for masked users, so they could not create Leads' 'Pending approval' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' 'No change for users who can see Phone__c'
+E $P4 $V4 'Aura Component' 'NewRefLeadCmp' 'Same as NewLeadCmp (New Referral Lead quick action)' 'Same' 'Pending approval' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
+E $P4 $V4 'Apex Trigger' 'LeadTrigger' 'One call at the very top (before insert / update): LeadPhoneEntryHandler copies entry fields before the existing formatting and duplicate check' 'Copy must run before RelatedSourceHandler.checkMobileNumber / duplicateCheck' 'Pending approval' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' 'Existing logic untouched'
+E $P4 $V4 'Apex Class' 'LeadTriggerHandler / RelatedSourceHandler' 'No change (existing tests re-run)' 'Dependency' '-' 'backup/v1.4.0-pre-change' 'No change' 'No' ''
+E $P11 $V11 'Lightning Page' 'New_Lead_Page' 'Swap phone fields for entry fields' 'Fields vanish for masked users' 'Not requested yet' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
+E $P11 $V11 'Lightning Page' 'New_Lead_Page1_sales' 'Swap phone fields for entry fields' 'Same' 'Not requested yet' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
 foreach ($c in @(
     @('Aura Component','MakeCall','Masked numbers on screen'), @('Apex Class','MakeCallController','Return masked values; number resolved server-side'),
     @('Lightning Web Component','utilityCallComponent','G-Talk: send recordId only'), @('Lightning Web Component','offlineCallQuickActionCmp','G-Talk: send recordId only'),
@@ -188,7 +190,7 @@ $backups = @(
     @('Baseline v1.0.0', '528 files: 44 Apex, LeadTrigger, 12 Aura, 11 LWC, 21 VF, 4 Lightning pages, 4 quick actions, 3 flows, 3 call centers, 38 phone fields, 167 profiles, 47 permission sets', 'force-app (git tag v1.0.0)', '2026-10-03', '9a87598', 'Backed up'),
     @('Pre_Sales app snapshot', 'Gsquare Housing app before the POC row', 'force-app/main/default/applications (commit 1adf63f)', '2026-10-05', '1adf63f', 'Backed up'),
     @('Part 3 pre-change backup', 'mcubeSoftphoneCTIAddOn, McubeSoftphoneAddOnController (+Test), index, slashPhone, slashPhoneApp, leadOp (+Test), 3 call centers', 'backup/v1.3.0-pre-change (with SHA256SUMS)', '2026-10-06', 'f2c7e4f', 'Backed up'),
-    @('Before Part 4', 'Re-retrieve Part 4 components and compare with baseline', 'backup/v1.4.0-pre-change', '', '', 'Planned'),
+    @('Part 4 pre-change backup', 'LeadTrigger, NewLeadCmp, NewRefLeadCmp, RelatedSourceHandler, LeadTriggerHandler (+tests), New_Lead_Page, New_Lead_Page1_sales (changed since baseline: +8 lines tab display), Lead.New_Referral_Lead', 'backup/v1.4.0-pre-change (with SHA256SUMS)', '2026-10-06', '9b32c8c', 'Backed up'),
     @('Before Part 5', 'Re-retrieve Part 5 components and compare with baseline', 'backup/v1.5.0-pre-change', '', '', 'Planned'),
     @('Before Part 7', 'TaskTrigger, CallDetailTrigger and handlers (not in baseline)', 'backup/v1.7.0-pre-change', '', '', 'Planned'),
     @('Before Part 11', 'All rep profiles, Lead_Record_Page3', 'backup/v2.0.0-pre-change', '', '', 'Planned')
@@ -223,7 +225,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
-    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Planned'),
+    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Pending approval'),
     @('Part 5', 'v1.5.0', 'Mask leaking screens', 'Planned'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
@@ -308,3 +310,20 @@ $stepRows = @(
 )
 Add-Sheet 'Release Bundle' 'Production Release Bundle - built components (Parts 1-3)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
 Add-Sheet 'Release Steps' 'Production Deploy Steps (Parts 1-3)' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
+
+# ---------------- PART 4 PLAN ----------------
+$p4 = @(
+    @('New', 'Custom Field (Phone)', 'Lead.Phone_Entry__c', 'Label "Phone". Reps type the primary number here when creating a Lead. Always empty after save.', 'Masked reps can create Leads', 'None'),
+    @('New', 'Custom Field (Phone)', 'Lead.Secondary_Phone_Entry__c', 'Label "Secondary Phone". Add / change the secondary number. Always empty after save.', 'Masked reps can add or change the secondary number', 'None'),
+    @('New', 'Apex Class', 'LeadPhoneEntryHandler', 'Before insert / update: copies entry -> Phone__c / Secondary_Phone__c and clears the entry fields. Primary is locked once set (error if an entry value tries to change it). Bulk-safe, no SOQL / DML.', 'Numbers are saved in the real (hidden) fields exactly as today', 'Low'),
+    @('New', 'Apex Class (test)', 'LeadPhoneEntryHandlerTest', 'Insert, update, lock, secondary change, blank, 200-record bulk, runAs masked user; > 85%, no SeeAllData', '-', '-'),
+    @('Existing', 'Apex Trigger', 'LeadTrigger', 'Add ONE call at the very top (after the bypass check): LeadPhoneEntryHandler.beforeSave(...) for before insert / update. Everything else unchanged.', 'Formatting, duplicate check, round robin and validation rules all see the copied number as today', 'Medium: LeadTrigger runs for every Lead save; covered by existing LeadTrigger tests + new tests'),
+    @('Existing', 'Aura Component', 'NewLeadCmp (Lead New button, desktop + mobile)', 'In the existing onload step: if the form did not receive Phone__c (user cannot see it), show the entry inputs (required Phone + Secondary Phone) instead.', 'Users who can see Phone__c: no change. Masked users: same form, entry inputs.', 'Low'),
+    @('Existing', 'Aura Component', 'NewRefLeadCmp (New Referral Lead quick action)', 'Same as NewLeadCmp', 'Same', 'Low'),
+    @('New (update)', 'Profile', 'POC Masked Rep', 'Edit access to the 2 entry fields', 'POC users can type numbers', 'None'),
+    @('New (update)', 'Lightning Page', 'Sales_Lead_Record_Page_Masked_POC', 'Add "Secondary Phone" entry field to the details so POC users can add / change the secondary number', 'POC users only', 'None'),
+    @('No change', 'Apex', 'RelatedSourceHandler, LeadTriggerHandler', 'Existing formatting + duplicate check keep working on Phone__c', '-', '-'),
+    @('Deferred to Part 11', 'Lightning Page', 'New_Lead_Page, New_Lead_Page1_sales', 'Phone fields swapped for panel + entry field at go-live', 'No change now', '-'),
+    @('Unaffected', 'Integrations', 'Website / portals / MCube / LeadCreationAPI', 'Still write Phone__c directly; entry fields not used', 'No change', '-')
+)
+Add-Sheet 'Part 4 Plan' 'Part 4 (v1.4.0) - Lead creation with hidden numbers' 'Explained before implementation; originals backed up in backup/v1.4.0-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(18, 20, 36, 70, 50, 34) $p4 @()
