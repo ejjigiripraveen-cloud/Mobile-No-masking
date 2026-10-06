@@ -263,3 +263,40 @@ Add-Sheet 'Test Classes' 'Test Classes and Coverage' 'Target above 85% per class
 Add-Sheet 'Backups' 'Backups of Original Code' 'Taken before any existing component changes' @('Backup', 'Contents', 'Location', 'Retrieved', 'Git commit', 'Status') @(26, 70, 42, 12, 12, 14) $backups @(5)
 
 Add-Sheet 'Part 3 Plan' 'Part 3 (v1.3.0) - Dialer adapters, POC' 'Explained before implementation; nothing changed yet' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(18, 18, 34, 70, 50, 26) $p3 @()
+
+# ---------------- RELEASE BUNDLE (built components, Parts 1-2) ----------------
+$releaseDir = Join-Path $PSScriptRoot '..\..\release\prod'
+$sumFile = Join-Path $releaseDir 'SHA256SUMS'
+$bundleMeta = @{
+    'part1-foundations' = @('1', 'Part 1', 'v1.1.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part1-foundations --test-level RunSpecifiedTests --tests PhoneMaskingConfigTest --tests PhoneMaskUtilTest --tests MaskedDialServiceTest --tests MaskedDialServiceCTITest', 'Deployed (Sandbox) 0Afft000000LO8zCAG')
+    'part2-panel'       = @('2', 'Part 2', 'v1.2.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part2-panel --test-level RunSpecifiedTests --tests MaskedPhonePanelControllerTest', 'Deployed (Sandbox) 0Afft000000LRq1CAG')
+    'part2-pilot'       = @('3', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
+}
+$typeOf = @{ 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }
+$relRows = @()
+if (Test-Path $sumFile) {
+    foreach ($line in (Get-Content $sumFile)) {
+        if ($line -notmatch '^([0-9a-f]{64})\s+\*?\./(.+)$') { continue }
+        $hash = $Matches[1]; $path = $Matches[2]
+        $parts = $path -split '/'
+        $folder = $parts[0]
+        if (-not $bundleMeta.ContainsKey($folder)) { continue }
+        $m = $bundleMeta[$folder]
+        $kind = if ($parts.Count -ge 3) { $typeOf[$parts[1]] } else { 'Manifest (package.xml)' }
+        $file = $parts[$parts.Count - 1]
+        $component = if ($parts.Count -ge 4) { $parts[2] } elseif ($parts.Count -eq 3) { ($file -replace '\.(cls|page|object|md|tab|permissionset|flexipage|profile)(-meta\.xml)?$', '' -replace '-meta\.xml$', '') } else { 'package.xml' }
+        $isTest = if ($kind -eq 'Apex Class' -and $component -match 'Test|Factory') { ' (test)' } else { '' }
+        $relRows += , @($m[0], $folder, $m[1], $m[2], ($kind + $isTest), $component, "release/prod/$path", $hash.Substring(0, 12), $m[3], $m[5], 'Not deployed')
+    }
+}
+$relRows = $relRows | Sort-Object @{ e = { [int]$_[0] } }, @{ e = { $_[4] } }, @{ e = { $_[6] } }
+$stepRows = @(
+    @('1', 'part1-foundations', 'Validate in production, then quick deploy', $bundleMeta['part1-foundations'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
+    @('2', 'part2-panel', 'Validate in production, then quick deploy', $bundleMeta['part2-panel'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
+    @('3', 'part2-pilot', 'Pilot only: clone Presales outbound -> POC Masked Rep in Setup, then deploy', $bundleMeta['part2-pilot'][4] + ' --target-org <prod>', 'Not deployed'),
+    @('4', '(manual)', 'Assign Phone Access Audit Viewer to admins', 'Setup > Permission Sets', 'Not deployed'),
+    @('5', '(manual, pilot)', 'Activate masked POC page: Gsquare Housing / Desktop / Pre Sales / POC Masked Rep', 'Lightning App Builder > Activation', 'Not deployed'),
+    @('6', '(check)', 'Run scripts/apex/v1.1.0-1 and -2 (read-only)', 'Developer Console > Execute Anonymous', 'Not deployed')
+)
+Add-Sheet 'Release Bundle P1-P2' 'Production Release Bundle - Parts 1 and 2 (built components)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
+Add-Sheet 'Release Steps P1-P2' 'Production Deploy Steps - Parts 1 and 2' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
