@@ -1,0 +1,49 @@
+<!-- 
+  This is an Aura component used to load a CTI (Computer Telephony Integration) dialer screen 
+  inside Salesforce using an iframe. It pulls the current user's info and shows the SlashRTC softphone.
+-->
+<aura:component description="Login panel for users to log into their CTI systems." implements="c:panel" access="global">
+
+  <!-- 
+    This handler runs automatically when the component is initialized.
+    It calls the 'init' function from the component's JavaScript controller.
+    This function is used to prepare the component (like setting URL for iframe).
+  -->
+  <aura:handler name="init" value="{!this}" action="{!c.init}"/> 
+
+  <!-- 
+    This attribute will hold the current user's details (like Username).
+    It is of type Object because it stores multiple fields of user data.
+  -->
+  <aura:attribute name="CurrentUser" type="Object"/>
+
+  <!-- 
+    This tag fetches the current logged-in user's record from Salesforce.
+    - 'recordId' uses a special variable to get the current user ID.
+    - 'fields' specifies which user field to fetch (here only Username).
+    - 'targetFields' stores the fetched user record in 'v.CurrentUser'.
+  -->
+  <force:recordData recordId="{!$SObjectType.CurrentUser.Id}" fields="Username" targetFields ="{!v.CurrentUser}"/>
+
+  <!-- 
+    This attribute will store the SlashRTC softphone URL (a string).
+    The JavaScript controller sets this URL dynamically on init.
+  -->
+  <aura:attribute name="userUrl" type="String"/>
+
+  <!-- 
+    This iframe renders the SlashRTC dialer inside the component.
+    - 'src' uses the value of 'userUrl' to load the dialer page.
+    - 'allow' enables microphone access and autoplay (needed for voice).
+    - The iframe fills the width of the screen and has a height of 500px.
+  -->
+  <iframe 
+    name   ="myFrame" 
+    style  ="width: 100%;" 
+    height ="500" 
+    id     ="slashCallingScreen" 
+    allow  ="autoplay; microphone"  
+    src    ="{!v.userUrl}">
+  </iframe>
+
+</aura:component>
