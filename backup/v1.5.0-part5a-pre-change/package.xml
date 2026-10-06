@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>MakeCallController</members>
+        <members>MakeCallControllerTest</members>
+        <members>OfflineCallAppAPI</members>
+        <members>OfflineCallAppAPITest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>CallPanel</members>
+        <members>CallPanel_Outbound</members>
+        <members>MakeCall</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>offlineCallQuickActionCmp</members>
+        <members>utilityCallComponent</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <version>66.0</version>
+</Package>

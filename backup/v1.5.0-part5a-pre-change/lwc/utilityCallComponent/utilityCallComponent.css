@@ -1,0 +1,33 @@
+.warningText{
+    color: orangered;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 16px;
+}
+/* utilityCallComponent.css */
+
+
+
+/* Style the card for consistent spacing */
+lightning-card {
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Improve spacing inside */
+.slds-p-around_medium {
+    padding: 1.5rem;
+}
+
+/* Style restricted message */
+.access-restricted {
+    text-align: center;
+    color: #636363;
+    font-size: 1rem;
+    padding: 1rem;
+}
+
+/* Buttons spacing */
+lightning-button {
+    margin-top: 0.5rem;
+}
