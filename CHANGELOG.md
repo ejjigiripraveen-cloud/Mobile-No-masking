@@ -5,6 +5,37 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.4.0 – Lead creation with hidden numbers (built locally 2026-10-06 · NOT deployed)
+
+- **Commit Version:** v1.4.0
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.4.0-lead-entry`
+- **Backup of originals (before any change):** `backup/v1.4.0-pre-change` (commit `9b32c8c`, SHA256SUMS)
+- **Modified Assets:**
+  - New: `Lead.Phone_Entry__c` (label "Phone"), `Lead.Secondary_Phone_Entry__c` (label "Secondary Phone"), `LeadPhoneEntryHandler`, `LeadPhoneEntryHandlerTest` (11 tests).
+  - Existing (approved 2026-10-06), additions only:
+    - `LeadTrigger` – +6 lines at the top: `LeadPhoneEntryHandler.beforeSave(Trigger.new, Trigger.oldMap)` for before insert / update. 0 lines removed.
+    - `NewLeadCmp`, `NewRefLeadCmp` – +1 attribute `isMaskedUser`; the Phone / Secondary Phone inputs wrapped in `aura:if` (entry fields for masked users, the original inputs unchanged in the `else`); +1 call in the existing `handleCreateLoad`; +1 helper function `detectMaskedUser`. Only the 2 original input lines per form moved into the `else`.
+  - Updated (our components): POC Masked Rep (edit access to the 2 entry fields), `Sales_Lead_Record_Page_Masked_POC` (Secondary Phone entry field after Name).
+  - Not changed: `RelatedSourceHandler`, `LeadTriggerHandler`, `New_Lead_Page`, `New_Lead_Page1_sales` (Part 11), integrations.
+- **Changelog:**
+  - Entry values are copied to `Phone__c` / `Secondary_Phone__c` before the existing formatting, duplicate check and validation rules, then cleared.
+  - Primary is locked once set: an entry value that would change it fails with "The primary number cannot be changed once it is set…". The same number in another format is accepted. Secondary can always be added or changed.
+  - The forms detect a masked user from the form's own field info (no Apex call): users who can see `Phone__c` get exactly the old form.
+- **Deploy:**
+  1. `sf project deploy start --manifest manifest/v1.4.0/package.xml --test-level RunSpecifiedTests --tests LeadPhoneEntryHandlerTest --tests LeadTriggerTest --tests LeadTriggerHandlerTest`
+  2. `sf project deploy start --manifest manifest/v1.4.0/package-pilot.xml --test-level NoTestRun`
+- **Rollback:** redeploy `LeadTrigger`, `NewLeadCmp`, `NewRefLeadCmp` from `backup/v1.4.0-pre-change` and the v1.3.0 POC page / profile (`git show ejjigiripraveen/v1.3.0-dialer-adapters:<path>`), then `manifest/v1.4.0/destructiveChanges.xml`.
+
+### Access sheet – v1.4.0
+
+| Item | Who | Action |
+|---|---|---|
+| `Phone_Entry__c`, `Secondary_Phone_Entry__c` (edit) | POC Masked Rep | Pilot manifest |
+| Same fields (edit) | All rep profiles that create Leads | **Go-live (Part 11)** |
+| `LeadPhoneEntryHandler` | – | Runs inside LeadTrigger; no class access needed |
+| Other users | – | No change |
+
 ## v1.3.0 – Dialer adapters MCube + SlashRTC, POC (deployed to sandbox 2026-10-06)
 
 - **Commit Version:** v1.3.0

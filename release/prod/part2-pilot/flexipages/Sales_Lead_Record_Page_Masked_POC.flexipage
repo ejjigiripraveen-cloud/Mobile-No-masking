@@ -47,6 +47,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Secondary_Phone_Entry__c</fieldItem>
+                <identifier>RecordSecondary_Phone_Entry__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Age__c</fieldItem>
                 <identifier>RecordAge_cField</identifier>
             </fieldInstance>

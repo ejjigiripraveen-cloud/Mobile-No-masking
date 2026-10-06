@@ -1,4 +1,4 @@
-# Production Release Bundle – Parts 1 to 3
+# Production Release Bundle – Parts 1 to 4
 
 Deploy-ready copies (Metadata API format) of the exact source that was deployed and tested in the
 sandbox. At the end of the project, deploy these folders to production in the order below, after any
@@ -120,3 +120,27 @@ Notes for production:
 - The SlashRTC **CTI Adapter URL change is sandbox only** – production keeps `https://gsquaregroup.lightning.force.com/apex/index`.
 - Click-to-dial on the panel is switched on by the Lightning page property (pilot page in `part2-pilot`; real pages at go-live, Part 11).
 - Pilot MCube users need `User.MobilePhone` = agent number registered with MCube; SlashRTC users need a SlashRTC agent for their email.
+
+---
+
+## Part 4 – v1.4.0 (built 2026-10-06)
+
+### part4-lead-entry (deploy fourth)
+| Type | Components | Change |
+|---|---|---|
+| Custom fields | `Lead.Phone_Entry__c`, `Lead.Secondary_Phone_Entry__c` | New – always empty after save |
+| Apex | `LeadPhoneEntryHandler` + `LeadPhoneEntryHandlerTest` | New |
+| Apex trigger | `LeadTrigger` | **Existing** – one call added at the top |
+| Aura | `NewLeadCmp`, `NewRefLeadCmp` | **Existing** – entry inputs for users who cannot see `Phone__c` |
+
+Originals: `backup/v1.4.0-pre-change`. Rollback: `manifest/v1.4.0/destructiveChanges.xml` (after redeploying the originals).
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part4-lead-entry --target-org <prod> \
+  --test-level RunSpecifiedTests --tests LeadPhoneEntryHandlerTest --tests LeadTriggerTest --tests LeadTriggerHandlerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+
+Notes for production:
+- Field-level security on the two entry fields: **edit** for every rep profile that creates Leads – granted at go-live (Part 11). Until then nobody sees them (the forms show them only to users who cannot see `Phone__c`).
+- `part2-pilot` now also contains the v1.4.0 POC profile (entry fields) and POC page (Secondary Phone entry field).

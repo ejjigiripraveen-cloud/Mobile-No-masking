@@ -37,9 +37,10 @@ f1df701a3a2c8bac5bcdc6f654815692b4ffee9f385420123ff4dd2769567819 *./part2-panel/
 d44addcdfaf997553db5238ffc2b3de50e59afcb35573654c4e846d90315865b *./part2-panel/lwc/maskedPhonePanel/maskedPhonePanel.js
 0d33c6f7d7e6529b450d7d60ae93bece4eaf76c2607c470d0040c14438fe7fdb *./part2-panel/lwc/maskedPhonePanel/maskedPhonePanel.js-meta.xml
 718673207c2165f0a02349b69284c5be626905aecb8589f9985c81f7efe97762 *./part2-panel/package.xml
-04cdfd7cd66e5e53086879044825c7ff35adb0a1a72ab24f086ff468ef794918 *./part2-pilot/flexipages/Sales_Lead_Record_Page_Masked_POC.flexipage
+9354cdba5c3ce7beab36e4efdbade96393b6a5b4dcc1bb3dbbcd86025fd9da9e *./part2-pilot/flexipages/Sales_Lead_Record_Page_Masked_POC.flexipage
 b158c134f5152d4eb29bda285b72882f29baa46647e9256e32e86633f906ae57 *./part2-pilot/package.xml
-e9c9172813abfe8239289177c8cb9fc8b602c81130145093713e2bd811596e42 *./part2-pilot/profiles/POC Masked Rep.profile
+86d290d2bafe14d7519b6491809808a24c229c55eb95cdfe068ab0ef490db040 *./part2-pilot/profiles/POC Masked Rep.profile
+43f02926d040def5d6904990c6e8c497753e95301d804afdb9bbfc50f028aa12 *./part3-dialers-rollback-README.md
 47376363b8062fc14c2dce62851cc12fb7bbdf0846637b8a57406e766b790805 *./part3-dialers/aura/slashPhone/slashPhone.cmp
 785614510f32cb889b401b560d986327f336c7e98cea879a1115c50097e2dfac *./part3-dialers/aura/slashPhone/slashPhone.cmp-meta.xml
 d0da498d01a28b7047d851ef28000bc3bb9c25460b32925d2f8e2142224aa7f7 *./part3-dialers/aura/slashPhone/slashPhone.css
@@ -52,3 +53,23 @@ a242f6e22b472afffbd726be71165de394e417355cdf1edd81b5601278ddea32 *./part3-dialer
 6888e0c79e3e1b7caa24aed98a8ea90b2cf7b3a799e422f4878cdbbdea4c188a *./part3-dialers/package.xml
 04cf84ceaff48c7fca7b40069301858e60ffd0761da229caf26ee484bf16b054 *./part3-dialers/pages/mcubeSoftphoneCTIAddOn.page
 b4c9950e6bc41bf74b07ab892b2d69610ff5aacb8abcb7ec5ed6884b9f75327e *./part3-dialers/pages/mcubeSoftphoneCTIAddOn.page-meta.xml
+60705e94357275c228ed62890bb9a6ee99235e9be72a92182c4a7803f0f3140a *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmp.auradoc
+a883464b3486eca8155c0d5aee711592b86394e257649a1050945437c7259550 *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmp.cmp
+26bafa2e57d57af286ca55471d6217bf9fcd22ab6267b5c9d94e199c51076b3f *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmp.cmp-meta.xml
+e0afee0398c44bde425d484f4aae32279afd241b0c7246dad5b969c8c009210d *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmp.css
+5ff4b67b38f3894b386ff46aa1c0ce26f1557abe65c9cfd01801b43a4debde0a *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmp.design
+441aea094a353954a684ba0be71377fae85d7c4a1025b9d9c0c0fd60930e6eb2 *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmpController.js
+f78896d8f5bd22029eb976758974888ddf09a10120b26d31fdd6c211eec18e78 *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmpHelper.js
+38731048a53938530e2418027a86a2a4611f6ec997c209ca5f073834fb90c7d8 *./part4-lead-entry/aura/NewLeadCmp/NewLeadCmpRenderer.js
+8dc9a335294b0c49796d4b94a97b8d98764660fecf89295c20ba1a3b8e09cdec *./part4-lead-entry/aura/NewRefLeadCmp/NewRefLeadCmp.cmp
+3757f400d527f2c1fc1475d6c440a677236efc718f066a2ff1384fbd69e444d1 *./part4-lead-entry/aura/NewRefLeadCmp/NewRefLeadCmp.cmp-meta.xml
+1645bb0df45feab5538e07cdfa344a6e91ae2e5f24bd2cc0afc44188fa8875c7 *./part4-lead-entry/aura/NewRefLeadCmp/NewRefLeadCmpController.js
+f78896d8f5bd22029eb976758974888ddf09a10120b26d31fdd6c211eec18e78 *./part4-lead-entry/aura/NewRefLeadCmp/NewRefLeadCmpHelper.js
+44394fa359a3f9aa67c0718c60eb2f8285a403263d5f3dc6e2ce49364c15c0f9 *./part4-lead-entry/classes/LeadPhoneEntryHandler.cls
+87b91a7450c6f89862eaf12fd41e143807888c976d917c53283bcfa8bf75cb1f *./part4-lead-entry/classes/LeadPhoneEntryHandler.cls-meta.xml
+ff4bcdf806b09433bf699b81f342914550974b2e72ee2c102859539ca239d595 *./part4-lead-entry/classes/LeadPhoneEntryHandlerTest.cls
+87b91a7450c6f89862eaf12fd41e143807888c976d917c53283bcfa8bf75cb1f *./part4-lead-entry/classes/LeadPhoneEntryHandlerTest.cls-meta.xml
+aafbb3299259865a23969c114a4887035cfd397ddeba55a559cd7019daaeedda *./part4-lead-entry/objects/Lead.object
+9451f166734199d8d5c9a21dfae253f34a677e624f33634fb9d069c5aa4a1915 *./part4-lead-entry/package.xml
+d76c4f8924ec8e7917b039ccf745da711f7b233b0834bdc79c7366c6e49613ee *./part4-lead-entry/triggers/LeadTrigger.trigger
+7a7f3d2d53bafff8320eb69d9999a3c6d4cf13a7a17a6572938ef2938c3bfff6 *./part4-lead-entry/triggers/LeadTrigger.trigger-meta.xml

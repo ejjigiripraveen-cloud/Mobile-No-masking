@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.4.0 rollback step 2 (after redeploying LeadTrigger, NewLeadCmp, NewRefLeadCmp from backup/v1.4.0-pre-change
+     and the v1.3.0 POC page/profile): removes the new handler, its test and the two entry fields. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>LeadPhoneEntryHandlerTest</members>
+        <members>LeadPhoneEntryHandler</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Lead.Phone_Entry__c</members>
+        <members>Lead.Secondary_Phone_Entry__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>66.0</version>
+</Package>

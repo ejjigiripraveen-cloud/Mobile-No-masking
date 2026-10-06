@@ -15,7 +15,7 @@ Every build part follows the same 5 checkpoints:
 | 1 | v1.1.0 | Foundations (masking engine, dial service, audit) | 🟡 |
 | 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | 🟡 |
 | 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | 🟡 |
-| 4 | v1.4.0 | Lead creation with hidden numbers | ⬜ |
+| 4 | v1.4.0 | Lead creation with hidden numbers | 🟡 |
 | 5 | v1.5.0 | Mask existing screens that leak numbers | ⬜ |
 | 6 | v1.6.0 | Reveal for TL / Head / Admin + audit cleanup | ⬜ |
 | 7 | v1.7.0 | Free-text auto-masking | ⬜ |
@@ -95,15 +95,15 @@ Every build part follows the same 5 checkpoints:
 | **Gate: Option B confirmed, or switch to Option A fallback** | ⬜ |
 | Tag v1.3.0 + access sheet | ⬜ |
 
-## Part 4 – Lead creation (v1.4.0) ⬜
+## Part 4 – Lead creation (v1.4.0) 🟡
 
-**New:** `Phone_Entry__c`, `Secondary_Phone_Entry__c`, `LeadPhoneEntryHandler`.
-**Existing changed:** `NewLeadCmp`, `NewRefLeadCmp`, `LeadTrigger` / `LeadTriggerHandler`, `New_Lead_Page`, `New_Lead_Page1_sales`.
+**New:** `Lead.Phone_Entry__c`, `Lead.Secondary_Phone_Entry__c`, `LeadPhoneEntryHandler` (+ test, 11 tests). Updates: POC profile (entry fields), POC page (Secondary Phone entry).
+**Existing changed (additions only):** `LeadTrigger` (+6 lines at top), `NewLeadCmp`, `NewRefLeadCmp` (entry inputs for masked users). `New_Lead_Page` / `New_Lead_Page1_sales` moved to Part 11. Backup: `backup/v1.4.0-pre-change`.
 
 | Checkpoint | Status |
 |---|---|
-| Build locally | ⬜ |
-| Approval | ⬜ |
+| Build locally | ✅ 2026-10-06 |
+| Approval | ✅ 2026-10-06 |
 | Deploy to sandbox | ⬜ |
 | Test (create lead, primary locked, secondary editable, duplicates blocked, website/portal APIs, 200-record load) | ⬜ |
 | Tag v1.4.0 + access sheet | ⬜ |

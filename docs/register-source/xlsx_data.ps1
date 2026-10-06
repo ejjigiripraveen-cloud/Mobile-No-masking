@@ -62,12 +62,12 @@ N $P3 $V3 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '
 N $P3 $V3 'Lightning Message Channel' 'MaskedDialRequest__c' '' 'Fallback Option A only: panel sends {recordId, fieldKey} to adapters' '' 'Conditional' '' 'Conditional' 'Only if POC shows masked click-to-dial fails'
 
 $P4 = 'Part 4'; $V4 = 'v1.4.0'
-N $P4 $V4 'Custom Field' 'Phone_Entry__c' 'Lead' 'Entry field for primary number; copied to Phone__c and cleared' '' 'Pending approval' '' 'Yes' ''
-N $P4 $V4 'Custom Field' 'Secondary_Phone_Entry__c' 'Lead' 'Entry field for secondary number' '' 'Pending approval' '' 'Yes' ''
-N $P4 $V4 'Apex Class' 'LeadPhoneEntryHandler' '' 'Copies entry fields, locks primary after creation' 'LeadPhoneEntryHandlerTest' 'Pending approval' '' 'Yes' ''
-N $P4 $V4 'Apex Class (test)' 'LeadPhoneEntryHandlerTest' '' 'Tests incl. 200-record bulk' '' 'Pending approval' '' 'Yes' ''
-N $P4 $V4 'Profile (update of new)' 'POC Masked Rep' '' 'Edit access to Phone_Entry__c, Secondary_Phone_Entry__c' '' 'Pending approval' '' 'Pilot only (decide)' 'Reps get it at go-live (Part 11)'
-N $P4 $V4 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Add Secondary_Phone_Entry__c (New secondary number) to the details' '' 'Pending approval' '' 'Pilot only' ''
+N $P4 $V4 'Custom Field' 'Phone_Entry__c' 'Lead' 'Entry field for primary number; copied to Phone__c and cleared' '' 'Built (Local)' '' 'Yes' ''
+N $P4 $V4 'Custom Field' 'Secondary_Phone_Entry__c' 'Lead' 'Entry field for secondary number' '' 'Built (Local)' '' 'Yes' ''
+N $P4 $V4 'Apex Class' 'LeadPhoneEntryHandler' '' 'Copies entry fields, locks primary after creation' 'LeadPhoneEntryHandlerTest' 'Built (Local)' '' 'Yes' ''
+N $P4 $V4 'Apex Class (test)' 'LeadPhoneEntryHandlerTest' '' 'Tests incl. 200-record bulk' '' 'Built (Local)' '' 'Yes' ''
+N $P4 $V4 'Profile (update of new)' 'POC Masked Rep' '' 'Edit access to Phone_Entry__c, Secondary_Phone_Entry__c' '' 'Built (Local)' '' 'Pilot only (decide)' 'Reps get it at go-live (Part 11)'
+N $P4 $V4 'Lightning Page (update of new)' 'Sales_Lead_Record_Page_Masked_POC' '' 'Add Secondary_Phone_Entry__c (New secondary number) to the details' '' 'Built (Local)' '' 'Pilot only' ''
 
 $P5 = 'Part 5'; $V5 = 'v1.5.0'
 N $P5 $V5 'Custom Field' 'Phone_Masked__c' 'Lead' 'Formula: masked primary for layouts / list views / reports' '' 'Planned' '' 'Yes' ''
@@ -111,9 +111,9 @@ E $P3 $V3 'Apex Class' 'McubeSoftphoneAddOnController' 'Add new @RemoteAction cl
 E $P3 $V3 'Aura Component' 'slashPhone (slashPhoneHelper.js)' 'In onClickToDial listener: if masked click, runApex MaskedDialServiceCTI.resolveForDial, then continue existing flow' 'SlashRTC receives 98XXXXXX21' 'Approved 2026-10-06' 'backup/v1.3.0-pre-change' 'Deployed (Sandbox) 0Afft000000LY6jCAG' 'Yes' 'Number exists briefly inside the SlashRTC softphone (vendor limitation)'
 E $P3 $V3 'Call Center' 'SlashRTCAdapter' 'Adapter URL -> sandbox index page' 'Sandbox adapter points to production' 'Manual by you (Setup)' 'backup/v1.3.0-pre-change' 'Sandbox only - manual' 'No' 'Production URL is already correct'
 E $P3 $V3 'User (data)' 'POC MCube Rep' 'Set MobilePhone = agent number registered with MCube' 'MCube rings the agent on User.MobilePhone first' 'Pending' '' 'Sandbox only' 'No' ''
-E $P4 $V4 'Aura Component' 'NewLeadCmp' 'On form load: if the user cannot see Phone__c, show Phone (entry) + Secondary Phone (entry) inputs instead' 'Phone__c input disappears for masked users, so they could not create Leads' 'Pending approval' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' 'No change for users who can see Phone__c'
-E $P4 $V4 'Aura Component' 'NewRefLeadCmp' 'Same as NewLeadCmp (New Referral Lead quick action)' 'Same' 'Pending approval' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
-E $P4 $V4 'Apex Trigger' 'LeadTrigger' 'One call at the very top (before insert / update): LeadPhoneEntryHandler copies entry fields before the existing formatting and duplicate check' 'Copy must run before RelatedSourceHandler.checkMobileNumber / duplicateCheck' 'Pending approval' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' 'Existing logic untouched'
+E $P4 $V4 'Aura Component' 'NewLeadCmp' 'On form load: if the user cannot see Phone__c, show Phone (entry) + Secondary Phone (entry) inputs instead' 'Phone__c input disappears for masked users, so they could not create Leads' 'Approved 2026-10-06' 'backup/v1.4.0-pre-change' 'Built (Local)' 'Yes' 'No change for users who can see Phone__c'
+E $P4 $V4 'Aura Component' 'NewRefLeadCmp' 'Same as NewLeadCmp (New Referral Lead quick action)' 'Same' 'Approved 2026-10-06' 'backup/v1.4.0-pre-change' 'Built (Local)' 'Yes' ''
+E $P4 $V4 'Apex Trigger' 'LeadTrigger' 'One call at the very top (before insert / update): LeadPhoneEntryHandler copies entry fields before the existing formatting and duplicate check' 'Copy must run before RelatedSourceHandler.checkMobileNumber / duplicateCheck' 'Approved 2026-10-06' 'backup/v1.4.0-pre-change' 'Built (Local)' 'Yes' 'Existing logic untouched'
 E $P4 $V4 'Apex Class' 'LeadTriggerHandler / RelatedSourceHandler' 'No change (existing tests re-run)' 'Dependency' '-' 'backup/v1.4.0-pre-change' 'No change' 'No' ''
 E $P11 $V11 'Lightning Page' 'New_Lead_Page' 'Swap phone fields for entry fields' 'Fields vanish for masked users' 'Not requested yet' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
 E $P11 $V11 'Lightning Page' 'New_Lead_Page1_sales' 'Swap phone fields for entry fields' 'Same' 'Not requested yet' 'backup/v1.4.0-pre-change' 'Planned' 'Yes' ''
@@ -177,7 +177,7 @@ $tests = @(
     @('McubeMaskedClickToCallTest + McubeSoftphoneAddOnControllerTest', 'McubeSoftphoneAddOnController', $P3, '-', '87.9%', 'Deployed (Sandbox)'),
     @('MaskedDialServiceTest (v1.3.0, +5)', 'MaskedDialService', $P3, '23', '100%', 'Deployed (Sandbox)'),
     @('MaskedDialServiceCTITest (v1.3.0, +3)', 'MaskedDialServiceCTI', $P3, '9', '94.4%', 'Deployed (Sandbox)'),
-    @('LeadPhoneEntryHandlerTest', 'LeadPhoneEntryHandler', $P4, '', 'target > 85%', 'Planned'),
+    @('LeadPhoneEntryHandlerTest (+ LeadTriggerTest, LeadTriggerHandlerTest)', 'LeadPhoneEntryHandler, LeadTrigger', $P4, '11', 'target > 85%', 'Built (Local)'),
     @('(existing test classes of Part 5 components)', 'Part 5 changed classes', $P5, '', 'keep >= current', 'Planned'),
     @('PhoneRevealServiceTest', 'PhoneRevealService', $P6, '', 'target > 85%', 'Planned'),
     @('PhoneAuditPurgeBatchTest', 'PhoneAuditPurgeBatch', $P6, '', 'target > 85%', 'Planned'),
@@ -225,7 +225,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
-    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Pending approval'),
+    @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Built (Local)'),
     @('Part 5', 'v1.5.0', 'Mask leaking screens', 'Planned'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
@@ -279,7 +279,8 @@ $bundleMeta = @{
     'part1-foundations' = @('1', 'Part 1', 'v1.1.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part1-foundations --test-level RunSpecifiedTests --tests PhoneMaskingConfigTest --tests PhoneMaskUtilTest --tests MaskedDialServiceTest --tests MaskedDialServiceCTITest', 'Deployed (Sandbox) 0Afft000000LO8zCAG')
     'part2-panel'       = @('2', 'Part 2', 'v1.2.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part2-panel --test-level RunSpecifiedTests --tests MaskedPhonePanelControllerTest', 'Deployed (Sandbox) 0Afft000000LRq1CAG')
     'part3-dialers'     = @('3', 'Part 3', 'v1.3.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part3-dialers --test-level RunSpecifiedTests --tests McubeMaskedClickToCallTest --tests McubeSoftphoneAddOnControllerTest', 'Deployed (Sandbox) 0Afft000000LY6jCAG')
-    'part2-pilot'       = @('4', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
+    'part4-lead-entry'  = @('4', 'Part 4', 'v1.4.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part4-lead-entry --test-level RunSpecifiedTests --tests LeadPhoneEntryHandlerTest --tests LeadTriggerTest --tests LeadTriggerHandlerTest', 'Built (Local) - not deployed')
+    'part2-pilot'       = @('5', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
 }
 $typeOf = @{ 'pages' = 'Visualforce Page'; 'aura' = 'Aura Component'; 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }
 $relRows = @()
@@ -304,12 +305,13 @@ $stepRows = @(
     @('2', 'part2-panel', 'Validate in production, then quick deploy', $bundleMeta['part2-panel'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
     @('3', 'part2-pilot', 'Pilot only: clone Presales outbound -> POC Masked Rep in Setup, then deploy', $bundleMeta['part2-pilot'][4] + ' --target-org <prod>', 'Not deployed'),
     @('3b', 'part3-dialers', 'Validate in production, then quick deploy', $bundleMeta['part3-dialers'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
+    @('3c', 'part4-lead-entry', 'Validate in production, then quick deploy', $bundleMeta['part4-lead-entry'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
     @('4', '(manual)', 'Assign Phone Access Audit Viewer to admins', 'Setup > Permission Sets', 'Not deployed'),
     @('5', '(manual, pilot)', 'Activate masked POC page: Gsquare Housing / Desktop / Pre Sales / POC Masked Rep', 'Lightning App Builder > Activation', 'Not deployed'),
     @('6', '(check)', 'Run scripts/apex/v1.1.0-1 and -2 (read-only)', 'Developer Console > Execute Anonymous', 'Not deployed')
 )
-Add-Sheet 'Release Bundle' 'Production Release Bundle - built components (Parts 1-3)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
-Add-Sheet 'Release Steps' 'Production Deploy Steps (Parts 1-3)' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
+Add-Sheet 'Release Bundle' 'Production Release Bundle - built components (Parts 1-4)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
+Add-Sheet 'Release Steps' 'Production Deploy Steps (Parts 1-4)' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
 
 # ---------------- PART 4 PLAN ----------------
 $p4 = @(

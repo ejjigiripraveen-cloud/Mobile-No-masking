@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>LeadPhoneEntryHandler</members>
+        <members>LeadPhoneEntryHandlerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>LeadTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>NewLeadCmp</members>
+        <members>NewRefLeadCmp</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>Lead.Phone_Entry__c</members>
+        <members>Lead.Secondary_Phone_Entry__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>66.0</version>
+</Package>

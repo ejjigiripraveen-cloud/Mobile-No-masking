@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Secondary_Phone_Entry__c</fullName>
+    <description>Secondary number typed by users who cannot see Secondary_Phone__c (mobile number masking). Copied to Secondary_Phone__c on save and cleared - always empty after save.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Type a new secondary number. It replaces the current secondary number and is hidden after you save.</inlineHelpText>
+    <label>Secondary Phone</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Phone</type>
+</CustomField>
