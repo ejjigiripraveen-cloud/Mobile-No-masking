@@ -5,11 +5,13 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.5.0 (5b) – Call history and logs masked (built locally 2026-10-06 · NOT deployed)
+## v1.5.0 (5b) – Call history and logs masked (deployed to sandbox 2026-10-06)
 
 - **Commit Version:** v1.5.0 (Part 5b)
 - **Type:** feat
 - **Branch:** `ejjigiripraveen/v1.5.0-part5b-history`
+- **Sandbox deploy:** 0Afft000000LfszCAC (5/5, **61 tests passed** incl. existing mCubeController_Test, mCubeControllerTestExtended, LeadHistoryandActivityControllerTest).
+- **Coverage:** PhoneDisplayService 100% · LeadHistoryandActivityController 87.1% · mCubeController 81.4% (whole 1,969-line class).
 - **Backup of originals (before any change):** `backup/v1.5.0-part5b-pre-change` (commit `d21280f`, 23 files; `LeadHistoryandActivityCmp` first backed up here)
 - **Found:** `Lead.Phone__c` and `Lead.Secondary_Phone__c` are field-history tracked, and the History & Activity screen returned old / new numbers.
 - **Modified Assets:**

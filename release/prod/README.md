@@ -172,7 +172,7 @@ Go-live: read access to `Lead.Phone_Masked__c` for all rep profiles (Part 11).
 
 ## Part 5b – v1.5.0 call history and logs (built 2026-10-06)
 
-### part5b-history (deploy after part5a-calling)
+### part5b-history (deploy after part5a-calling) – tested in sandbox 0Afft000000LfszCAC · 61 tests
 | Type | Components | Change |
 |---|---|---|
 | Apex | `PhoneDisplayService` | Updated (`forDisplay`, `historyValueForDisplay`) – also in part5a-calling |
