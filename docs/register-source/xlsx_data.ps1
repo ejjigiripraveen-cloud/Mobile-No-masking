@@ -75,7 +75,7 @@ N $P5 $V5 'Apex Class (test)' 'PhoneDisplayServiceTest' '' '' '' 'Pending approv
 N $P5 $V5 'Apex Class (update of new)' 'MaskedDialService' '' '5a: + logAccess (audit rows for MakeCall / G-Talk, deferred when a callout follows)' 'MaskedDialServiceTest' 'Pending approval' '' 'Yes' ''
 N $P5 $V5 'Custom Field' 'Phone_Masked__c' 'Lead' '5a: Formula: masked primary (call panels; later list views / reports)' '' 'Pending approval' '' 'Yes' ''
 N $P5 $V5 'Custom Field' 'Secondary_Phone_Masked__c' 'Lead' 'Formula: masked secondary' '' 'Planned' '' 'Yes' ''
-N $P5 $V5 'Custom Field' 'Call_To_Masked__c' 'Call_Detail__c' 'Formula: masked call number' '' 'Planned' '' 'Yes' ''
+N $P5 $V5 'Custom Field' 'Call_To_Masked__c' 'Call_Detail__c' '5b: Formula: masked call number' '' 'Pending approval' '' 'Yes' ''
 
 $P6 = 'Part 6'; $V6 = 'v1.6.0'
 N $P6 $V6 'Apex Class' 'PhoneRevealService' '' 'Reveal for TL / Head / Admin: reason, 30 s, audit' 'PhoneRevealServiceTest' 'Planned' '' 'Yes' ''
@@ -124,8 +124,8 @@ foreach ($c in @(
     @('Aura Component','MakeCall','5a: NO CHANGE needed - shows what readContacts returns and sends it back'), @('Apex Class','MakeCallController','5a: readContacts returns masked for masked users; callCustomer resolves a masked number on the server'),
     @('Lightning Web Component','utilityCallComponent','5a: NO CHANGE needed - sends the number back to triggerCall, resolved on the server'), @('Lightning Web Component','offlineCallQuickActionCmp','5a: NO CHANGE needed (same as utilityCallComponent)'),
     @('Apex Class','OfflineCallAppAPI','5a: getLeadPhone / getOppPhone masked for masked users; triggerCall resolves a masked number on the server'), @('Aura Component','CallPanel','5a: show Phone_Masked__c for masked users'), @('Aura Component','CallPanel_Outbound','5a: show Phone_Masked__c for masked users'),
-    @('Aura Component','mCubeLightningPage','Show Call_To__c masked'), @('Apex Class','LeadHistoryandActivityController','Return Call_To__c masked'),
-    @('Apex Class','mCubeController','Mask numbers before writing log__c'), @('Aura Component','LeadMergeCmp','Masked numbers'), @('Apex Class','LeadMergeController','Return masked values'),
+    @('Aura Component','mCubeLightningPage','5b: NO CHANGE - shows what callRecords returns'), @('Apex Class','LeadHistoryandActivityController','5b: GetData masks phone history values and call numbers for masked users'),
+    @('Apex Class','mCubeController','5b: callRecords masked for masked users; log__c Request / Response masked for everyone'), @('Aura Component','LeadMergeCmp','Masked numbers'), @('Apex Class','LeadMergeController','Return masked values'),
     @('Aura Component','UpdateContactDetails','Primary read-only masked; secondary masked entry'), @('Apex Class','updateContactDetails','Same'),
     @('Lightning Web Component','leadBulkPush','Masked selection list'), @('Apex Class','LeadBulkPushController','Return masked values'),
     @('Lightning Web Component','leadYotelPush','Masked selection list'), @('Apex Class','LeadYotelBulkPushController','Return masked values'),
@@ -365,3 +365,15 @@ $p5a = @(
     @('Note', 'LWC', 'offlineCallQuickActionCmp', 'Existing issue found (not changed): treats the getLeadPhone result (a map) as a text number and shows a debug alert.', 'Report to the owner of this component', '-')
 )
 Add-Sheet 'Part 5a Plan' 'Part 5a (v1.5.0) - Calling screens' 'Explained before implementation; originals in backup/v1.5.0-part5a-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(16, 20, 40, 80, 44, 14) $p5a @()
+
+# ---------------- PART 5b PLAN ----------------
+$p5b = @(
+    @('New', 'Custom Field (formula)', 'Call_Detail__c.Call_To_Masked__c', 'Masked customer number of a call (first 2 + last 2)', 'Masked column for call list views / reports (used at go-live)', 'None'),
+    @('New', 'Apex Class (test)', 'PhoneMaskingHistoryTest', 'Tests the masked paths of callRecords, GetData and the log masking (callouts mocked)', '-', '-'),
+    @('Existing', 'Apex Class', 'mCubeController.callRecords', 'For masked users, mask Call_From__c / Call_To__c on the returned call list (in memory, never saved)', 'Call history list (mCubeLightningPage) shows 98XXXXXX21 for masked users; unchanged for others', 'Low'),
+    @('Existing', 'Apex Class', 'mCubeController.makeCall / makeCallZetta (log__c)', 'Wrap the 3 Request__c and 2 Response__c values in PhoneMaskUtil.maskInText - numbers in the MCube logs are masked for everyone', 'Admins reading log__c see masked numbers (by design); MCube calls unchanged', 'Low'),
+    @('Existing', 'Apex Class', 'LeadHistoryandActivityController.GetData', 'For masked users: mask OldValue / NewValue of phone-field history rows (Phone__c, Secondary_Phone__c are history-tracked) and callfrom / callto', 'History screen shows masked old / new numbers for masked users; unchanged for others', 'Low'),
+    @('No change', 'Aura', 'mCubeLightningPage, LeadHistoryandActivityCmp', 'They display what Apex returns', '-', '-'),
+    @('Later', 'Free text', 'Task Subject / Description in the history', 'Numbers typed in notes are handled by Part 7 (free-text masking)', '-', '-')
+)
+Add-Sheet 'Part 5b Plan' 'Part 5b (v1.5.0) - Call history and logs' 'Explained before implementation; originals in backup/v1.5.0-part5b-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(16, 22, 44, 80, 50, 12) $p5b @()
