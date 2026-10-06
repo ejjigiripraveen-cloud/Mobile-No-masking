@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.5.0 Part 5a POC/pilot: POC profile read access to Lead.Phone_Masked__c. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>POC Masked Rep</members>
+        <name>Profile</name>
+    </types>
+    <version>66.0</version>
+</Package>

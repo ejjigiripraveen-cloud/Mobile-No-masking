@@ -144,3 +144,26 @@ sf project deploy quick --job-id <validation id> --target-org <prod>
 Notes for production:
 - Field-level security on the two entry fields: **edit** for every rep profile that creates Leads – granted at go-live (Part 11). Until then nobody sees them (the forms show them only to users who cannot see `Phone__c`).
 - `part2-pilot` now also contains the v1.4.0 POC profile (entry fields) and POC page (Secondary Phone entry field).
+
+---
+
+## Part 5a – v1.5.0 calling screens (built 2026-10-06)
+
+### part5a-calling (deploy fifth)
+| Type | Components | Change |
+|---|---|---|
+| Apex | `PhoneDisplayService` + `PhoneDisplayServiceTest`, `PhoneMaskingCallScreensTest` | New |
+| Field | `Lead.Phone_Masked__c` (formula) | New |
+| Apex | `MaskedDialService` | Updated (`logAccess`) – also inside part1-foundations |
+| Apex | `MakeCallController`, `OfflineCallAppAPI` | **Existing** – masked for masked users, resolved on the server |
+| Aura | `CallPanel`, `CallPanel_Outbound` | **Existing** – masked line for masked users |
+
+Originals: `backup/v1.5.0-part5a-pre-change`.
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part5a-calling --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneDisplayServiceTest --tests PhoneMaskingCallScreensTest \
+  --tests MakeCallControllerTest --tests OfflineCallAppAPITest --tests MaskedDialServiceTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+Go-live: read access to `Lead.Phone_Masked__c` for all rep profiles (Part 11).

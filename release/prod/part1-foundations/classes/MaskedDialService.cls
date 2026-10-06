@@ -98,6 +98,35 @@ public with sharing class MaskedDialService {
     }
 
     /**
+     * @description Writes one audit row for a real-number access made outside resolve(), e.g. by the MakeCall
+     *              and G-Talk screens (v1.5.0). Honours deferAuditWrites() and the Audit Enabled switch.
+     *              Never pass a real number: maskedNumber must already be masked.
+     */
+    public static void logAccess(Id recordId, String fieldKey, String maskedNumber, String channel, String outcome, String message) {
+        if (!PhoneMaskingConfig.isAuditEnabled()) {
+            return;
+        }
+        Phone_Access_Audit__c audit = new Phone_Access_Audit__c(
+            Action__c = ACTION_DIAL,
+            Outcome__c = outcome,
+            User__c = UserInfo.getUserId(),
+            Record_Id__c = recordId,
+            Object_Name__c = recordId == null ? null
+                : recordId.getSObjectType().getDescribe(Schema.SObjectDescribeOptions.DEFERRED).getName(),
+            Field_Key__c = fieldKey == null ? null : fieldKey.left(120),
+            Masked_Number__c = maskedNumber == null ? null : maskedNumber.left(40),
+            Channel__c = channel == null ? null : channel.left(80),
+            Message__c = message == null ? null : message.left(255),
+            Event_Time__c = System.now()
+        );
+        if (deferAudits) {
+            pendingAudits.add(audit);
+        } else {
+            writeAudits(new List<Phone_Access_Audit__c>{ audit });
+        }
+    }
+
+    /**
      * @description Finds which approved dial field of the record shows the given masked value, for clicks
      *              that carry only the masked number (no field key). Returns null when no field or more than
      *              one field matches. The user must be able to see the record (with sharing). One query.

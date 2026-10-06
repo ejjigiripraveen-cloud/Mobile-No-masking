@@ -16,7 +16,7 @@ Every build part follows the same 5 checkpoints:
 | 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | 🟡 |
 | 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | 🟡 |
 | 4 | v1.4.0 | Lead creation with hidden numbers | 🟡 |
-| 5 | v1.5.0 | Mask existing screens that leak numbers | ⬜ |
+| 5 | v1.5.0 | Mask existing screens that leak numbers (5a calling 🟡, 5b–5e ⬜) | 🟡 |
 | 6 | v1.6.0 | Reveal for TL / Head / Admin + audit cleanup | ⬜ |
 | 7 | v1.7.0 | Free-text auto-masking | ⬜ |
 | 8 | v1.8.0 | Find by number (only if POC shows search breaks) | ⏸️ |
@@ -108,15 +108,15 @@ Every build part follows the same 5 checkpoints:
 | Test (create lead, primary locked, secondary editable, duplicates blocked, website/portal APIs, 200-record load) | ⬜ |
 | Tag v1.4.0 + access sheet | ⬜ |
 
-## Part 5 – Mask leaking screens (v1.5.0) ⬜
+## Part 5 – Mask leaking screens (v1.5.0) 🟡
 
 **New:** masked formula fields (`Phone_Masked__c`, `Secondary_Phone_Masked__c`, `Call_To_Masked__c`).
 **Existing changed:** `MakeCall` + controller, G-Talk (`utilityCallComponent`, `offlineCallQuickActionCmp`, `OfflineCallAppAPI`), `CallPanel`, `CallPanel_Outbound`, `mCubeLightningPage`, `LeadHistoryandActivityController`, `mCubeController` (logs), `LeadMergeCmp` + controller, `UpdateContactDetails` + controller, `leadBulkPush` / `leadYotelPush` + controllers, `leadMsgConversationLWC` + controller.
 
 | Checkpoint | Status |
 |---|---|
-| Build locally | ⬜ |
-| Approval | ⬜ |
+| Build locally | 🟡 5a ✅ 2026-10-06 (backup/v1.5.0-part5a-pre-change) · 5b–5e ⬜ |
+| Approval | 🟡 5a ✅ 2026-10-06 · 5b–5e ⬜ |
 | Deploy to sandbox | ⬜ |
 | Test (each screen masked; MakeCall, G-Talk, Yotel/bulk push, WhatsApp, merge still work; `log__c` clean) | ⬜ |
 | Tag v1.5.0 + access sheet | ⬜ |

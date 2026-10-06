@@ -11,6 +11,11 @@
     <custom>true</custom>
     <description>POC only (mobile number masking). Clone of Presales outbound without access to customer phone fields. Assign to test users only.</description>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Lead.Phone_Masked__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Lead.Phone_Entry__c</field>
         <readable>true</readable>

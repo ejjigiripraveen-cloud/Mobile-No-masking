@@ -5,6 +5,35 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.5.0 (5a) – Calling screens masked (built locally 2026-10-06 · NOT deployed)
+
+- **Commit Version:** v1.5.0 (Part 5a)
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.5.0-part5a-calling`
+- **Backup of originals (before any change):** `backup/v1.5.0-part5a-pre-change` (commit `3c0330b`, 33 files identical to baseline)
+- **Modified Assets:**
+  - New: `PhoneDisplayService` (one masking rule for all screens; resolves a masked number on the server with record-access check + audit), `PhoneDisplayServiceTest`, `PhoneMaskingCallScreensTest`, `Lead.Phone_Masked__c` (formula).
+  - Updated (ours): `MaskedDialService` (+ `logAccess`), POC Masked Rep (read `Phone_Masked__c`).
+  - Existing (approved 2026-10-06):
+    - `MakeCallController` – original `readContacts` body renamed `collectPhones` and original `callCustomer` body renamed `placeMcubeCall` (bodies unchanged); new `readContacts` returns masked for masked users; new `callCustomer` resolves a masked selection then calls `placeMcubeCall`. Audit written after the MCube callout.
+    - `OfflineCallAppAPI` – `triggerCall` resolves a masked number before enqueueing the G-Talk callout; `getLeadPhone` / `getOppPhone` mask the map for masked users (+33 lines, 0 removed).
+    - `CallPanel`, `CallPanel_Outbound` – `isMaskedUser` attribute, `onload` on the view form, `Phone_Masked__c` for masked users; original `Phone__c` line unchanged in the `else`.
+  - No change: `MakeCall`, `utilityCallComponent`, `offlineCallQuickActionCmp` (they show what Apex returns and send it back).
+- **Rule:** masking applies only to users who cannot read `Lead.Phone__c`; all other users get exactly the previous data.
+- **Noted, not changed:** `offlineCallQuickActionCmp` treats the phone map as a text number and shows a debug `alert` – existing issue for its owner.
+- **Deploy:**
+  1. `sf project deploy start --manifest manifest/v1.5.0-5a/package.xml --test-level RunSpecifiedTests --tests PhoneDisplayServiceTest --tests PhoneMaskingCallScreensTest --tests MakeCallControllerTest --tests OfflineCallAppAPITest --tests MaskedDialServiceTest`
+  2. `sf project deploy start --manifest manifest/v1.5.0-5a/package-pilot.xml --test-level NoTestRun`
+- **Rollback:** redeploy the 4 changed components from `backup/v1.5.0-part5a-pre-change` and `MaskedDialService` from the v1.4.0 branch, then `manifest/v1.5.0-5a/destructiveChanges.xml`.
+
+### Access sheet – v1.5.0 (5a)
+
+| Item | Who | Action |
+|---|---|---|
+| `Lead.Phone_Masked__c` (read) | POC Masked Rep | Pilot manifest; all rep profiles at go-live (Part 11) |
+| `PhoneDisplayService` | – | Called by other Apex; no class access needed |
+| `MakeCallController`, `OfflineCallAppAPI` | Existing users | Already granted; no change |
+
 ## v1.4.0 – Lead creation with hidden numbers (deployed to sandbox 2026-10-06)
 
 - **Commit Version:** v1.4.0

@@ -152,6 +152,21 @@ foreach ($c in @('McubeAutoDailerApi','mCubeController','McubeSoftphoneAddOnCont
     E $PS $VS 'Apex Class' $c 'Use Named Credential MCube_API instead of hard-coded token / http URL' 'Security debt' 'Not requested yet' 'Baseline v1.0.0' 'Planned' 'Yes (optional)' ''
 }
 
+# Part 5a status (v1.5.0, built 2026-10-06)
+foreach ($row in $ex) {
+    if ($row[0] -ne 'Part 5') { continue }
+    if (@('MakeCallController', 'OfflineCallAppAPI', 'CallPanel', 'CallPanel_Outbound') -contains $row[3]) {
+        $row[6] = 'Approved 2026-10-06'; $row[7] = 'backup/v1.5.0-part5a-pre-change'; $row[8] = 'Built (Local) - 5a'
+    } elseif (@('MakeCall', 'utilityCallComponent', 'offlineCallQuickActionCmp') -contains $row[3]) {
+        $row[6] = '-'; $row[7] = 'backup/v1.5.0-part5a-pre-change'; $row[8] = 'No change (5a)'; $row[9] = 'No'
+    }
+}
+foreach ($row in $new) {
+    if ($row[0] -eq 'Part 5' -and @('PhoneDisplayService', 'PhoneDisplayServiceTest', 'MaskedDialService', 'Phone_Masked__c') -contains $row[3]) { $row[7] = 'Built (Local) - 5a' }
+}
+N $P5 $V5 'Apex Class (test)' 'PhoneMaskingCallScreensTest' '' '5a: masked paths of MakeCallController and OfflineCallAppAPI (callouts mocked)' '' 'Built (Local) - 5a' '' 'Yes' 'Existing test classes unchanged'
+N $P5 $V5 'Profile (update of new)' 'POC Masked Rep' '' '5a: read access to Lead.Phone_Masked__c' '' 'Built (Local) - 5a' '' 'Pilot only (decide)' ''
+
 # ---------------- MANUAL STEPS ----------------
 $manual = @(
     @('M1', $P1, 'Assign permission set Phone Access Audit Viewer to admins who review audits', 'Setup > Permission Sets', 'Not done', 'Yes'),
@@ -229,7 +244,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
     @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Deployed (Sandbox)'),
-    @('Part 5', 'v1.5.0', 'Mask leaking screens', 'Planned'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
+    @('Part 5', 'v1.5.0', 'Mask leaking screens (5a built)', 'Built (Local) - 5a'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
     @('Part 11', 'v2.0.0', 'Go-live access (masking ON)', 'Planned'), @('Security fix', 'optional', 'MCube Named Credential', 'Planned')
@@ -283,7 +298,8 @@ $bundleMeta = @{
     'part2-panel'       = @('2', 'Part 2', 'v1.2.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part2-panel --test-level RunSpecifiedTests --tests MaskedPhonePanelControllerTest', 'Deployed (Sandbox) 0Afft000000LRq1CAG')
     'part3-dialers'     = @('3', 'Part 3', 'v1.3.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part3-dialers --test-level RunSpecifiedTests --tests McubeMaskedClickToCallTest --tests McubeSoftphoneAddOnControllerTest', 'Deployed (Sandbox) 0Afft000000LY6jCAG')
     'part4-lead-entry'  = @('4', 'Part 4', 'v1.4.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part4-lead-entry --test-level RunSpecifiedTests --tests LeadPhoneEntryHandlerTest --tests LeadTriggerTest --tests LeadTriggerHandlerTest', 'Deployed (Sandbox) 0Afft000000Lc77CAC')
-    'part2-pilot'       = @('5', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
+    'part5a-calling'    = @('5', 'Part 5', 'v1.5.0 (5a)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5a-calling --test-level RunSpecifiedTests --tests PhoneDisplayServiceTest --tests PhoneMaskingCallScreensTest --tests MakeCallControllerTest --tests OfflineCallAppAPITest --tests MaskedDialServiceTest', 'Built (Local) - not deployed')
+    'part2-pilot'       = @('6', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
 }
 $typeOf = @{ 'pages' = 'Visualforce Page'; 'aura' = 'Aura Component'; 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }
 $relRows = @()
@@ -309,12 +325,13 @@ $stepRows = @(
     @('3', 'part2-pilot', 'Pilot only: clone Presales outbound -> POC Masked Rep in Setup, then deploy', $bundleMeta['part2-pilot'][4] + ' --target-org <prod>', 'Not deployed'),
     @('3b', 'part3-dialers', 'Validate in production, then quick deploy', $bundleMeta['part3-dialers'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
     @('3c', 'part4-lead-entry', 'Validate in production, then quick deploy', $bundleMeta['part4-lead-entry'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
+    @('3d', 'part5a-calling', 'Validate in production, then quick deploy', $bundleMeta['part5a-calling'][4] + ' --target-org <prod>   then   sf project deploy quick --job-id <id> --target-org <prod>', 'Not deployed'),
     @('4', '(manual)', 'Assign Phone Access Audit Viewer to admins', 'Setup > Permission Sets', 'Not deployed'),
     @('5', '(manual, pilot)', 'Activate masked POC page: Gsquare Housing / Desktop / Pre Sales / POC Masked Rep', 'Lightning App Builder > Activation', 'Not deployed'),
     @('6', '(check)', 'Run scripts/apex/v1.1.0-1 and -2 (read-only)', 'Developer Console > Execute Anonymous', 'Not deployed')
 )
-Add-Sheet 'Release Bundle' 'Production Release Bundle - built components (Parts 1-4)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
-Add-Sheet 'Release Steps' 'Production Deploy Steps (Parts 1-4)' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
+Add-Sheet 'Release Bundle' 'Production Release Bundle - built components (Parts 1-5a)' "Every file in release/prod, converted from the sandbox-tested source. Checksums in release/prod/SHA256SUMS. Rebuild: bash scripts/release/build-prod-release.sh" @('Deploy order', 'Bundle folder', 'Part', 'Version', 'Metadata Type', 'Component', 'File path', 'SHA-256 (first 12)', 'For', 'Tested in sandbox', 'Prod Status') @(9, 20, 9, 9, 30, 34, 70, 16, 30, 34, 14) $relRows @(9, 10)
+Add-Sheet 'Release Steps' 'Production Deploy Steps (Parts 1-5a)' 'Validate first, then quick deploy. Replace <prod> with the production org alias.' @('Step', 'Bundle', 'What', 'Command / Where', 'Prod Status') @(6, 20, 50, 110, 14) $stepRows @(4)
 
 # ---------------- PART 4 PLAN ----------------
 $p4 = @(
