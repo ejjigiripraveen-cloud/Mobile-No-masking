@@ -211,6 +211,13 @@ foreach ($row in $ex) {
 
 N $P5 $V5 'Apex Class (test)' 'PhoneMaskingPushTest' '' '5d: selection lists masked for masked users; eligibility unchanged' '' 'Deployed (Sandbox)' '0Afft000000Lm1dCAC' 'Yes' ''
 
+# Part 5e status (planned 2026-10-07)
+foreach ($row in $ex) {
+    if ($row[0] -ne 'Part 5') { continue }
+    if ($row[3] -eq 'LeadMsgConversationController') { $row[4] = '5e: mask numbers in conversation message / rawJson / senderName for masked users'; $row[6] = 'Pending approval'; $row[7] = 'backup/v1.5.0-part5e-pre-change' }
+    elseif ($row[3] -eq 'leadMsgConversationLWC') { $row[4] = '5e: NO CHANGE - shows what Apex returns'; $row[6] = '-'; $row[7] = 'backup/v1.5.0-part5e-pre-change'; $row[8] = 'No change (5e)'; $row[9] = 'No' }
+}
+
 # ---------------- MANUAL STEPS ----------------
 $manual = @(
     @('M1', $P1, 'Assign permission set Phone Access Audit Viewer to admins who review audits', 'Setup > Permission Sets', 'Not done', 'Yes'),
@@ -446,3 +453,15 @@ $p5d = @(
     @('Not in scope', 'Apex', 'getUserPicklistValues, rmMobileNumber', 'Agent / user numbers, not customer numbers', '-', '-')
 )
 Add-Sheet 'Part 5d Plan' 'Part 5d (v1.5.0) - Bulk push and Yotel push' 'Explained before implementation; originals in backup/v1.5.0-part5d-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(16, 18, 44, 80, 54, 10) $p5d @()
+
+# ---------------- PART 5e PLAN ----------------
+$p5e = @(
+    @('Existing', 'Apex Class', 'LeadMsgConversationController.getConversationViaConnectApi', 'Before returning the conversation: for masked users, mask numbers inside message, rawJson and senderName (PhoneMaskUtil.maskInText) - one call to a new @TestVisible helper', 'Masked users: chat shows the same messages with any phone number masked; the raw data never carries the WhatsApp number. Others: unchanged', 'Low'),
+    @('No change', 'Apex', 'getMessagingSessionId, getTransferContext, transferMessagingSession, getSessionAttachments', 'Use Full_phone_number__c on the server only; return Ids, status, files - no number', '-', '-'),
+    @('No change', 'LWC', 'leadMsgConversationLWC', 'Displays what Apex returns', '-', '-'),
+    @('New', 'Apex Class (test)', 'PhoneMaskingWhatsAppTest', 'Conversation rows masked for masked users, unchanged for others (Connect API not called - helper tested directly)', '-', '-'),
+    @('Go-live decision (D4)', 'Standard objects', 'MessagingEndUser / MessagingSession', 'Presales outbound has View All on both; the WhatsApp customer record shows the number in standard screens, reports, search. Needs a go-live decision (remove View All / restrict) without breaking chat for reps', 'Not changed in 5e', 'Decision'),
+    @('Later (Part 7)', 'Apex', 'notifyLeadStakeholders(messagePreview)', 'Preview text typed in chat - free-text masking', '-', '-'),
+    @('Test limit', 'Data', 'Sandbox has 0 MessagingEndUser records', 'The chat cannot be tested on screen in the sandbox (no WhatsApp data copied)', '-', '-')
+)
+Add-Sheet 'Part 5e Plan' 'Part 5e (v1.5.0) - WhatsApp chat' 'Explained before implementation; originals in backup/v1.5.0-part5e-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(18, 18, 48, 84, 54, 12) $p5e @()

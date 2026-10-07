@@ -1,0 +1,93 @@
+<template>
+
+    <!-- HEADER -->
+    <div class="headerSection">
+        <img src={whatsappLogo} class="whatsappIcon"/>
+        <div class="headerInfo">
+            <div class="headerTitle">WhatsApp Conversation</div>
+        </div>
+    </div>
+
+    <!-- TRANSFER ACTION - single button -->
+    <template if:true={hasActiveSession}>
+        <div class="transferBar">
+            <lightning-button label="Transfer to Me" icon-name="utility:adduser" class="transferBtn"
+                disabled={disableTransferToMe} onclick={handleTransferToMe}>
+            </lightning-button>
+            <lightning-button
+            label="Click here to Chat"
+            variant="brand"
+            icon-name="utility:chat"
+            disabled={disableClickToChat}
+            onclick={handleAttachClick}>
+        </lightning-button>
+        </div>
+    </template>
+
+    <!-- CHAT AREA -->
+    <div class="chatContainer">
+        <template if:true={isLoading}>
+            <div class="spinnerContainer">
+                <lightning-spinner alternative-text="Loading conversation" size="medium">
+                </lightning-spinner>
+            </div>
+        </template>
+
+        <template for:each={messages} for:item="msg">
+            <div key={msg.id} class={msg.cssClass}>
+                <div class="messageBubble">
+
+                    <div class="senderLabel">{msg.senderLabel}</div>
+                    <!-- ===== MEDIA BUBBLE ===== -->
+                    <template if:true={msg.isMedia}>
+                        <template if:true={msg.isImage}>
+                            <!-- <img src={msg.fileUrl} alt={msg.fileName} class="chatImage"/> -->
+                            <img src={msg.fileUrl} alt={msg.fileName} class="chatImage clickableImage" data-url={msg.fileUrl}
+                                onclick={openImagePreview} />
+                                <template if:true={showImagePreview}>
+                                    <section class="imageModal" onclick={closeImagePreview}>
+                                        <div class="imageModalContent">
+                                            <lightning-button-icon icon-name="utility:close" alternative-text="Close" class="closeBtn"
+                                                onclick={closeImagePreview}>
+                                            </lightning-button-icon>
+                                
+                                            <img src={previewImageUrl} class="previewImage" />
+                                        </div>
+                                    </section>
+                                </template>
+                        </template>
+                        <template if:true={msg.isAudio}>
+                            <audio controls src={msg.fileUrl} class="chatAudio"></audio>
+                        </template>
+                        <template if:true={msg.isVideo}>
+                            <video controls src={msg.fileUrl} class="chatVideo"></video>
+                        </template>
+                        <!-- fallback: any other file type -> download link -->
+                        <template if:false={msg.isImage}>
+                            <template if:false={msg.isAudio}>
+                                <template if:false={msg.isVideo}>
+                                    <a href={msg.fileUrl} target="_blank" class="chatFile">
+                                        📎 {msg.fileName}
+                                    </a>
+                                </template>
+                            </template>
+                        </template>
+                    </template>
+                    <template if:false={msg.isMedia}>
+                        <div class="messageText">
+                            <template for:each={msg.messageLines} for:item="line">
+                                <p key={line.key} class="messageLine">{line.value}</p>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div class="messageTime">{msg.formattedDate}</div>
+                </div>
+            </div>
+        </template>
+
+        <template if:false={hasMessages}>
+            <div class="emptyState">No messages yet</div>
+        </template>
+    </div>
+</template>
