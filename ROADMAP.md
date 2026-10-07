@@ -16,7 +16,7 @@ Every build part follows the same 5 checkpoints:
 | 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | 🟡 |
 | 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | 🟡 |
 | 4 | v1.4.0 | Lead creation with hidden numbers | 🟡 |
-| 5 | v1.5.0 | Mask existing screens that leak numbers (5a + 5b deployed, 5c built, 5d–5e ⬜) | 🟡 |
+| 5 | v1.5.0 | Mask existing screens that leak numbers (5a–5c deployed, 5d–5e ⬜) | 🟡 |
 | 6 | v1.6.0 | Reveal for TL / Head / Admin + audit cleanup | ⬜ |
 | 7 | v1.7.0 | Free-text auto-masking | ⬜ |
 | 8 | v1.8.0 | Find by number (only if POC shows search breaks) | ⏸️ |
@@ -34,7 +34,8 @@ Every build part follows the same 5 checkpoints:
 | # | Item | Why deferred | Proposed fix | Status |
 |---|---|---|---|---|
 | D1 | Call panels `CallPanel`, `CallPanel_Outbound` show an empty Phone line for masked users | Aura `lightning:recordViewForm` has no `onload` event – two 5a deploys rolled back; owner asked to skip for now (2026-10-06) | New LWC `maskedPhoneField` (Phone__c for users who can see it, Phone_Masked__c otherwise); replace the one Phone line in each panel | ⏸️ Remind owner after Parts 5b–7 |
-| D2 | Sandbox testing of Parts 5a and 5b (and results of the Part 2–4 tests) | Owner will test later (2026-10-07) | Test steps given in chat; 5b call history list `mCubeLightningPage` is on no page, so not testable on screen unless added to the POC page (needs approval) | ⏸️ Remind owner at the end |
+| D2 | Sandbox testing of Parts 5a, 5b and 5c (and results of the Part 2–4 tests) | Owner will test later (2026-10-07) | Test steps given in chat; 5b call history list `mCubeLightningPage` is on no page, so not testable on screen unless added to the POC page (needs approval) | ⏸️ Remind owner at the end |
+| D3 | Existing test `updateContactDetailsTest` fails before this project (`Too many SOQL queries: 101` in `LeadTrigger` line 232) | Found while deploying 5c (2026-10-07); verified on the unchanged sandbox code – not caused by masking | Excluded from the 5c test run (our `PhoneMaskingLeadToolsTest` covers `updateContactDetails`); production deploys must not list it. Reducing `LeadTrigger` queries is outside this project – report to its owner | ⏸️ Tell owner at the end |
 
 ---
 
@@ -127,6 +128,7 @@ Every build part follows the same 5 checkpoints:
 | Build locally | 🟡 5a ✅ · 5b ✅ · 5c ✅ 2026-10-07 (backup/v1.5.0-part5c-pre-change) · 5d–5e ⬜ |
 | Deploy 5a | ✅ 2026-10-06 code 0Afft000000Lf3NCAS (45 tests) · pilot 0Afft000000Lf4zCAC · call panels deferred (D1) |
 | Deploy 5b | ✅ 2026-10-06 0Afft000000LfszCAC (61 tests) |
+| Deploy 5c | ✅ 2026-10-07 0Afft000000LkRFCA0 (23 tests; existing updateContactDetailsTest excluded - D3) |
 | Approval | 🟡 5a ✅ · 5b ✅ · 5c ✅ 2026-10-07 · 5d–5e ⬜ |
 | Deploy to sandbox | ⬜ |
 | Test (each screen masked; MakeCall, G-Talk, Yotel/bulk push, WhatsApp, merge still work; `log__c` clean) | ⬜ |

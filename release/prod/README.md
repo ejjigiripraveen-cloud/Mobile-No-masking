@@ -194,7 +194,7 @@ sf project deploy quick --job-id <validation id> --target-org <prod>
 
 ## Part 5c – v1.5.0 Lead Merge + Update Contact Details (built 2026-10-07)
 
-### part5c-lead-tools (deploy after part5b-history)
+### part5c-lead-tools (deploy after part5b-history) - tested in sandbox 0Afft000000LkRFCA0, 23 tests
 | Type | Components | Change |
 |---|---|---|
 | Apex | `PhoneDisplayService` | Updated (`maskRecords`, `prepareContactInput`) |
@@ -207,6 +207,6 @@ Originals: `backup/v1.5.0-part5c-pre-change`.
 ```bash
 sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --target-org <prod> \
   --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest \
-  --tests LeadMergeControllerTest --tests updateContactDetailsTest
+  --tests LeadMergeControllerTest   (not updateContactDetailsTest: it fails before 5c - see D3)
 sf project deploy quick --job-id <validation id> --target-org <prod>
 ```

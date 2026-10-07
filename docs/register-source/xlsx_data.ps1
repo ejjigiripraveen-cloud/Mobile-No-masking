@@ -190,14 +190,14 @@ E $P5 $V5 'Aura Component' 'LeadHistoryandActivityCmp' '5b: NO CHANGE - shows wh
 foreach ($row in $ex) {
     if ($row[0] -ne 'Part 5') { continue }
     if (@('LeadMergeController', 'updateContactDetails') -contains $row[3]) {
-        $row[6] = 'Approved 2026-10-07'; $row[7] = 'backup/v1.5.0-part5c-pre-change'; $row[8] = 'Built (Local) - 5c'
+        $row[6] = 'Approved 2026-10-07'; $row[7] = 'backup/v1.5.0-part5c-pre-change'; $row[8] = 'Deployed (Sandbox) 0Afft000000LkRFCA0'
     } elseif (@('LeadMergeCmp', 'UpdateContactDetails') -contains $row[3]) {
         $row[4] = '5c: NO CHANGE - shows what Apex returns'; $row[6] = '-'; $row[7] = 'backup/v1.5.0-part5c-pre-change'; $row[8] = 'No change (5c)'; $row[9] = 'No'
     }
 }
 
-N $P5 $V5 'Apex Class (test)' 'PhoneMaskingLeadToolsTest' '' '5c: merge lists masked; Update Contact never saves masked values, primary locked for masked users' '' 'Built (Local) - 5c' '' 'Yes' ''
-N $P5 $V5 'Apex Class (update of new)' 'PhoneDisplayService' '' '5c: + maskRecords, prepareContactInput' 'PhoneMaskingLeadToolsTest' 'Built (Local) - 5c' '' 'Yes' ''
+N $P5 $V5 'Apex Class (test)' 'PhoneMaskingLeadToolsTest' '' '5c: merge lists masked; Update Contact never saves masked values, primary locked for masked users' '' 'Deployed (Sandbox)' '0Afft000000LkRFCA0' 'Yes' ''
+N $P5 $V5 'Apex Class (update of new)' 'PhoneDisplayService' '' '5c: + maskRecords, prepareContactInput' 'PhoneMaskingLeadToolsTest' 'Deployed (Sandbox)' '0Afft000000LkRFCA0' 'Yes' ''
 
 # ---------------- MANUAL STEPS ----------------
 $manual = @(
@@ -276,7 +276,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
     @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Deployed (Sandbox)'),
-    @('Part 5', 'v1.5.0', 'Mask leaking screens (5a + 5b deployed, 5c built, call panels deferred D1)', 'Built (Local) - 5c'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
+    @('Part 5', 'v1.5.0', 'Mask leaking screens (5a-5c deployed, call panels deferred D1)', 'Deployed (Sandbox) - 5a, 5b, 5c'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
     @('Part 11', 'v2.0.0', 'Go-live access (masking ON)', 'Planned'), @('Security fix', 'optional', 'MCube Named Credential', 'Planned')
@@ -332,7 +332,7 @@ $bundleMeta = @{
     'part4-lead-entry'  = @('4', 'Part 4', 'v1.4.0', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part4-lead-entry --test-level RunSpecifiedTests --tests LeadPhoneEntryHandlerTest --tests LeadTriggerTest --tests LeadTriggerHandlerTest', 'Deployed (Sandbox) 0Afft000000Lc77CAC')
     'part5a-calling'    = @('5', 'Part 5', 'v1.5.0 (5a)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5a-calling --test-level RunSpecifiedTests --tests PhoneDisplayServiceTest --tests PhoneMaskingCallScreensTest --tests MakeCallControllerTest --tests OfflineCallAppAPITest --tests MaskedDialServiceTest', 'Deployed (Sandbox) 0Afft000000Lf3NCAS')
     'part5b-history'    = @('6', 'Part 5', 'v1.5.0 (5b)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5b-history --test-level RunSpecifiedTests --tests PhoneMaskingHistoryTest --tests PhoneDisplayServiceTest --tests mCubeController_Test --tests mCubeControllerTestExtended --tests LeadHistoryandActivityControllerTest', 'Deployed (Sandbox) 0Afft000000LfszCAC')
-    'part5c-lead-tools' = @('7', 'Part 5', 'v1.5.0 (5c)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest --tests LeadMergeControllerTest --tests updateContactDetailsTest', 'Built (Local) - not deployed')
+    'part5c-lead-tools' = @('7', 'Part 5', 'v1.5.0 (5c)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest --tests LeadMergeControllerTest (not updateContactDetailsTest - fails before 5c, D3)', 'Deployed (Sandbox) 0Afft000000LkRFCA0')
     'part2-pilot'       = @('8', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
 }
 $typeOf = @{ 'pages' = 'Visualforce Page'; 'aura' = 'Aura Component'; 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }

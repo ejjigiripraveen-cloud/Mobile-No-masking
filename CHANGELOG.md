@@ -5,11 +5,13 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.5.0 (5c) – Lead Merge and Update Contact Details masked (built locally 2026-10-07 · NOT deployed)
+## v1.5.0 (5c) – Lead Merge and Update Contact Details masked (deployed to sandbox 2026-10-07)
 
 - **Commit Version:** v1.5.0 (Part 5c)
 - **Type:** feat
 - **Branch:** `ejjigiripraveen/v1.5.0-part5c-lead-tools`
+- **Sandbox deploy:** 0Afft000000LkRFCA0 (4/4, **23 tests passed**: PhoneMaskingLeadToolsTest 13, PhoneDisplayServiceTest, existing LeadMergeControllerTest). Coverage: PhoneDisplayService 92.9% · updateContactDetails 84.6% · LeadMergeController 79.3% (whole class).
+- **Pre-existing test failure found:** the existing `updateContactDetailsTest.testcontact` fails **before** Part 5c (verified against the unchanged sandbox code): `Too many SOQL queries: 101` in `LeadTrigger` line 232. It is excluded from the 5c test run; `PhoneMaskingLeadToolsTest` now also covers the existing duplicate / formatting / no-change / no-access branches of `savecontactdetails` (one save per test). Attempts 0Afft000000LkMPCA0 (that test) and 0Afft000000LkJCCA0 (coverage 58.2% without it) were rolled back. **Production:** do not include `updateContactDetailsTest` in the specified tests (see deferred item D3).
 - **Backup of originals (before any change):** `backup/v1.5.0-part5c-pre-change` (commit `dd2bb88`, 22 files identical to baseline)
 - **Found:** `savecontactdetails` saves whatever the screen sends – masking only the display would have overwritten real numbers with masked ones.
 - **Modified Assets:**
