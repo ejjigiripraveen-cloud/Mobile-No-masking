@@ -2,12 +2,16 @@
 
 Salesforce DX project for masking customer mobile numbers from GSquare users (everyone except System Admins and integration users) while keeping click-to-dial working through the existing dialers.
 
-## Status
+## Status (as of 2026-10-07)
 
-- Design is **finalized**. Nothing has been built yet; `force-app` is empty.
+- **Deployed to the sandbox (Sandbox alias, gsquaregroup--prodreplic):** Parts 1, 2, 3, 4, 5a–5e, 6. Masking is visible only to POC test users (profile *POC Masked Rep*); real users are unchanged until the go-live switch (Part 11).
+- **Next:** Part 7 (free-text masking – permanent), then Part 11 (go-live switch in the sandbox); Parts 8 / 9 only if needed.
+- **Open questions from the owner's last session:** schedule the nightly audit purge (`PhoneAuditPurgeBatch.scheduleNightly()`) – not done yet; test Part 6 now or at the end.
+- **Deferred items D1–D4** (call panels, testing of all parts, pre-broken `updateContactDetailsTest`, WhatsApp Messaging object access) – see ROADMAP.md "Deferred items"; raise them at the end.
+- **Where things are:** `ROADMAP.md` (progress), `CHANGELOG.md` (every version, deploy IDs, rollback, access sheets), `TEST_GUIDE.md` (step-by-step tests of every part), `REQUIREMENTS.md`, `docs/Mobile_Masking_Component_Register.xlsx` (all components + production deploy list), `release/prod/` (production bundle), `backup/` (originals before each change).
+- **Git:** one branch per part (`ejjigiripraveen/v1.x.0-…`), each built on the previous one; latest `ejjigiripraveen/v1.6.0-reveal`; remote `origin` = github.com/ejjigiripraveen-cloud/Mobile-No-masking (public).
+- **Test users (sandbox):** POC MCube Rep, POC SlashRTC Rep, POC TL (Phone Reveal).
 - **Do not deploy or change anything in any org without explicit approval.** Read-only queries in the sandbox are fine.
-- Waiting on: sandbox refresh (current sandbox data does not match prod call-center assignments) and vendor responses to the scope of work.
-- Next after refresh: proof of concept (see below) and a read-only inventory of every flow, Lightning page, component and Apex class that references the phone fields.
 
 ## Docs
 
@@ -18,7 +22,7 @@ The internal design doc is the source of truth. Update it, not just this file, w
 
 ## Orgs
 
-- Default target org: `gsquaregroup--prodreplic` (sandbox, user `jesseewilson@gsquarehousing.com.prodreplic`).
+- Default target org: alias `Sandbox` = gsquaregroup--prodreplic (refreshed, org 00Dft000000AiZFEA0, user ejjigiripraveen@gsquarehousing.com.prodreplic).
 - Production is not the default. Never target prod without explicit approval.
 
 ## Current dialer setup (as found in sandbox; prod matches per user)
