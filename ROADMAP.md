@@ -34,6 +34,7 @@ Every build part follows the same 5 checkpoints:
 | # | Item | Why deferred | Proposed fix | Status |
 |---|---|---|---|---|
 | D1 | Call panels `CallPanel`, `CallPanel_Outbound` show an empty Phone line for masked users | Aura `lightning:recordViewForm` has no `onload` event – two 5a deploys rolled back; owner asked to skip for now (2026-10-06) | New LWC `maskedPhoneField` (Phone__c for users who can see it, Phone_Masked__c otherwise); replace the one Phone line in each panel | ⏸️ Remind owner after Parts 5b–7 |
+| D2 | Sandbox testing of Parts 5a and 5b (and results of the Part 2–4 tests) | Owner will test later (2026-10-07) | Test steps given in chat; 5b call history list `mCubeLightningPage` is on no page, so not testable on screen unless added to the POC page (needs approval) | ⏸️ Remind owner at the end |
 
 ---
 
