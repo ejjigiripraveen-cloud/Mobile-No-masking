@@ -186,6 +186,16 @@ N $P5 $V5 'Apex Class (test)' 'PhoneMaskingHistoryTest' '' '5b: call history, Hi
 N $P5 $V5 'Apex Class (update of new)' 'PhoneDisplayService' '' '5b: + forDisplay, historyValueForDisplay' 'PhoneMaskingHistoryTest' 'Deployed (Sandbox)' '0Afft000000LfszCAC' 'Yes' ''
 E $P5 $V5 'Aura Component' 'LeadHistoryandActivityCmp' '5b: NO CHANGE - shows what GetData returns' 'History & Activity on 4 Lead pages' '-' 'backup/v1.5.0-part5b-pre-change' 'No change (5b)' 'No' 'First backed up in 5b'
 
+# Part 5c status (v1.5.0, planned 2026-10-07)
+foreach ($row in $ex) {
+    if ($row[0] -ne 'Part 5') { continue }
+    if (@('LeadMergeController', 'updateContactDetails') -contains $row[3]) {
+        $row[6] = 'Pending approval'; $row[7] = 'backup/v1.5.0-part5c-pre-change'
+    } elseif (@('LeadMergeCmp', 'UpdateContactDetails') -contains $row[3]) {
+        $row[4] = '5c: NO CHANGE - shows what Apex returns'; $row[6] = '-'; $row[7] = 'backup/v1.5.0-part5c-pre-change'; $row[8] = 'No change (5c)'; $row[9] = 'No'
+    }
+}
+
 # ---------------- MANUAL STEPS ----------------
 $manual = @(
     @('M1', $P1, 'Assign permission set Phone Access Audit Viewer to admins who review audits', 'Setup > Permission Sets', 'Not done', 'Yes'),
@@ -395,3 +405,14 @@ $p5b = @(
     @('Later', 'Free text', 'Task Subject / Description in the history', 'Numbers typed in notes are handled by Part 7 (free-text masking)', '-', '-')
 )
 Add-Sheet 'Part 5b Plan' 'Part 5b (v1.5.0) - Call history and logs' 'Explained before implementation; originals in backup/v1.5.0-part5b-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(16, 22, 44, 80, 50, 12) $p5b @()
+
+# ---------------- PART 5c PLAN ----------------
+$p5c = @(
+    @('Updated (ours)', 'Apex Class', 'PhoneDisplayService', '+ maskRecords(records, fields): masks phone fields on a result list for masked users (in memory only). + prepareContactInput(recordId, phone, secondaryPhone): a masked value sent back by a screen is replaced by the stored number (never saved masked); for masked users the primary stays locked once set.', 'Same rules as Parts 4 / 5a', 'Low'),
+    @('New', 'Apex Class (test)', 'PhoneMaskingLeadToolsTest', 'Merge lists masked / unchanged; Update Contact: masked values never saved, secondary change saved, primary change refused for masked users, unmasked users unchanged', '-', '-'),
+    @('Existing', 'Apex Class', 'LeadMergeController', 'getLeads / getSearchLeads: phone numbers in the results masked for masked users (2 return lines become assign + mask + return). mergeLead unchanged.', 'Merge screen shows 98XXXXXX21 for masked users; merge works as before', 'Low'),
+    @('Existing', 'Apex Class', 'updateContactDetails', 'getcontactdetails: +1 line (mask for masked users). savecontactdetails: +5 lines at the top (prepareContactInput) - masked values restored to the stored numbers, primary locked for masked users.', 'Masked users: see masked, can change secondary + emails; a masked value is never written back. Others: unchanged.', 'Medium (writes data) - covered by new + existing tests'),
+    @('No change', 'Aura', 'LeadMergeCmp, UpdateContactDetails', 'Screens show what Apex returns; the phone inputs have no format check, so masked values pass validation', '-', '-'),
+    @('Existing issue (not changed)', 'Apex Class', 'LeadMergeController.getLeads', 'Returns every Lead except the current one with no limit, and the class has no sharing keyword', 'Report to the owner; out of scope', '-')
+)
+Add-Sheet 'Part 5c Plan' 'Part 5c (v1.5.0) - Lead Merge and Update Contact Details' 'Explained before implementation; originals in backup/v1.5.0-part5c-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(18, 18, 34, 90, 50, 22) $p5c @()
