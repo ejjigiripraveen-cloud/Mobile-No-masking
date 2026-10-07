@@ -152,7 +152,7 @@ Buttons at the top right of the Lead page (or under ▼): **Update Contact Detai
 
 ## Part 5d – Bulk push + Yotel push (v1.5.0) · built, not yet deployed
 
-Both are started from a Lead **list view**: select Leads → list button (Bulk push / Yotel push).
+Leads tab → list view → tick Leads → list buttons **Add Leads to Call List** (Bulk push → MCube) and **Create Lead List For Yotel** (Yotel). ⚠️ Pushing is real – MCube / Yotel may call the numbers: use a private list view with only test Leads (e.g. filter Last Name contains "Test Lead") and check with the MCube / Yotel admins before pressing Push. Yotel eligibility needs `Gi_BOT_Camp_ID__c` (ask the Yotel admin for a test campaign Id). **On hold:** the owner could not test 5d yet because of an access issue (2026-10-07).
 
 | # | As | Step | Expected |
 |---|---|---|---|
