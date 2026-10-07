@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- v1.5.0 Part 5d (Bulk push, Yotel push). Run tests: PhoneMaskingPushTest LeadBulkPushControllerTest LeadYotelBulkPushControllerTest -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>LeadBulkPushController</members>
+        <members>LeadYotelBulkPushController</members>
+        <members>PhoneMaskingPushTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>66.0</version>
+</Package>

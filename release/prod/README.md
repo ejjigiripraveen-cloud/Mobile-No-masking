@@ -210,3 +210,22 @@ sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --targe
   --tests LeadMergeControllerTest   (not updateContactDetailsTest: it fails before 5c - see D3)
 sf project deploy quick --job-id <validation id> --target-org <prod>
 ```
+
+---
+
+## Part 5d – v1.5.0 Bulk push + Yotel push (built 2026-10-07)
+
+### part5d-push (deploy after part5c-lead-tools)
+| Type | Components | Change |
+|---|---|---|
+| Apex | `LeadBulkPushController` | **Existing** – selection list mobile masked for masked users (1 line) |
+| Apex | `LeadYotelBulkPushController` | **Existing** – selection list masked for masked users (1 line); debug line masked |
+| Apex test | `PhoneMaskingPushTest` | New |
+
+Originals: `backup/v1.5.0-part5d-pre-change`.
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part5d-push --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingPushTest --tests LeadBulkPushControllerTest --tests LeadYotelBulkPushControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```

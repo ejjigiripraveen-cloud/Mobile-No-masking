@@ -140,6 +140,85 @@ private class PhoneMaskingLeadToolsTest {
         Assert.isTrue(leadNamed('Tools Lead One').Phone__c.contains('00000001'));
     }
 
+    // ---------------- existing savecontactdetails branches (unmasked users, behaviour unchanged) ----------------
+    // The existing updateContactDetailsTest fails before Part 5c (too many SOQL queries in LeadTrigger), so these
+    // tests cover the existing branches with one save per test.
+
+    @IsTest
+    static void existingDuplicatePhoneIsReported() {
+        PhoneDisplayService.maskedUserOverride = false;
+        Lead one = leadNamed('Tools Lead One');
+
+        Test.startTest();
+        String result = updateContactDetails.savecontactdetails(one.Id, PRIMARY, one.Email, '9555555555', null);
+        Test.stopTest();
+
+        Assert.isTrue(result.startsWith('Lead aleady existed with this contact details.'), 'Existing duplicate message: ' + result);
+    }
+
+    @IsTest
+    static void existingDuplicateEmailIsReported() {
+        PhoneDisplayService.maskedUserOverride = false;
+        Lead two = leadNamed('Tools Lead Two');
+
+        Test.startTest();
+        String result = updateContactDetails.savecontactdetails(two.Id, null, 'tools.one@example.com', null, null);
+        Test.stopTest();
+
+        Assert.isTrue(result.startsWith('Lead aleady existed with this contact details.'), 'Existing duplicate message: ' + result);
+    }
+
+    @IsTest
+    static void existingFormattingOfCountryCodes() {
+        PhoneDisplayService.maskedUserOverride = false;
+        Lead one = leadNamed('Tools Lead One');
+
+        Test.startTest();
+        String result = updateContactDetails.savecontactdetails(one.Id, '+91' + PRIMARY, 'changed@example.com', '+447700900123', 'second@example.com');
+        Test.stopTest();
+
+        Assert.areEqual('Success', result);
+        Lead saved = leadNamed('Tools Lead One');
+        Assert.isTrue(saved.Phone__c.contains(PRIMARY.right(8)));
+        Assert.areEqual('changed@example.com', saved.Email);
+    }
+
+    @IsTest
+    static void existingSaveWithoutChanges() {
+        PhoneDisplayService.maskedUserOverride = false;
+        Lead one = leadNamed('Tools Lead One');
+
+        Test.startTest();
+        String result = updateContactDetails.savecontactdetails(one.Id, one.Phone__c, one.Email, one.Secondary_Phone__c, one.Secondary_Email__c);
+        Test.stopTest();
+
+        Assert.areEqual('Success', result);
+    }
+
+    @IsTest
+    static void existingNoEditAccessMessage() {
+        Lead one = leadNamed('Tools Lead One');
+        User other;
+        System.runAs(new User(Id = UserInfo.getUserId())) {
+            other = PhoneTestDataFactory.createUser('Standard User');
+        }
+        Boolean canEdit = [
+            SELECT RecordId, HasEditAccess FROM UserRecordAccess WHERE UserId = :other.Id AND RecordId = :one.Id
+        ].HasEditAccess;
+
+        String result;
+        System.runAs(other) {
+            PhoneDisplayService.maskedUserOverride = false;
+            result = updateContactDetails.savecontactdetails(one.Id, PRIMARY, 'x@example.com', SECONDARY, null);
+        }
+
+        if (!canEdit) {
+            Assert.isTrue(result.startsWith('Oops...you do not have the necessary privileges'), result);
+        } else {
+            Assert.isNotNull(result);
+        }
+    }
+
     @IsTest
     static void prepareContactInputHandlesBadOrMissingRecords() {
         PhoneDisplayService.maskedUserOverride = true;

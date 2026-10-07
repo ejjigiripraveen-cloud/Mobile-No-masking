@@ -5,6 +5,28 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.5.0 (5d) – Bulk push and Yotel push selection lists masked (built locally 2026-10-07 · NOT deployed)
+
+- **Commit Version:** v1.5.0 (Part 5d)
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.5.0-part5d-push`
+- **Backup of originals (before any change):** `backup/v1.5.0-part5d-pre-change` (commit `8e5a8d4`, 29 files; wrappers, apps and the 2 VF host pages first backed up here)
+- **Modified Assets:**
+  - New: `PhoneMaskingPushTest`.
+  - Existing (approved 2026-10-07), 3 lines in total:
+    - `LeadBulkPushController.getSelectedLeads` – `w.mobileNumber = PhoneDisplayService.forDisplay(l.MobilePhone)`.
+    - `LeadYotelBulkPushController.getSelectedLeads` – `w.mobileNumber = PhoneDisplayService.forDisplay(l.Phone__c)`; the debug line logs `PhoneMaskUtil.mask(l.Phone__c)` (everyone). Eligibility still uses the real number.
+  - No change: `pushBulkToDialer`, `pushBulkToYotel` (Lead Ids only; real numbers read on the server), LWCs, wrappers, apps, VF pages.
+  - Note: the existing `LeadBulkPushController.getSelectedLeads` replaces its query result with an empty Lead while tests run (`if(Test.isRunningTest())`), so its masked line is checked on that record; the rule itself is tested elsewhere.
+- **Deploy:** `sf project deploy start --manifest manifest/v1.5.0-5d/package.xml --test-level RunSpecifiedTests --tests PhoneMaskingPushTest --tests LeadBulkPushControllerTest --tests LeadYotelBulkPushControllerTest`
+- **Rollback:** redeploy both controllers from `backup/v1.5.0-part5d-pre-change`, then `manifest/v1.5.0-5d/destructiveChanges.xml`.
+
+### Access sheet – v1.5.0 (5d)
+
+| Item | Who | Action |
+|---|---|---|
+| Changed classes | Existing users | Already granted; no change |
+
 ## v1.5.0 (5c) – Lead Merge and Update Contact Details masked (deployed to sandbox 2026-10-07)
 
 - **Commit Version:** v1.5.0 (Part 5c)

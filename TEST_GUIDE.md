@@ -150,13 +150,24 @@ Buttons at the top right of the Lead page (or under ▼): **Update Contact Detai
 | 5c.7 | POC MCube Rep | Merge Lead → list, search "Test Lead" → (optional) merge Test Lead B | Masked numbers; merge works |
 | 5c.8 | Admin | Query `SELECT Phone__c, Secondary_Phone__c, Email FROM Lead WHERE Id IN ('00Q…A','00Q…B')` | Real numbers (Phone still 9876543221, Secondary 9333333333), **no "X" in any phone field** |
 
----
+## Part 5d – Bulk push + Yotel push (v1.5.0) · built, not yet deployed
 
-## Parts still to be built – sections added as each part is built
+Both are started from a Lead **list view**: select Leads → list button (Bulk push / Yotel push).
+
+| # | As | Step | Expected |
+|---|---|---|---|
+| 5d.1 | Normal rep | Lead list → select 2 test Leads → **Yotel push** | Table shows full numbers, as before |
+| 5d.2 | POC MCube Rep | Lead list → select Test Lead A + B → **Yotel push** | Table shows `98XXXXXX21`; eligibility column unchanged; nothing in Network |
+| 5d.3 | POC MCube Rep | Click Push (only with test numbers / a test campaign) | Push succeeds – Yotel receives the real numbers from the server |
+| 5d.4 | POC MCube Rep | Lead list → select test Leads → **Bulk push** | Screen as before; F12 → Network: no full customer number in the response |
+| 5d.5 | POC MCube Rep | Pick the agent and push (test Leads only) | Push to MCube succeeds |
+| 5d.6 | Normal rep | Bulk push | Exactly as before |
+
+$1 – sections added as each part is built
 
 | Part | Status |
 |---|---|
-| 5d – Dialer push (Bulk, Yotel) | ⬜ |
+| 5d – Dialer push (Bulk, Yotel) | Section above |
 | 5e – WhatsApp | ⬜ |
 | 6 – Reveal + audit cleanup | ⬜ |
 | 7 – Free-text masking | ⬜ |
@@ -177,3 +188,4 @@ Buttons at the top right of the Lead page (or under ▼): **Update Contact Detai
 | 5a Calling | | | | |
 | 5b History + logs | | | | |
 | 5c Merge + Update Contact | | | | |
+| 5d Bulk + Yotel push | | | | |
