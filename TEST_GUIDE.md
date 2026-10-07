@@ -163,12 +163,30 @@ Leads tab → list view → tick Leads → list buttons **Add Leads to Call List
 | 5d.5 | POC MCube Rep | Pick the agent and push (test Leads only) | Push to MCube succeeds |
 | 5d.6 | Normal rep | Bulk push | Exactly as before |
 
-$1 – sections added as each part is built
+---
+
+## Part 5e – WhatsApp chat (v1.5.0) · built, not yet deployed
+
+⚠️ The sandbox has **0 WhatsApp customers** (`MessagingEndUser`), so the chat cannot be tested on screen there. The Apex tests cover the masking; check on screen during the production pilot.
+
+| # | As | Step | Expected |
+|---|---|---|---|
+| 5e.1 | Sandbox (now) | Setup → Apex Test Execution → `PhoneMaskingWhatsAppTest`, `LeadMsgConversationControllerTest` | All pass |
+| 5e.2 | Normal rep (prod pilot) | Lead with a WhatsApp chat → chat component | Messages exactly as before |
+| 5e.3 | Pilot (masked) user | Same Lead → chat | Same messages; any phone number typed in a message shows as `98XXXXXX21` |
+| 5e.4 | Pilot (masked) user | F12 → Network → chat response | The customer's WhatsApp number is not in the data (`rawJson` masked) |
+| 5e.5 | Pilot (masked) user | Transfer chat, open attachments | Work as before |
+
+Related go-live decision **D4**: reps have View All on `MessagingEndUser` / `MessagingSession` (standard WhatsApp records show the number).
+
+---
+
+## Parts still to be built – sections added as each part is built
 
 | Part | Status |
 |---|---|
 | 5d – Dialer push (Bulk, Yotel) | Section above |
-| 5e – WhatsApp | ⬜ |
+| 5e – WhatsApp | Section above |
 | 6 – Reveal + audit cleanup | ⬜ |
 | 7 – Free-text masking | ⬜ |
 | 8 / 9 | Only if needed |
@@ -189,3 +207,4 @@ $1 – sections added as each part is built
 | 5b History + logs | | | | |
 | 5c Merge + Update Contact | | | | |
 | 5d Bulk + Yotel push | | | | |
+| 5e WhatsApp chat | | | | |

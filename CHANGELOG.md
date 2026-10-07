@@ -5,6 +5,28 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.5.0 (5e) – WhatsApp chat masked (built locally 2026-10-07 · NOT deployed)
+
+- **Commit Version:** v1.5.0 (Part 5e)
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.5.0-part5e-whatsapp`
+- **Backup of originals (before any change):** `backup/v1.5.0-part5e-pre-change` (commit `94438d2`, 9 files identical to baseline)
+- **Found:** the conversation returned to the screen includes `rawJson` (raw Messaging data carrying the customer's WhatsApp number); message text may contain typed numbers. Separately (D4): reps have View All on `MessagingEndUser` / `MessagingSession`.
+- **Modified Assets:**
+  - New: `PhoneMaskingWhatsAppTest` (3 tests – helper tested directly; the Connect API cannot be called in tests).
+  - Existing (approved 2026-10-07): `LeadMsgConversationController` – the final `return wrappersList;` of `getConversationViaConnectApi` now calls `maskConversationForUser(wrappersList)` first; new `@TestVisible` helper masks numbers in `message`, `rawJson`, `senderName` for masked users (+15 lines; the one changed line keeps its original content).
+  - No change: other chat methods, `leadMsgConversationLWC`, `WhatsAppMediaQueue`, `WhatsAppLeadChecker`, `WhatsAppLeadVerifier`.
+- **Test limit:** the sandbox has 0 `MessagingEndUser` records – chat masking is checked by Apex tests here and on screen during the production pilot.
+- **Deploy:** `sf project deploy start --manifest manifest/v1.5.0-5e/package.xml --test-level RunSpecifiedTests --tests PhoneMaskingWhatsAppTest --tests LeadMsgConversationControllerTest`
+- **Rollback:** redeploy `LeadMsgConversationController` from `backup/v1.5.0-part5e-pre-change`, then `manifest/v1.5.0-5e/destructiveChanges.xml`.
+
+### Access sheet – v1.5.0 (5e)
+
+| Item | Who | Action |
+|---|---|---|
+| Changed class | Existing users | Already granted; no change |
+| `MessagingEndUser` / `MessagingSession` View All | Rep profiles | Decision at go-live (D4) |
+
 ## v1.5.0 (5d) – Bulk push and Yotel push selection lists masked (deployed to sandbox 2026-10-07)
 
 - **Commit Version:** v1.5.0 (Part 5d)
