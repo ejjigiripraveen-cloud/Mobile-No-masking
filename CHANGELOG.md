@@ -5,6 +5,31 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.5.0 (5c) – Lead Merge and Update Contact Details masked (built locally 2026-10-07 · NOT deployed)
+
+- **Commit Version:** v1.5.0 (Part 5c)
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.5.0-part5c-lead-tools`
+- **Backup of originals (before any change):** `backup/v1.5.0-part5c-pre-change` (commit `dd2bb88`, 22 files identical to baseline)
+- **Found:** `savecontactdetails` saves whatever the screen sends – masking only the display would have overwritten real numbers with masked ones.
+- **Modified Assets:**
+  - New: `PhoneMaskingLeadToolsTest` (8 tests).
+  - Updated (ours): `PhoneDisplayService` (+ `maskRecords`, `prepareContactInput` / `ContactInput`).
+  - Existing (approved 2026-10-07):
+    - `LeadMergeController` – `getLeads` / `getSearchLeads`: the 2 `return [query]` lines became assign + `maskRecords` + return. `mergeLead` unchanged.
+    - `updateContactDetails` – `getcontactdetails`: +1 line (mask). `savecontactdetails`: +7 lines at the top (`prepareContactInput`): masked values replaced by the stored numbers, primary locked for masked users. 0 lines removed.
+  - No change: `LeadMergeCmp`, `UpdateContactDetails`.
+  - Existing issue noted (not changed): `LeadMergeController.getLeads` returns every Lead except the current one with no limit; class has no sharing keyword.
+- **Deploy:** `sf project deploy start --manifest manifest/v1.5.0-5c/package.xml --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest --tests LeadMergeControllerTest --tests updateContactDetailsTest`
+- **Rollback:** redeploy `LeadMergeController`, `updateContactDetails` from `backup/v1.5.0-part5c-pre-change` and `PhoneDisplayService` from the 5b branch, then `manifest/v1.5.0-5c/destructiveChanges.xml`.
+
+### Access sheet – v1.5.0 (5c)
+
+| Item | Who | Action |
+|---|---|---|
+| Changed classes | Existing users | Already granted; no change |
+| New fields / permissions | – | None |
+
 ## v1.5.0 (5b) – Call history and logs masked (deployed to sandbox 2026-10-06)
 
 - **Commit Version:** v1.5.0 (Part 5b)

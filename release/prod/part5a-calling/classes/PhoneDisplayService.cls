@@ -79,6 +79,74 @@ public with sharing class PhoneDisplayService {
     }
 
     /**
+     * @description For masked users, masks the given phone fields on each record (v1.5.0 5c). In memory only -
+     *              the records must not be saved afterwards. Fields that were not queried are skipped.
+     */
+    public static void maskRecords(List<SObject> records, List<String> fieldNames) {
+        if (records == null || fieldNames == null || !isMaskedUser()) {
+            return;
+        }
+        for (SObject record : records) {
+            Map<String, Object> populated = record.getPopulatedFieldsAsMap();
+            for (String fieldName : fieldNames) {
+                if (populated.containsKey(fieldName) && populated.get(fieldName) != null) {
+                    record.put(fieldName, maskForDisplay(String.valueOf(populated.get(fieldName))));
+                }
+            }
+        }
+    }
+
+    /**
+     * @description Phone values a screen sends back for saving, made safe (v1.5.0 5c).
+     */
+    public class ContactInput {
+        public String phone;
+        public String secondaryPhone;
+        public String error;
+    }
+
+    /**
+     * @description Prepares phone values a screen sends back before they are saved (v1.5.0 5c):
+     *                - a masked value (contains X) is replaced by the number stored on the Lead - never saved masked;
+     *                - for masked users, a primary that differs from the stored one is refused (primary locked once set,
+     *                  same rule as LeadPhoneEntryHandler).
+     *              Users who can see phone numbers and send real values: unchanged, no query.
+     * @param recordId       the Lead being updated
+     * @param phone          primary value from the screen
+     * @param secondaryPhone secondary value from the screen
+     */
+    public static ContactInput prepareContactInput(String recordId, String phone, String secondaryPhone) {
+        ContactInput input = new ContactInput();
+        input.phone = phone;
+        input.secondaryPhone = secondaryPhone;
+        Boolean maskedUser = isMaskedUser();
+        if (!maskedUser && !isMasked(phone) && !isMasked(secondaryPhone)) {
+            return input;
+        }
+        Id leadId;
+        try {
+            leadId = Id.valueOf(recordId);
+        } catch (Exception e) {
+            return input;
+        }
+        List<Lead> leads = [SELECT Phone__c, Secondary_Phone__c FROM Lead WHERE Id = :leadId LIMIT 1];
+        if (leads.isEmpty()) {
+            return input;
+        }
+        Lead current = leads[0];
+        if (isMasked(phone)) {
+            input.phone = current.Phone__c;
+        } else if (maskedUser && String.isNotBlank(current.Phone__c)
+                && PhoneMaskUtil.normalize(phone) != PhoneMaskUtil.normalize(current.Phone__c)) {
+            input.error = LeadPhoneEntryHandler.PRIMARY_LOCKED_MESSAGE;
+        }
+        if (isMasked(secondaryPhone)) {
+            input.secondaryPhone = current.Secondary_Phone__c;
+        }
+        return input;
+    }
+
+    /**
      * @description Masks a list for display, keeping the order. Null-safe.
      */
     public static List<String> maskAllForDisplay(List<String> values) {

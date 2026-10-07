@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part 5c rollback step 2 (after redeploying LeadMergeController and updateContactDetails from
+     backup/v1.5.0-part5c-pre-change and PhoneDisplayService from the 5b branch). -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>PhoneMaskingLeadToolsTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>66.0</version>
+</Package>

@@ -189,3 +189,24 @@ sf project deploy validate --metadata-dir release/prod/part5b-history --target-o
   --tests mCubeController_Test --tests mCubeControllerTestExtended --tests LeadHistoryandActivityControllerTest
 sf project deploy quick --job-id <validation id> --target-org <prod>
 ```
+
+---
+
+## Part 5c – v1.5.0 Lead Merge + Update Contact Details (built 2026-10-07)
+
+### part5c-lead-tools (deploy after part5b-history)
+| Type | Components | Change |
+|---|---|---|
+| Apex | `PhoneDisplayService` | Updated (`maskRecords`, `prepareContactInput`) |
+| Apex | `LeadMergeController` | **Existing** – merge lists masked for masked users |
+| Apex | `updateContactDetails` | **Existing** – masked for masked users; masked values never saved; primary locked for masked users |
+| Apex test | `PhoneMaskingLeadToolsTest` | New |
+
+Originals: `backup/v1.5.0-part5c-pre-change`.
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest \
+  --tests LeadMergeControllerTest --tests updateContactDetailsTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
