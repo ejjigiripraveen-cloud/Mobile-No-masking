@@ -165,13 +165,15 @@ Leads tab → list view → tick Leads → list buttons **Add Leads to Call List
 
 ---
 
-## Part 5e – WhatsApp chat (v1.5.0) · built, not yet deployed
+## Part 5e – WhatsApp chat (v1.5.0) · built, not yet deployed · testing on hold (owner, 2026-10-07)
 
 ⚠️ The sandbox has **0 WhatsApp customers** (`MessagingEndUser`), so the chat cannot be tested on screen there. The Apex tests cover the masking; check on screen during the production pilot.
 
 | # | As | Step | Expected |
 |---|---|---|---|
-| 5e.1 | Sandbox (now) | Setup → Apex Test Execution → `PhoneMaskingWhatsAppTest`, `LeadMsgConversationControllerTest` | All pass |
+| 5e.1 | Sandbox | Setup → Apex Test Execution → `PhoneMaskingWhatsAppTest`, `LeadMsgConversationControllerTest` | All pass |
+| 5e.1b | Sandbox – normal rep and POC MCube Rep | Open a non–Pre Sales Lead (New_Lead_Page has the chat) | Chat component loads without error ("no conversation" – no WhatsApp data) |
+| 5e.1c | Sandbox – optional, only if a test WhatsApp channel is connected | Send "call me on 9123456780" from your phone to the sandbox number (Lead Phone = your WhatsApp number); open the Lead as normal rep, then as POC user | Normal rep: unchanged · POC user: "call me on 91XXXXXX80"; your WhatsApp number not in Network |
 | 5e.2 | Normal rep (prod pilot) | Lead with a WhatsApp chat → chat component | Messages exactly as before |
 | 5e.3 | Pilot (masked) user | Same Lead → chat | Same messages; any phone number typed in a message shows as `98XXXXXX21` |
 | 5e.4 | Pilot (masked) user | F12 → Network → chat response | The customer's WhatsApp number is not in the data (`rawJson` masked) |
