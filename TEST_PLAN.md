@@ -2,6 +2,8 @@
 
 For each part: what is **new**, what **existing** component changes (approval needed), and the **exact steps to see and test** it in the sandbox after it is deployed.
 
+> **Detailed step-by-step tests of every deployed part are in [TEST_GUIDE.md](TEST_GUIDE.md).** This file is the original plan per part.
+
 Sandbox: https://gsquaregroup--prodreplic.sandbox.my.salesforce.com
 Before testing: Setup → **Login Access Policies** → "Administrators Can Log in as Any User" must be enabled.
 "Login as X" below means: Setup → **Users** → find X → **Login**. Log out to return to your admin session.
