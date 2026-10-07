@@ -229,3 +229,21 @@ sf project deploy validate --metadata-dir release/prod/part5d-push --target-org 
   --test-level RunSpecifiedTests --tests PhoneMaskingPushTest --tests LeadBulkPushControllerTest --tests LeadYotelBulkPushControllerTest
 sf project deploy quick --job-id <validation id> --target-org <prod>
 ```
+
+---
+
+## Part 5e – v1.5.0 WhatsApp chat (deployed to sandbox 2026-10-07)
+
+### part5e-whatsapp (deploy after part5d-push) - tested in sandbox 0Afft000000Lmb7CAC, 37 tests
+| Type | Components | Change |
+|---|---|---|
+| Apex | `LeadMsgConversationController` | **Existing** – conversation numbers (message, rawJson, senderName) masked for masked users; +1 call, +1 helper |
+| Apex test | `PhoneMaskingWhatsAppTest` | New |
+
+Originals: `backup/v1.5.0-part5e-pre-change`. Note the go-live decision D4 (Messaging object access).
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part5e-whatsapp --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingWhatsAppTest --tests LeadMsgConversationControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
