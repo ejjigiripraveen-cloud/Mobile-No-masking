@@ -82,7 +82,7 @@ N $P6 $V6 'Apex Class' 'PhoneRevealService' '' 'Reveal for TL / Head / Admin: re
 N $P6 $V6 'Apex Class (test)' 'PhoneRevealServiceTest' '' '' '' 'Built (Local)' '' 'Yes' ''
 N $P6 $V6 'Custom Field' 'Comment__c' 'Phone_Access_Audit__c' 'Reveal comment (Reason__c kept as Text; 7 reasons enforced in Apex)' '' 'Built (Local)' '' 'Yes' ''
 N $P6 $V6 'Custom Permission' 'Reveal_Phone_Number' '' 'Who may reveal' '' 'Built (Local)' '' 'Yes' ''
-N $P6 $V6 'Permission Set' 'Phone_Number_Reveal' '' 'Grants Reveal_Phone_Number to TL / Head / Admin' '' 'Built (Local)' '' 'Yes' ''
+N $P6 $V6 'Permission Set' 'Phone_Reveal' '' 'Grants Reveal_Phone_Number to TL / Head / Admin' '' 'Built (Local)' '' 'Yes' ''
 N $P6 $V6 'Apex Class' 'PhoneAuditPurgeBatch' '' 'Nightly delete of audit rows older than 1 year (batch + schedulable)' 'PhoneAuditPurgeBatchTest' 'Built (Local)' '' 'Yes' 'Schedule after deploy'
 N $P6 $V6 'Apex Class (test)' 'PhoneAuditPurgeBatchTest' '' '' '' 'Built (Local)' '' 'Yes' ''
 N $P6 $V6 'Lightning Web Component (update)' 'maskedPhonePanel' '' 'Add Reveal button + reason picker' '' 'Built (Local)' '' 'Yes' ''
