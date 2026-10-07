@@ -78,14 +78,14 @@ N $P5 $V5 'Custom Field' 'Secondary_Phone_Masked__c' 'Lead' 'Formula: masked sec
 N $P5 $V5 'Custom Field' 'Call_To_Masked__c' 'Call_Detail__c' '5b: Formula: masked call number' '' 'Pending approval' '' 'Yes' ''
 
 $P6 = 'Part 6'; $V6 = 'v1.6.0'
-N $P6 $V6 'Apex Class' 'PhoneRevealService' '' 'Reveal for TL / Head / Admin: reason, 30 s, audit' 'PhoneRevealServiceTest' 'Built (Local)' '' 'Yes' ''
-N $P6 $V6 'Apex Class (test)' 'PhoneRevealServiceTest' '' '' '' 'Built (Local)' '' 'Yes' ''
-N $P6 $V6 'Custom Field' 'Comment__c' 'Phone_Access_Audit__c' 'Reveal comment (Reason__c kept as Text; 7 reasons enforced in Apex)' '' 'Built (Local)' '' 'Yes' ''
-N $P6 $V6 'Custom Permission' 'Reveal_Phone_Number' '' 'Who may reveal' '' 'Built (Local)' '' 'Yes' ''
-N $P6 $V6 'Permission Set' 'Phone_Reveal' '' 'Grants Reveal_Phone_Number to TL / Head / Admin' '' 'Built (Local)' '' 'Yes' ''
-N $P6 $V6 'Apex Class' 'PhoneAuditPurgeBatch' '' 'Nightly delete of audit rows older than 1 year (batch + schedulable)' 'PhoneAuditPurgeBatchTest' 'Built (Local)' '' 'Yes' 'Schedule after deploy'
-N $P6 $V6 'Apex Class (test)' 'PhoneAuditPurgeBatchTest' '' '' '' 'Built (Local)' '' 'Yes' ''
-N $P6 $V6 'Lightning Web Component (update)' 'maskedPhonePanel' '' 'Add Reveal button + reason picker' '' 'Built (Local)' '' 'Yes' ''
+N $P6 $V6 'Apex Class' 'PhoneRevealService' '' 'Reveal for TL / Head / Admin: reason, 30 s, audit' 'PhoneRevealServiceTest' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' ''
+N $P6 $V6 'Apex Class (test)' 'PhoneRevealServiceTest' '' '' '' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' ''
+N $P6 $V6 'Custom Field' 'Comment__c' 'Phone_Access_Audit__c' 'Reveal comment (Reason__c kept as Text; 7 reasons enforced in Apex)' '' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' ''
+N $P6 $V6 'Custom Permission' 'Reveal_Phone_Number' '' 'Who may reveal' '' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' ''
+N $P6 $V6 'Permission Set' 'Phone_Reveal' '' 'Grants Reveal_Phone_Number to TL / Head / Admin' '' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' ''
+N $P6 $V6 'Apex Class' 'PhoneAuditPurgeBatch' '' 'Nightly delete of audit rows older than 1 year (batch + schedulable)' 'PhoneAuditPurgeBatchTest' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' 'Schedule after deploy'
+N $P6 $V6 'Apex Class (test)' 'PhoneAuditPurgeBatchTest' '' '' '' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' ''
+N $P6 $V6 'Lightning Web Component (update)' 'maskedPhonePanel' '' 'Add Reveal button + reason picker' '' 'Deployed (Sandbox)' '0Afft000000LmMcCAK' 'Yes' ''
 
 $P7 = 'Part 7'; $V7 = 'v1.7.0'
 N $P7 $V7 'Apex Class' 'FreeTextMaskService' '' 'Masks numbers typed in free text on save' 'FreeTextMaskServiceTest' 'Planned' '' 'Yes' 'Permanent masking'
@@ -297,7 +297,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
     @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Deployed (Sandbox)'),
-    @('Part 5', 'v1.5.0', 'Mask leaking screens (5a-5e deployed, call panels deferred D1)', 'Deployed (Sandbox) - 5a to 5e'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Built (Local)'),
+    @('Part 5', 'v1.5.0', 'Mask leaking screens (5a-5e deployed, call panels deferred D1)', 'Deployed (Sandbox) - 5a to 5e'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Deployed (Sandbox)'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
     @('Part 11', 'v2.0.0', 'Go-live access (masking ON)', 'Planned'), @('Security fix', 'optional', 'MCube Named Credential', 'Planned')
@@ -356,7 +356,7 @@ $bundleMeta = @{
     'part5c-lead-tools' = @('7', 'Part 5', 'v1.5.0 (5c)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest --tests LeadMergeControllerTest (not updateContactDetailsTest - fails before 5c, D3)', 'Deployed (Sandbox) 0Afft000000LkRFCA0')
     'part5d-push'       = @('8', 'Part 5', 'v1.5.0 (5d)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5d-push --test-level RunSpecifiedTests --tests PhoneMaskingPushTest --tests LeadBulkPushControllerTest --tests LeadYotelBulkPushControllerTest', 'Deployed (Sandbox) 0Afft000000Lm1dCAC')
     'part5e-whatsapp'   = @('9', 'Part 5', 'v1.5.0 (5e)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5e-whatsapp --test-level RunSpecifiedTests --tests PhoneMaskingWhatsAppTest --tests LeadMsgConversationControllerTest', 'Deployed (Sandbox) 0Afft000000Lmb7CAC')
-    'part6-reveal'      = @('10', 'Part 6', 'v1.6.0', 'Production - everyone (assign Phone_Reveal to TL / Head / Admin)', 'sf project deploy validate --metadata-dir release/prod/part6-reveal --test-level RunSpecifiedTests --tests PhoneRevealServiceTest --tests PhoneAuditPurgeBatchTest --tests MaskedDialServiceTest --tests MaskedPhonePanelControllerTest', 'Built (Local) - not deployed')
+    'part6-reveal'      = @('10', 'Part 6', 'v1.6.0', 'Production - everyone (assign Phone_Reveal to TL / Head / Admin)', 'sf project deploy validate --metadata-dir release/prod/part6-reveal --test-level RunSpecifiedTests --tests PhoneRevealServiceTest --tests PhoneAuditPurgeBatchTest --tests MaskedDialServiceTest --tests MaskedPhonePanelControllerTest', 'Deployed (Sandbox) 0Afft000000LmMcCAK')
     'part2-pilot'       = @('11', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
 }
 $typeOf = @{ 'pages' = 'Visualforce Page'; 'aura' = 'Aura Component'; 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }

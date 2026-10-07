@@ -252,7 +252,7 @@ sf project deploy quick --job-id <validation id> --target-org <prod>
 
 ## Part 6 – v1.6.0 Reveal + audit cleanup (built 2026-10-07)
 
-### part6-reveal (deploy after part5e-whatsapp)
+### part6-reveal (deploy after part5e-whatsapp) - tested in sandbox 0Afft000000LmMcCAK, 45 tests
 | Type | Components | Change |
 |---|---|---|
 | Custom permission / permission set | `Reveal_Phone_Number`, `Phone_Reveal` | New |

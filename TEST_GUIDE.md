@@ -183,7 +183,7 @@ Related go-live decision **D4**: reps have View All on `MessagingEndUser` / `Mes
 
 ---
 
-## Part 6 – Reveal + audit cleanup (v1.6.0) · built, not yet deployed
+## Part 6 – Reveal + audit cleanup (v1.6.0) · deployed 0Afft000000LmMcCAK · POC TL created
 
 Preparation: test user **POC TL** (profile POC Masked Rep + permission set **Phone Reveal**), created at deploy time; it owns or can see **Test Lead A**.
 

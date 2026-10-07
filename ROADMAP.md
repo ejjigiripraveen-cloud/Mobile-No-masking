@@ -145,7 +145,7 @@ Every build part follows the same 5 checkpoints:
 | Checkpoint | Status |
 |---|---|
 | Build locally | ✅ 2026-10-07 |
-| Deploy to sandbox | ⬜ |
+| Deploy to sandbox | ✅ 2026-10-07 0Afft000000LmMcCAK (45 tests) · POC TL created + Phone Reveal · nightly purge not scheduled yet |
 | Test (TL/Head reveal 30 s + audit row; reps no button; purge deletes only >1 year) | ⬜ |
 | Tag v1.6.0 + access sheet | ⬜ |
 

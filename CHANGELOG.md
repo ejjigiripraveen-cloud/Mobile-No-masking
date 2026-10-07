@@ -5,11 +5,13 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.6.0 – Reveal for Team Leads, Heads, Admins + nightly audit cleanup (built locally 2026-10-07 · NOT deployed)
+## v1.6.0 – Reveal for Team Leads, Heads, Admins + nightly audit cleanup (deployed to sandbox 2026-10-07)
 
 - **Commit Version:** v1.6.0
 - **Type:** feat + permission-update
 - **Branch:** `ejjigiripraveen/v1.6.0-reveal` · checkpoint tag `checkpoint-before-part6` (state before Part 6)
+- **Sandbox deploy:** 0Afft000000LmMcCAK (11/11, **45 tests passed**). Coverage: PhoneRevealService 100% · PhoneAuditPurgeBatch 100% · MaskedDialService 90.6%.
+- **Sandbox setup done:** user **POC TL** (005ft000000YupRAAS, profile POC Masked Rep) created and assigned **Phone Reveal**. Nightly purge **not yet scheduled** (waiting for owner OK).
 - **Design:** G5 of the internal design doc – 7 reasons: Site visit coordination · Booking / documentation follow-up · Customer escalation / complaint · Dialer down, manual call needed · Number verification / correction · Management review · Other (comment required).
 - **Owner decisions (2026-10-07):** `Phone_Access_Audit__c.Reason__c` stays Text (already deployed); the 7 reasons are enforced in Apex and offered as a dropdown. A third test user "POC TL" (POC Masked Rep + Phone Reveal) is created at deploy time.
 - **Modified Assets (no existing org component changed):**
