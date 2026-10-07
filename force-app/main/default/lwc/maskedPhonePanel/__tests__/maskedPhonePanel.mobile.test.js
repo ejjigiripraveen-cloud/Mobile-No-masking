@@ -5,6 +5,19 @@ import getMaskedNumbers from '@salesforce/apex/MaskedPhonePanelController.getMas
 jest.mock('@salesforce/client/formFactor', () => ({ default: 'Small' }), { virtual: true });
 
 jest.mock(
+    '@salesforce/apex/PhoneRevealService.getReasons',
+    () => {
+        const { createApexTestWireAdapter } = require('@salesforce/sfdx-lwc-jest');
+        return { default: createApexTestWireAdapter(jest.fn()) };
+    },
+    { virtual: true }
+);
+
+jest.mock('@salesforce/apex/PhoneRevealService.revealNumber', () => ({ default: jest.fn() }), { virtual: true });
+
+jest.mock('@salesforce/customPermission/Reveal_Phone_Number', () => ({ default: false }), { virtual: true });
+
+jest.mock(
     '@salesforce/apex/MaskedPhonePanelController.getMaskedNumbers',
     () => {
         const { createApexTestWireAdapter } = require('@salesforce/sfdx-lwc-jest');

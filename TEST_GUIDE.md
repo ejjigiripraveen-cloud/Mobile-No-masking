@@ -183,13 +183,32 @@ Related go-live decision **D4**: reps have View All on `MessagingEndUser` / `Mes
 
 ---
 
+## Part 6 – Reveal + audit cleanup (v1.6.0) · built, not yet deployed
+
+Preparation: test user **POC TL** (profile POC Masked Rep + permission set **Phone Reveal**), created at deploy time; it owns or can see **Test Lead A**.
+
+| # | As | Step | Expected |
+|---|---|---|---|
+| 6.1 | POC MCube Rep (no Phone Reveal) | Test Lead A → Phone Numbers panel | **No** Reveal (eye) icon |
+| 6.2 | POC TL | Test Lead A → panel | Eye icon next to Primary (and Secondary if filled) |
+| 6.3 | POC TL | Click the eye → dialog | 7 reasons in the dropdown; Reveal disabled until a reason is chosen |
+| 6.4 | POC TL | Choose **Other**, leave Comment empty | Reveal stays disabled |
+| 6.5 | POC TL | Choose **Management review** → Reveal | Real number shown under the masked one with "Hides after 30 seconds"; after 30 s it disappears |
+| 6.6 | POC TL | Other + comment "test" → Reveal | Number shown; comment stored (6.7) |
+| 6.7 | Admin | Phone Access Audits → All | Action **Reveal**, Outcome Success, user POC TL, Reason and Comment filled, Masked Number only |
+| 6.8 | Normal rep / admin | Lead page | No change (panel only on the POC page) |
+| 6.9 | Admin | Execute Anonymous: `System.debug(PhoneAuditPurgeBatch.scheduleNightly());` (once) | Setup → Scheduled Jobs shows "Phone Access Audit purge (nightly)" at 02:00 |
+| 6.10 | Admin | Execute Anonymous: `Database.executeBatch(new PhoneAuditPurgeBatch());` | Apex Jobs: completes; only audit rows older than 365 days are deleted (none yet in the sandbox) |
+
+---
+
 ## Parts still to be built – sections added as each part is built
 
 | Part | Status |
 |---|---|
 | 5d – Dialer push (Bulk, Yotel) | Section above |
 | 5e – WhatsApp | Section above |
-| 6 – Reveal + audit cleanup | ⬜ |
+| 6 – Reveal + audit cleanup | Section above |
 | 7 – Free-text masking | ⬜ |
 | 8 / 9 | Only if needed |
 | D1 – Call panels | Deferred |
@@ -210,3 +229,4 @@ Related go-live decision **D4**: reps have View All on `MessagingEndUser` / `Mes
 | 5c Merge + Update Contact | | | | |
 | 5d Bulk + Yotel push | | | | |
 | 5e WhatsApp chat | | | | |
+| 6 Reveal + purge | | | | |

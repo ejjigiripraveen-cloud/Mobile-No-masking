@@ -40,6 +40,7 @@ public with sharing class MaskedDialService {
         public String fieldKey;
         public String channel;
         public String reason;
+        public String comment;
 
         public DialRequest(Id recordId, String fieldKey, String channel) {
             this.recordId = recordId;
@@ -335,6 +336,7 @@ public with sharing class MaskedDialService {
             Masked_Number__c = result.maskedNumber,
             Channel__c = request?.channel == null ? null : request.channel.left(80),
             Reason__c = request?.reason == null ? null : request.reason.left(255),
+            Comment__c = request?.comment == null ? null : request.comment.left(1000),
             Message__c = result.message == null ? null : result.message.left(255),
             Event_Time__c = System.now()
         );

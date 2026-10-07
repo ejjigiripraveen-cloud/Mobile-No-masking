@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>MaskedDialService</members>
+        <members>PhoneAuditPurgeBatch</members>
+        <members>PhoneAuditPurgeBatchTest</members>
+        <members>PhoneRevealService</members>
+        <members>PhoneRevealServiceTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit__c.Comment__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Reveal_Phone_Number</members>
+        <name>CustomPermission</name>
+    </types>
+    <types>
+        <members>maskedPhonePanel</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit__c.All</members>
+        <name>ListView</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit_Viewer</members>
+        <members>Phone_Reveal</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>66.0</version>
+</Package>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Part 6 rollback step 2 (after redeploying MaskedDialService, maskedPhonePanel, Phone_Access_Audit_Viewer and the
+     All list view from tag checkpoint-before-part6, and removing Phone_Reveal assignments / the scheduled purge job). -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>PhoneRevealServiceTest</members>
+        <members>PhoneRevealService</members>
+        <members>PhoneAuditPurgeBatchTest</members>
+        <members>PhoneAuditPurgeBatch</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Phone_Reveal</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Reveal_Phone_Number</members>
+        <name>CustomPermission</name>
+    </types>
+    <types>
+        <members>Phone_Access_Audit__c.Comment__c</members>
+        <name>CustomField</name>
+    </types>
+    <version>66.0</version>
+</Package>

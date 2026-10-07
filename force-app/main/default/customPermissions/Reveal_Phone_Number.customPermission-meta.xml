@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Mobile number masking: may reveal a masked customer phone number for 30 seconds, with a reason. Every reveal is audited. Granted by the Phone_Reveal permission set (Team Leads, Heads, Admins).</description>
+    <isLicensed>false</isLicensed>
+    <label>Reveal Phone Number</label>
+</CustomPermission>

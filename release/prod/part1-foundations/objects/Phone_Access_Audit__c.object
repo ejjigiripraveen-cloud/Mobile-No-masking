@@ -65,6 +65,16 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Comment__c</fullName>
+        <description>Comment given with a reveal (required when the reason is Other).</description>
+        <externalId>false</externalId>
+        <label>Comment</label>
+        <length>1000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
         <fullName>Event_Time__c</fullName>
         <defaultValue>NOW()</defaultValue>
         <description>When the request was made.</description>
@@ -199,6 +209,8 @@
         <columns>Field_Key__c</columns>
         <columns>Masked_Number__c</columns>
         <columns>Channel__c</columns>
+        <columns>Reason__c</columns>
+        <columns>Comment__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

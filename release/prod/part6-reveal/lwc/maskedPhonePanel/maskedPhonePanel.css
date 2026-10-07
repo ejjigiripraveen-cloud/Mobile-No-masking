@@ -1,0 +1,13 @@
+.masked-number {
+    font-family: monospace;
+    letter-spacing: 0.05em;
+}
+
+.call-disabled {
+    opacity: 0.4;
+}
+
+.spinner-holder {
+    position: relative;
+    min-height: 3rem;
+}

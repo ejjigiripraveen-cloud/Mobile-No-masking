@@ -247,3 +247,24 @@ sf project deploy validate --metadata-dir release/prod/part5e-whatsapp --target-
   --test-level RunSpecifiedTests --tests PhoneMaskingWhatsAppTest --tests LeadMsgConversationControllerTest
 sf project deploy quick --job-id <validation id> --target-org <prod>
 ```
+
+---
+
+## Part 6 – v1.6.0 Reveal + audit cleanup (built 2026-10-07)
+
+### part6-reveal (deploy after part5e-whatsapp)
+| Type | Components | Change |
+|---|---|---|
+| Custom permission / permission set | `Reveal_Phone_Number`, `Phone_Reveal` | New |
+| Apex | `PhoneRevealService`, `PhoneAuditPurgeBatch` (+ tests) | New |
+| Field | `Phone_Access_Audit__c.Comment__c` | New |
+| Apex / LWC / permission set / list view | `MaskedDialService`, `maskedPhonePanel`, `Phone_Access_Audit_Viewer`, `Phone_Access_Audit__c.All` | Updated (ours) |
+
+After deploy: `PhoneAuditPurgeBatch.scheduleNightly();` once (Execute Anonymous), and assign **Phone Reveal** to Team Leads, Heads, Admins.
+
+```bash
+sf project deploy validate --metadata-dir release/prod/part6-reveal --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneRevealServiceTest --tests PhoneAuditPurgeBatchTest \
+  --tests MaskedDialServiceTest --tests MaskedPhonePanelControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```

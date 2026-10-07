@@ -22,6 +22,7 @@
         <members>Masked_Phone_Field__mdt.Sort_Order__c</members>
         <members>Phone_Access_Audit__c.Action__c</members>
         <members>Phone_Access_Audit__c.Channel__c</members>
+        <members>Phone_Access_Audit__c.Comment__c</members>
         <members>Phone_Access_Audit__c.Event_Time__c</members>
         <members>Phone_Access_Audit__c.Field_Key__c</members>
         <members>Phone_Access_Audit__c.Masked_Number__c</members>

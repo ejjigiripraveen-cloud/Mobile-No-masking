@@ -5,6 +5,28 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.6.0 – Reveal for Team Leads, Heads, Admins + nightly audit cleanup (built locally 2026-10-07 · NOT deployed)
+
+- **Commit Version:** v1.6.0
+- **Type:** feat + permission-update
+- **Branch:** `ejjigiripraveen/v1.6.0-reveal` · checkpoint tag `checkpoint-before-part6` (state before Part 6)
+- **Design:** G5 of the internal design doc – 7 reasons: Site visit coordination · Booking / documentation follow-up · Customer escalation / complaint · Dialer down, manual call needed · Number verification / correction · Management review · Other (comment required).
+- **Owner decisions (2026-10-07):** `Phone_Access_Audit__c.Reason__c` stays Text (already deployed); the 7 reasons are enforced in Apex and offered as a dropdown. A third test user "POC TL" (POC Masked Rep + Phone Reveal) is created at deploy time.
+- **Modified Assets (no existing org component changed):**
+  - New: custom permission `Reveal_Phone_Number`; permission set `Phone_Reveal` (custom permission + `PhoneRevealService` access); `PhoneRevealService` (+ `PhoneRevealServiceTest`, 7 tests); `PhoneAuditPurgeBatch` – Batchable + Schedulable, deletes audit rows older than `Audit_Retention_Days__c` (365), `scheduleNightly()` at 02:00 (+ `PhoneAuditPurgeBatchTest`, 4 tests, 200 rows); field `Phone_Access_Audit__c.Comment__c` (Long Text 1000).
+  - Updated (ours): `MaskedDialService` (`DialRequest.comment` → `Comment__c`); `maskedPhonePanel` (eye icon per number for users with the custom permission, dialog with reasons + comment, number shown for `Reveal_Seconds__c` then cleared; Jest: existing tests get mocks, new `maskedPhonePanel.reveal.test.js`); `Phone_Access_Audit_Viewer` (+ Comment__c read); list view All (+ Reason, Comment).
+- **Deploy:** `sf project deploy start --manifest manifest/v1.6.0/package.xml --test-level RunSpecifiedTests --tests PhoneRevealServiceTest --tests PhoneAuditPurgeBatchTest --tests MaskedDialServiceTest --tests MaskedPhonePanelControllerTest`; then create POC TL + assign Phone Reveal; then `PhoneAuditPurgeBatch.scheduleNightly();` (Execute Anonymous).
+- **Rollback:** abort the scheduled job; remove Phone Reveal assignments; redeploy `MaskedDialService`, `maskedPhonePanel`, `Phone_Access_Audit_Viewer`, list view from tag `checkpoint-before-part6`; then `manifest/v1.6.0/destructiveChanges.xml`.
+
+### Access sheet – v1.6.0
+
+| Item | Who | Action |
+|---|---|---|
+| Permission set **Phone Reveal** | POC TL (sandbox); Team Leads, Heads, Admins (go-live) | Assign |
+| `PhoneRevealService` class access | Holders of Phone Reveal | In the permission set |
+| `Comment__c` read | Admins with Phone Access Audit Viewer | In that permission set |
+| Scheduled job "Phone Access Audit purge (nightly)" | Admin who schedules it (runs as that user) | Schedule once per org |
+
 ## v1.5.0 (5e) – WhatsApp chat masked (deployed to sandbox 2026-10-07)
 
 - **Commit Version:** v1.5.0 (Part 5e)

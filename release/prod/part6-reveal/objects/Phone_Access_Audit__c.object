@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Audit trail of every access to a real customer phone number (dial, reveal, search). Stores the masked number only. Visible to administrators through the Phone Access Audit Viewer permission set.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableLicensing>false</enableLicensing>
+    <enableReports>true</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>Private</externalSharingModel>
+    <label>Phone Access Audit</label>
+    <nameField>
+        <displayFormat>AUD-{000000}</displayFormat>
+        <label>Audit Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Phone Access Audits</pluralLabel>
+    <sharingModel>Private</sharingModel>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>Comment__c</fullName>
+        <description>Comment given with a reveal (required when the reason is Other).</description>
+        <externalId>false</externalId>
+        <label>Comment</label>
+        <length>1000</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Event_Time__c</columns>
+        <columns>Action__c</columns>
+        <columns>Outcome__c</columns>
+        <columns>User__c</columns>
+        <columns>Object_Name__c</columns>
+        <columns>Record_Id__c</columns>
+        <columns>Field_Key__c</columns>
+        <columns>Masked_Number__c</columns>
+        <columns>Channel__c</columns>
+        <columns>Reason__c</columns>
+        <columns>Comment__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+</CustomObject>

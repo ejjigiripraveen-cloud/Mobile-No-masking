@@ -3,6 +3,11 @@
     <description>Read-only access to the Phone Access Audit trail and its tab. Assign to System Administrators who review number access.</description>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Phone_Access_Audit__c.Comment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Phone_Access_Audit__c.Action__c</field>
         <readable>true</readable>
     </fieldPermissions>

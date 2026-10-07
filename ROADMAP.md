@@ -17,7 +17,7 @@ Every build part follows the same 5 checkpoints:
 | 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | 🟡 |
 | 4 | v1.4.0 | Lead creation with hidden numbers | 🟡 |
 | 5 | v1.5.0 | Mask existing screens that leak numbers (5a–5e deployed; call panels D1 deferred) | 🟡 |
-| 6 | v1.6.0 | Reveal for TL / Head / Admin + audit cleanup | ⬜ |
+| 6 | v1.6.0 | Reveal for TL / Head / Admin + audit cleanup | 🟡 |
 | 7 | v1.7.0 | Free-text auto-masking | ⬜ |
 | 8 | v1.8.0 | Find by number (only if POC shows search breaks) | ⏸️ |
 | 9 | v1.9.0 | Opportunity, Contact & customer documents (only if Decision 1 = Yes) | ⏸️ |
@@ -137,14 +137,14 @@ Every build part follows the same 5 checkpoints:
 | Test (each screen masked; MakeCall, G-Talk, Yotel/bulk push, WhatsApp, merge still work; `log__c` clean) | ⬜ |
 | Tag v1.5.0 + access sheet | ⬜ |
 
-## Part 6 – Reveal + audit cleanup (v1.6.0) ⬜
+## Part 6 – Reveal + audit cleanup (v1.6.0) 🟡
 
-**New:** `PhoneRevealService`, `Reveal_Reason__c` (7 reasons), `Reveal_Phone_Number` custom permission, `PhoneAuditPurgeBatch` (nightly, 1-year retention).
-**Existing changed:** none expected.
+**New:** `PhoneRevealService`, `Reveal_Phone_Number` custom permission, `Phone_Reveal` permission set, `PhoneAuditPurgeBatch` (nightly, 365 days), `Phone_Access_Audit__c.Comment__c` (+ tests). 7 reasons from design G5; `Reason__c` kept as Text (owner decision).
+**Existing changed:** none (only our own components: `maskedPhonePanel`, `MaskedDialService`, audit viewer permission set, list view). Checkpoint tag `checkpoint-before-part6`.
 
 | Checkpoint | Status |
 |---|---|
-| Build locally | ⬜ |
+| Build locally | ✅ 2026-10-07 |
 | Deploy to sandbox | ⬜ |
 | Test (TL/Head reveal 30 s + audit row; reps no button; purge deletes only >1 year) | ⬜ |
 | Tag v1.6.0 + access sheet | ⬜ |
