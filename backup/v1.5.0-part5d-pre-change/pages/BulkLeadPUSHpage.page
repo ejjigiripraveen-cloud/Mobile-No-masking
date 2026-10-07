@@ -1,0 +1,36 @@
+<apex:page standardController="Lead"
+    recordSetVar="leads"
+    lightningStylesheets="true"
+        extensions="LeadBulkPushController"   >
+
+    <apex:includeLightning />
+
+    <div id="lwcContainer"></div>
+
+    <script>
+
+        var selectedIds = "{!selectedLeadIds}";
+    
+ 
+       console.log(' selectedId ' + selectedIds);
+    
+        $Lightning.use(
+            "c:LeadBulkPushApp",
+            function() {
+
+                $Lightning.createComponent(
+                    "c:leadBulkPushWrapper",
+                    {
+                        recordIds : selectedIds.split(',')
+                    },
+                    "lwcContainer",
+                    function(cmp) {
+                        console.log('Loaded');
+                    }
+                );
+            }
+        );
+
+    </script>
+
+</apex:page>

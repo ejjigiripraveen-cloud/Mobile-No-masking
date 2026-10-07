@@ -1,0 +1,145 @@
+<template>
+
+    <lightning-card>
+
+        <!-- HEADER -->
+
+        <div class="headerSection">
+
+            <div>
+
+                <h1 class="mainHeading">
+                    Lead Call Queue
+                </h1>
+
+                <p class="subHeading">
+                    Review selected Leads before adding to Call List
+                </p>
+
+            </div>
+
+
+
+            <div class="rightHeaderSection">
+
+                <div class="countBox">
+                    {leadCount} {leadCountWord} Selected
+                </div>
+
+
+
+                <div class="headerButtons">
+
+                    <lightning-button label="Cancel" variant="neutral" onclick={closeWindow} disabled={loading}>
+                    </lightning-button>
+
+                    <lightning-button label="Submit" variant="brand" onclick={handleSubmit} disabled={loading}
+                        class="submitBtn">
+                    </lightning-button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <lightning-card title="Select User" icon-name="utility:setup">
+                <div class="slds-var-m-around_medium">
+                    <lightning-record-picker
+                        name="selectUserPicklist"
+                        label="Select a User"
+                        placeholder="Choose..."
+                        onchange={handleChange}
+                        object-api-name="User"
+                        filter={filter}
+                    ></lightning-record-picker>
+                    
+                    <p class="slds-var-m-top_medium">Selected Mobile Number: <b>{selectedValue}</b></p>
+                </div>
+        </lightning-card>   
+
+
+        <template if:true={message}>
+
+            <div class={messageClass}>
+
+                {message}
+
+            </div>
+
+        </template>
+
+        <!-- TABLE -->
+
+        <template if:true={hasLeads}>
+
+            <div class="tableContainer">
+
+                <table class="customTable">
+
+                    <thead>
+
+                        <tr>
+                            <th>Lead Name</th>
+                            <th>Project</th>
+                            <th>Owner</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <template for:each={leads} for:item="lead">
+
+                            <tr key={lead.leadId}>
+
+                                <td>{lead.customerName}</td>
+                                <td>{lead.projectInterested}</td>
+                                <td>{lead.userName}</td>
+                                <td>{lead.status}</td>
+
+                            </tr>
+
+                        </template>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </template>
+
+
+
+        <!-- EMPTY STATE -->
+
+        <template if:false={hasLeads}>
+
+            <div class="emptyState">
+
+                No Leads Selected
+
+            </div>
+
+        </template>
+
+
+
+        <!-- SPINNER -->
+
+        <template if:true={loading}>
+
+            <div class="spinnerSection">
+
+                <lightning-spinner alternative-text="Loading" size="medium">
+                </lightning-spinner>
+
+            </div>
+
+        </template>
+
+    </lightning-card>
+
+</template>

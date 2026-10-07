@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>LeadBulkPushController</members>
+        <members>LeadBulkPushControllerTest</members>
+        <members>LeadYotelBulkPushController</members>
+        <members>LeadYotelBulkPushControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>BulkLeadPUSHpage</members>
+        <members>BulkLeadPushYotel</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>LeadYotelPushApp</members>
+        <members>leadBulkPushApp</members>
+        <members>leadBulkPushWrapper</members>
+        <members>leadYotelPushWrapper</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>leadBulkPush</members>
+        <members>leadYotelPush</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <version>66.0</version>
+</Package>

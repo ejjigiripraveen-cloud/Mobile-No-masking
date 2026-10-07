@@ -1,0 +1,57 @@
+<template>
+    <lightning-card title="Push Leads to Yotel Dialer" icon-name="standard:call">
+
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+
+        <template if:true={resultMessage}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_small">
+                <lightning-formatted-text value={resultMessage}></lightning-formatted-text>
+            </div>
+        </template>
+
+        <template if:true={hasLeads}>
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th scope="col"><div class="slds-truncate">Name</div></th>
+                        <th scope="col"><div class="slds-truncate">Mobile</div></th>
+                        <th scope="col"><div class="slds-truncate">Project</div></th>
+                        <th scope="col"><div class="slds-truncate">Status</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={leads} for:item="lead">
+                        <tr key={lead.leadId} class="slds-hint-parent">
+                            <td><div class="slds-truncate">{lead.customerName}</div></td>
+                            <td><div class="slds-truncate">{lead.mobileNumber}</div></td>
+                            <td><div class="slds-truncate">{lead.projectInterested}</div></td>
+                            <td>
+                                <template if:true={lead.eligible}>
+                                    <lightning-badge label="Ready"></lightning-badge>
+                                </template>
+                                <template if:false={lead.eligible}>
+                                    <lightning-badge label="Skipped - no campaign / mobile"></lightning-badge>
+                                </template>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+
+        <template if:false={hasLeads}>
+            <p class="slds-p-around_medium">No leads selected.</p>
+        </template>
+
+        <div slot="footer">
+            <lightning-button
+                variant="brand"
+                label="Push to Yotel"
+                onclick={handlePush}
+                disabled={pushDisabled}>
+            </lightning-button>
+        </div>
+    </lightning-card>
+</template>

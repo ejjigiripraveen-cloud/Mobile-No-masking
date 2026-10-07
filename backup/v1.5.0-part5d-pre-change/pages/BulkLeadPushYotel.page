@@ -1,0 +1,34 @@
+<apex:page standardController="Lead"
+    recordSetVar="leads"
+    lightningStylesheets="true"
+    extensions="LeadYotelBulkPushController">
+
+    <apex:includeLightning />
+
+    <div id="lwcContainer"></div>
+
+    <script>
+        var selectedIds = "{!selectedLeadIds}";
+        console.log('selectedId ' + selectedIds);
+
+        var idsArray = selectedIds.split(',');
+        console.log('idsArray (length ' + idsArray.length + ') = ' + JSON.stringify(idsArray));
+
+        $Lightning.use(
+            "c:LeadYotelPushApp",
+            function() {
+                console.log('$Lightning.use loaded LeadYotelPushApp');
+                $Lightning.createComponent(
+                    "c:leadYotelPushWrapper",
+                    {
+                        recordIds: idsArray
+                    },
+                    "lwcContainer",
+                    function(cmp) {
+                        console.log('leadYotelPushWrapper component created:', cmp);
+                    }
+                );
+            }
+        );
+    </script>
+</apex:page>

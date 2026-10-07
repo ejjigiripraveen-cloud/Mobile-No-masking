@@ -1,0 +1,6 @@
+<aura:component implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes" access="global">
+
+    <aura:attribute name="recordIds" type="List"/>
+
+    <c:leadYotelPush recordIds="{!v.recordIds}" />
+</aura:component>

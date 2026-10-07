@@ -1,0 +1,9 @@
+<aura:component implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes" access="global">
+    
+      <aura:attribute
+        name="recordIds"
+        type="List"/>
+    
+    <c:leadBulkPush recordIds="{!v.recordIds}" />
+
+</aura:component>

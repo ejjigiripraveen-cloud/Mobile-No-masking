@@ -1,0 +1,227 @@
+.headerSection {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 1rem 1.5rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0176d3,
+            #005fb2
+        );
+
+    color: white;
+
+    border-radius: 8px 8px 0 0;
+}
+
+
+
+.mainHeading {
+
+    font-size: 24px;
+
+    font-weight: 700;
+}
+
+
+
+.subHeading {
+
+    margin-top: 4px;
+
+    opacity: 0.9;
+}
+
+
+
+/*
+=====================================================
+RIGHT SECTION
+=====================================================
+*/
+
+.rightHeaderSection {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 1rem;
+}
+
+
+
+.countBox {
+
+    background: rgba(255,255,255,0.2);
+
+    padding: 12px 18px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    font-size: 16px;
+}
+
+
+
+/*
+=====================================================
+BUTTONS
+=====================================================
+*/
+
+.headerButtons {
+
+    display: flex;
+
+    gap: 10px;
+}
+
+
+
+.submitBtn {
+
+    --slds-c-button-brand-color-background:
+        #0176d3;
+}
+
+
+
+/*
+=====================================================
+TABLE
+=====================================================
+*/
+
+.tableContainer {
+
+    padding: 1rem;
+
+    overflow-x: auto;
+}
+
+
+
+.customTable {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: white;
+}
+
+
+
+.customTable thead {
+
+    background: #f4f6f9;
+}
+
+
+
+.customTable th {
+
+    padding: 14px;
+
+    text-align: left;
+
+    font-weight: 700;
+
+    border-bottom:
+        2px solid #d8dde6;
+}
+
+
+
+.customTable td {
+
+    padding: 14px;
+
+    border-bottom:
+        1px solid #eef1f6;
+}
+
+
+
+.customTable tr:hover {
+
+    background: #f8fbff;
+}
+
+
+
+/*
+=====================================================
+EMPTY STATE
+=====================================================
+*/
+
+.emptyState {
+
+    padding: 3rem;
+
+    text-align: center;
+
+    color: #666;
+
+    font-size: 18px;
+}
+
+
+
+/*
+=====================================================
+SPINNER
+=====================================================
+*/
+
+.spinnerSection {
+
+    padding: 2rem;
+}
+
+.message {
+
+    margin: 1rem;
+
+    padding: 14px 18px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    font-size: 14px;
+}
+
+
+
+.successMessage {
+
+    color: #e7f9ed;
+
+    background: #1e824c !important;
+
+    font-size: 26px;
+
+    border: 1px solid #9ad8b3;
+}
+
+
+
+.errorMessage {
+
+    color: white;
+
+    background-color: rgb(182, 29, 29) !important;
+
+    border: 1px solid #f1a7a7;
+}

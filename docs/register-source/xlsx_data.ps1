@@ -199,6 +199,16 @@ foreach ($row in $ex) {
 N $P5 $V5 'Apex Class (test)' 'PhoneMaskingLeadToolsTest' '' '5c: merge lists masked; Update Contact never saves masked values, primary locked for masked users' '' 'Deployed (Sandbox)' '0Afft000000LkRFCA0' 'Yes' ''
 N $P5 $V5 'Apex Class (update of new)' 'PhoneDisplayService' '' '5c: + maskRecords, prepareContactInput' 'PhoneMaskingLeadToolsTest' 'Deployed (Sandbox)' '0Afft000000LkRFCA0' 'Yes' ''
 
+# Part 5d status (planned 2026-10-07)
+foreach ($row in $ex) {
+    if ($row[0] -ne 'Part 5') { continue }
+    if (@('LeadBulkPushController', 'LeadYotelBulkPushController') -contains $row[3]) {
+        $row[6] = 'Pending approval'; $row[7] = 'backup/v1.5.0-part5d-pre-change'
+    } elseif (@('leadBulkPush', 'leadYotelPush') -contains $row[3]) {
+        $row[4] = '5d: NO CHANGE - shows what Apex returns'; $row[6] = '-'; $row[7] = 'backup/v1.5.0-part5d-pre-change'; $row[8] = 'No change (5d)'; $row[9] = 'No'
+    }
+}
+
 # ---------------- MANUAL STEPS ----------------
 $manual = @(
     @('M1', $P1, 'Assign permission set Phone Access Audit Viewer to admins who review audits', 'Setup > Permission Sets', 'Not done', 'Yes'),
@@ -421,3 +431,14 @@ $p5c = @(
     @('Existing issue (not changed)', 'Apex Class', 'LeadMergeController.getLeads', 'Returns every Lead except the current one with no limit, and the class has no sharing keyword', 'Report to the owner; out of scope', '-')
 )
 Add-Sheet 'Part 5c Plan' 'Part 5c (v1.5.0) - Lead Merge and Update Contact Details' 'Explained before implementation; originals in backup/v1.5.0-part5c-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(18, 18, 34, 90, 50, 22) $p5c @()
+
+# ---------------- PART 5d PLAN ----------------
+$p5d = @(
+    @('Existing', 'Apex Class', 'LeadBulkPushController.getSelectedLeads', 'w.mobileNumber = PhoneDisplayService.forDisplay(l.MobilePhone) - 1 line', 'Masked users: masked in the data sent to the screen (Bulk push does not display it). Others: unchanged', 'Low'),
+    @('Existing', 'Apex Class', 'LeadYotelBulkPushController.getSelectedLeads', 'w.mobileNumber = PhoneDisplayService.forDisplay(l.Phone__c) - 1 line; eligibility still computed from the real number; the debug line logs the masked number', 'Masked users: Yotel selection table shows 98XXXXXX21. Others: unchanged', 'Low'),
+    @('No change', 'Apex', 'pushBulkToDialer, pushBulkToYotel', 'Receive Lead Ids only and read the real numbers on the server - vendors still get real numbers', '-', '-'),
+    @('No change', 'LWC / Aura / VF', 'leadBulkPush, leadYotelPush, wrappers, apps, BulkLeadPUSHpage, BulkLeadPushYotel', 'Display what Apex returns', '-', '-'),
+    @('New', 'Apex Class (test)', 'PhoneMaskingPushTest', 'Selection lists masked for masked users, unchanged for others; eligibility unchanged', '-', '-'),
+    @('Not in scope', 'Apex', 'getUserPicklistValues, rmMobileNumber', 'Agent / user numbers, not customer numbers', '-', '-')
+)
+Add-Sheet 'Part 5d Plan' 'Part 5d (v1.5.0) - Bulk push and Yotel push' 'Explained before implementation; originals in backup/v1.5.0-part5d-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(16, 18, 44, 80, 54, 10) $p5d @()
