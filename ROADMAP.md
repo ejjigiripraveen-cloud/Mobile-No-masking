@@ -16,7 +16,7 @@ Every build part follows the same 5 checkpoints:
 | 2 | v1.2.0 | Masked phone panel on Lead page (POC users only) | 🟡 |
 | 3 | v1.3.0 | Dialer adapters – MCube & SlashRTC (POC) | 🟡 |
 | 4 | v1.4.0 | Lead creation with hidden numbers | 🟡 |
-| 5 | v1.5.0 | Mask existing screens that leak numbers (5a–5d deployed, 5e built) | 🟡 |
+| 5 | v1.5.0 | Mask existing screens that leak numbers (5a–5e deployed; call panels D1 deferred) | 🟡 |
 | 6 | v1.6.0 | Reveal for TL / Head / Admin + audit cleanup | ⬜ |
 | 7 | v1.7.0 | Free-text auto-masking | ⬜ |
 | 8 | v1.8.0 | Find by number (only if POC shows search breaks) | ⏸️ |
@@ -131,6 +131,7 @@ Every build part follows the same 5 checkpoints:
 | Deploy 5b | ✅ 2026-10-06 0Afft000000LfszCAC (61 tests) |
 | Deploy 5c | ✅ 2026-10-07 0Afft000000LkRFCA0 (23 tests; existing updateContactDetailsTest excluded - D3) |
 | Deploy 5d | ✅ 2026-10-07 0Afft000000Lm1dCAC (10 tests) · testing on hold (access issue, D2) |
+| Deploy 5e | ✅ 2026-10-07 0Afft000000Lmb7CAC (37 tests) · testing on hold (D2) |
 | Approval | ✅ 5a–5e |
 | Deploy to sandbox | ⬜ |
 | Test (each screen masked; MakeCall, G-Talk, Yotel/bulk push, WhatsApp, merge still work; `log__c` clean) | ⬜ |

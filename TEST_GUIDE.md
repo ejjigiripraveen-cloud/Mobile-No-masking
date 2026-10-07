@@ -165,7 +165,7 @@ Leads tab → list view → tick Leads → list buttons **Add Leads to Call List
 
 ---
 
-## Part 5e – WhatsApp chat (v1.5.0) · built, not yet deployed · testing on hold (owner, 2026-10-07)
+## Part 5e – WhatsApp chat (v1.5.0) · deployed 0Afft000000Lmb7CAC · testing on hold (owner, 2026-10-07)
 
 ⚠️ The sandbox has **0 WhatsApp customers** (`MessagingEndUser`), so the chat cannot be tested on screen there. The Apex tests cover the masking; check on screen during the production pilot.
 
