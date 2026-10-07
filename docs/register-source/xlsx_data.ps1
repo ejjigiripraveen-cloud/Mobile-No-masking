@@ -203,13 +203,13 @@ N $P5 $V5 'Apex Class (update of new)' 'PhoneDisplayService' '' '5c: + maskRecor
 foreach ($row in $ex) {
     if ($row[0] -ne 'Part 5') { continue }
     if (@('LeadBulkPushController', 'LeadYotelBulkPushController') -contains $row[3]) {
-        $row[6] = 'Approved 2026-10-07'; $row[7] = 'backup/v1.5.0-part5d-pre-change'; $row[8] = 'Built (Local) - 5d'
+        $row[6] = 'Approved 2026-10-07'; $row[7] = 'backup/v1.5.0-part5d-pre-change'; $row[8] = 'Deployed (Sandbox) 0Afft000000Lm1dCAC'
     } elseif (@('leadBulkPush', 'leadYotelPush') -contains $row[3]) {
         $row[4] = '5d: NO CHANGE - shows what Apex returns'; $row[6] = '-'; $row[7] = 'backup/v1.5.0-part5d-pre-change'; $row[8] = 'No change (5d)'; $row[9] = 'No'
     }
 }
 
-N $P5 $V5 'Apex Class (test)' 'PhoneMaskingPushTest' '' '5d: selection lists masked for masked users; eligibility unchanged' '' 'Built (Local) - 5d' '' 'Yes' ''
+N $P5 $V5 'Apex Class (test)' 'PhoneMaskingPushTest' '' '5d: selection lists masked for masked users; eligibility unchanged' '' 'Deployed (Sandbox)' '0Afft000000Lm1dCAC' 'Yes' ''
 
 # ---------------- MANUAL STEPS ----------------
 $manual = @(
@@ -288,7 +288,7 @@ Add-Sheet 'Read Me' 'Mobile Number Masking - Component Register' "As of $asOf" @
 $parts = @(
     @('Part 1', 'v1.1.0', 'Foundations', 'Deployed (Sandbox)'), @('Part 2', 'v1.2.0', 'Masked phone panel (POC users)', 'Deployed (Sandbox)'),
     @('Part 3', 'v1.3.0', 'Dialer adapters MCube + SlashRTC (POC)', 'Deployed (Sandbox)'), @('Part 4', 'v1.4.0', 'Lead creation with hidden numbers', 'Deployed (Sandbox)'),
-    @('Part 5', 'v1.5.0', 'Mask leaking screens (5a-5c deployed, 5d built, call panels deferred D1)', 'Built (Local) - 5d'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
+    @('Part 5', 'v1.5.0', 'Mask leaking screens (5a-5d deployed, call panels deferred D1)', 'Deployed (Sandbox) - 5a to 5d'), @('Part 6', 'v1.6.0', 'Reveal + audit cleanup', 'Planned'),
     @('Part 7', 'v1.7.0', 'Free-text auto-masking', 'Planned'), @('Part 8', 'v1.8.0', 'Find by number', 'Conditional'),
     @('Part 9', 'v1.9.0', 'Opportunity, Contact, documents', 'Conditional'), @('Part 10', '-', 'Vendor deliveries', 'Vendor'),
     @('Part 11', 'v2.0.0', 'Go-live access (masking ON)', 'Planned'), @('Security fix', 'optional', 'MCube Named Credential', 'Planned')
@@ -345,7 +345,7 @@ $bundleMeta = @{
     'part5a-calling'    = @('5', 'Part 5', 'v1.5.0 (5a)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5a-calling --test-level RunSpecifiedTests --tests PhoneDisplayServiceTest --tests PhoneMaskingCallScreensTest --tests MakeCallControllerTest --tests OfflineCallAppAPITest --tests MaskedDialServiceTest', 'Deployed (Sandbox) 0Afft000000Lf3NCAS')
     'part5b-history'    = @('6', 'Part 5', 'v1.5.0 (5b)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5b-history --test-level RunSpecifiedTests --tests PhoneMaskingHistoryTest --tests PhoneDisplayServiceTest --tests mCubeController_Test --tests mCubeControllerTestExtended --tests LeadHistoryandActivityControllerTest', 'Deployed (Sandbox) 0Afft000000LfszCAC')
     'part5c-lead-tools' = @('7', 'Part 5', 'v1.5.0 (5c)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest --tests LeadMergeControllerTest (not updateContactDetailsTest - fails before 5c, D3)', 'Deployed (Sandbox) 0Afft000000LkRFCA0')
-    'part5d-push'       = @('8', 'Part 5', 'v1.5.0 (5d)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5d-push --test-level RunSpecifiedTests --tests PhoneMaskingPushTest --tests LeadBulkPushControllerTest --tests LeadYotelBulkPushControllerTest', 'Built (Local) - not deployed')
+    'part5d-push'       = @('8', 'Part 5', 'v1.5.0 (5d)', 'Production - everyone', 'sf project deploy validate --metadata-dir release/prod/part5d-push --test-level RunSpecifiedTests --tests PhoneMaskingPushTest --tests LeadBulkPushControllerTest --tests LeadYotelBulkPushControllerTest', 'Deployed (Sandbox) 0Afft000000Lm1dCAC')
     'part2-pilot'       = @('9', 'Part 2', 'v1.2.0', 'Production pilot only (clone POC profile first)', 'sf project deploy start --metadata-dir release/prod/part2-pilot --test-level NoTestRun', 'Deployed (Sandbox) 0Afft000000LRq1CAG / 0Afft000000LRzhCAG')
 }
 $typeOf = @{ 'pages' = 'Visualforce Page'; 'aura' = 'Aura Component'; 'classes' = 'Apex Class'; 'lwc' = 'Lightning Web Component'; 'objects' = 'Custom Object / Custom Metadata Type (with fields)'; 'customMetadata' = 'Custom Metadata Record'; 'tabs' = 'Custom Tab'; 'permissionsets' = 'Permission Set'; 'flexipages' = 'Lightning Page'; 'profiles' = 'Profile' }

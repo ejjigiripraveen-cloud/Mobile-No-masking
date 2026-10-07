@@ -5,11 +5,13 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.5.0 (5d) – Bulk push and Yotel push selection lists masked (built locally 2026-10-07 · NOT deployed)
+## v1.5.0 (5d) – Bulk push and Yotel push selection lists masked (deployed to sandbox 2026-10-07)
 
 - **Commit Version:** v1.5.0 (Part 5d)
 - **Type:** feat
 - **Branch:** `ejjigiripraveen/v1.5.0-part5d-push`
+- **Sandbox deploy:** 0Afft000000Lm1dCAC (3/3, **10 tests passed** incl. existing LeadBulkPushControllerTest, LeadYotelBulkPushControllerTest). Coverage: LeadBulkPushController 98.5% · LeadYotelBulkPushController 95.8%. First attempt 0Afft000000LlwnCAC rolled back: my new Yotel test expected real data, but the existing code also swaps in an empty Lead while tests run – test corrected.
+- **Testing:** on hold – owner access issue (D2).
 - **Backup of originals (before any change):** `backup/v1.5.0-part5d-pre-change` (commit `8e5a8d4`, 29 files; wrappers, apps and the 2 VF host pages first backed up here)
 - **Modified Assets:**
   - New: `PhoneMaskingPushTest`.

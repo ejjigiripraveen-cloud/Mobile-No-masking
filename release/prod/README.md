@@ -215,7 +215,7 @@ sf project deploy quick --job-id <validation id> --target-org <prod>
 
 ## Part 5d – v1.5.0 Bulk push + Yotel push (built 2026-10-07)
 
-### part5d-push (deploy after part5c-lead-tools)
+### part5d-push (deploy after part5c-lead-tools) - tested in sandbox 0Afft000000Lm1dCAC, 10 tests
 | Type | Components | Change |
 |---|---|---|
 | Apex | `LeadBulkPushController` | **Existing** – selection list mobile masked for masked users (1 line) |
