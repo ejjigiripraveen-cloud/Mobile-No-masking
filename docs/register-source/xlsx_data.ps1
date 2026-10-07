@@ -469,3 +469,17 @@ $p5e = @(
     @('Test limit', 'Data', 'Sandbox has 0 MessagingEndUser records', 'The chat cannot be tested on screen in the sandbox (no WhatsApp data copied)', '-', '-')
 )
 Add-Sheet 'Part 5e Plan' 'Part 5e (v1.5.0) - WhatsApp chat' 'Explained before implementation; originals in backup/v1.5.0-part5e-pre-change' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(18, 18, 48, 84, 54, 12) $p5e @()
+
+# ---------------- PART 6 PLAN ----------------
+$p6 = @(
+    @('New', 'Custom Permission', 'Reveal_Phone_Number', 'Who may reveal (design G5)', 'Only users with it see the Reveal button', 'None'),
+    @('New', 'Permission Set', 'Phone_Reveal', 'Grants Reveal_Phone_Number + Apex access to PhoneRevealService. Assigned to Team Leads, Heads, Admins (go-live); a POC TL test user in the sandbox', '-', 'None'),
+    @('New', 'Apex Class', 'PhoneRevealService (+ test)', 'revealNumber(recordId, fieldKey, reason, comment): checks the custom permission, the reason (7 approved values) and the comment (required for Other), then MaskedDialService (approved field, record access, Reveal audit row with reason + comment) and returns the number + seconds to show', 'Real number only for permitted users, always audited', 'Low'),
+    @('New', 'Custom Field', 'Phone_Access_Audit__c.Comment__c', 'Long text - comment of a reveal (required for Other)', 'Audit shows why', 'None'),
+    @('New', 'Apex Class', 'PhoneAuditPurgeBatch (+ test)', 'Batch + Schedulable: deletes Phone_Access_Audit__c rows older than Audit_Retention_Days__c (365); scheduled nightly (manual step)', 'Audit kept 1 year', 'Low'),
+    @('Updated (ours)', 'Apex Class', 'MaskedDialService', 'Reveal requests carry a comment -> Comment__c on the audit row', '-', 'Low'),
+    @('Updated (ours)', 'LWC', 'maskedPhonePanel', 'Reveal button per number (only with Reveal_Phone_Number); dialog with the 7 reasons + comment; number shown for Reveal_Seconds__c (30) then cleared from the screen', 'TL / Head / Admin can reveal; reps see no button', 'Low'),
+    @('Kept (decision)', 'Custom Field', 'Phone_Access_Audit__c.Reason__c', 'Stays Text (already deployed). The 7 reasons are enforced by Apex and offered as a dropdown in the dialog. Design said picklist - changing a deployed field type is avoided', '-', '-'),
+    @('No change', 'Existing org components', '-', 'Part 6 changes only components built in this project', '-', '-')
+)
+Add-Sheet 'Part 6 Plan' 'Part 6 (v1.6.0) - Reveal and audit cleanup' 'Explained before implementation; checkpoint tag checkpoint-before-part6' @('New / Existing', 'Type', 'Component', 'Change', 'Effect for users', 'Risk') @(16, 18, 36, 90, 44, 10) $p6 @()
