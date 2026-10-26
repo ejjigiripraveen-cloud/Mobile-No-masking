@@ -1,0 +1,764 @@
+# Mobile Number Masking – Part-by-Part Test and Production Deploy Guide (Parts 1–6)
+
+Written for the project owner, who will test each part in the sandbox and then deploy it to production one part at a time.
+Order for every part: **read → take care of the existing components → test in the sandbox → fill in the result sheet → deploy to production → check production**.
+
+Last updated: 2026-10-26 · Sandbox: gsquaregroup--prodreplic (alias `Sandbox`) · Code: branch `ejjigiripraveen/v1.6.0-reveal`
+
+---
+
+## 0. Read first
+
+### 0.1 Golden rules
+| Rule | Why |
+|---|---|
+| Use **dummy numbers only** (e.g. 9000011111) – never a customer's number | Calls, pushes and logs are real |
+| **Normal user = exactly as before; masked user = 98XXXXXX21 and still works** | This is the test for every screen |
+| Browser check: **F12 → Network → open the `aura?…` / `apexremote` response → Ctrl+F the last 6 digits of the real number → must not be found** | The number must never reach the browser |
+| Nothing is masked for real users until **Part 11** (go-live switch) | In the sandbox only *POC Masked Rep* users are masked; in production only pilot users |
+
+### 0.2 Test users (sandbox)
+| User | Profile | Call center | Use |
+|---|---|---|---|
+| POC MCube Rep (005ft000000YFsfAAG) | POC Masked Rep | MCube Softphone CTI Add On | Masked rep, MCube |
+| POC SlashRTC Rep (005ft000000YFuHAAW) | POC Masked Rep | SlashRTC Call Center Adapter | Masked rep, SlashRTC |
+| POC TL (005ft000000YupRAAS) | POC Masked Rep + **Phone_Reveal** | – | Masked team lead (Reveal) |
+| Priya J (or any Presales outbound user) | Presales outbound | SlashRTC | **Normal rep** – must see no change |
+| You | System Administrator | – | Admin checks, scripts |
+
+"Login as": Setup → Users → user → **Login** (needs Setup → Login Access Policies → *Administrators Can Log in as Any User*).
+
+### 0.3 ⛔ Blockers to fix BEFORE the first production deploy
+| # | Blocker | What happens if ignored | Fix |
+|---|---|---|---|
+| **B1** | The production bundles in `release/prod/` were rebuilt from the **final (Part 6) code**. `part1-foundations` → `MaskedDialService` uses the field `Phone_Access_Audit__c.Comment__c`, which is only in `part6-reveal`. | **Part 1 production deploy fails** ("Variable does not exist: Comment__c") | Approve a bundle fix (see 0.4) |
+| **B2** | `part2-panel` → `maskedPhonePanel` already contains the Reveal button, which needs `PhoneRevealService` and custom permission `Reveal_Phone_Number` (both only in `part6-reveal`). | **Part 2 production deploy fails** | Same fix |
+| B3 | POC MCube Rep → **Mobile** and **Mcube Phone** are empty in the sandbox | Parts 3 / 5a MCube calls fail with "no Mobile number set" | Set both to your MCube agent number (Setup → Users) |
+| B4 | GitHub repo is **public** and contains the existing hard-coded MCube API token | Token exposure | Make the repo private, rotate the token |
+| B5 | Existing test `updateContactDetailsTest` fails before this project (D3) | A production deploy that runs it fails | Never list it in `--tests`; report it to the LeadTrigger owner |
+
+### 0.4 Proposed fix for B1 / B2 (needs your approval – nothing changed yet)
+Move the few Part 6 items that earlier parts depend on into the earlier bundles:
+- `part1-foundations` + `Phone_Access_Audit__c.Comment__c` (field only).
+- `part2-panel` + `PhoneRevealService`, `PhoneRevealServiceTest`, custom permission `Reveal_Phone_Number`.
+- `part6-reveal` keeps the rest (permission set `Phone_Reveal`, `PhoneAuditPurgeBatch`, list view, viewer permission set update).
+
+Effect: no user sees Reveal until someone is given the **Phone_Reveal** permission set, so shipping the class earlier changes nothing for users. Reply **"approve bundle fix"** and I will change the manifests, rebuild `release/prod`, validate each bundle **against the sandbox (validate-only, no changes)** and update this guide.
+
+### 0.5 Before deploying ANY part to production – take care of the existing components
+Production may have been changed since our sandbox baseline. For every existing component listed in a part:
+1. Retrieve the production version: `sf project retrieve start --metadata "ApexClass:<Name>" --target-org <prod> --output-dir prod-check`
+2. Compare it with our backup of the original (`backup/<version>-pre-change/…`): `git diff --no-index backup/<…>/<file> prod-check/<…>/<file>`
+3. **Identical** → safe to deploy our version. **Different** → stop; someone changed it in production. Send me the differences and I will merge our change into the production version first.
+4. Tell the component owner before you deploy (who / what / when) – our change is additions only, but they must know.
+
+### 0.6 Shared preparation in the sandbox (once)
+| # | Step | Where |
+|---|---|---|
+| P1 | Assign **Phone Access Audit Viewer** to yourself | Setup → Permission Sets |
+| P2 | POC MCube Rep → **Mobile** and **Mcube Phone** = your MCube agent number (B3) | Setup → Users → Edit |
+| P3 | SlashRTC: an agent exists for the POC users' email (jesseewilson@gsquarehousing.com) and can log in from the sandbox | SlashRTC admin |
+| P4 | G-Talk: POC username registered (else check G-Talk only by the audit row) | G-Talk admin |
+| P5 | Test lead **Tet Mcube Rep** (00Qft000002UQS9EAO, Pre Sales, owner POC MCube Rep) exists. Part 4 creates **POC Test 4A / 4B** with dummy numbers – used from Part 4 on | – |
+| P6 | Private Lead list view **POC Push Test** (Last Name contains "POC Test") – for Part 5d | Leads tab |
+
+---
+
+## Master list – existing components changed (all parts)
+
+All changes are **additions**; original code was backed up before any change. Originals = `backup/<folder>` (with `SHA256SUMS`).
+
+| # | Part | Existing component | Type | What we changed | Backup | Take care of |
+|---|---|---|---|---|---|---|
+| 1 | 2 | Pre_Sales app (Gsquare Housing) – page assignment | App (manual) | +1 assignment row: POC Masked Rep → masked page (pilot only) | commit 1adf63f | Done manually in App Builder; remove at go-live |
+| 2 | 3 | `mcubeSoftphoneCTIAddOn` | Visualforce page | Masked-click branch in `onClickToDial`; normal clicks unchanged | backup/v1.3.0-pre-change | MCube softphone for all MCube users |
+| 3 | 3 | `McubeSoftphoneAddOnController` | Apex class | New method `clickToCallMasked`; existing methods untouched | backup/v1.3.0-pre-change | Hard-coded token / http (security debt, separate) |
+| 4 | 3 | `slashPhone` (`slashPhoneHelper.js`) | Aura | Masked-click step in the `onClickToDial` listener | backup/v1.3.0-pre-change | SlashRTC softphone for all SlashRTC users |
+| 5 | 3 | SlashRTC Call Center Adapter URL | Call center (manual) | Sandbox only – production URL unchanged | backup/v1.3.0-pre-change | **Do not change in production** |
+| 6 | 4 | `LeadTrigger` | Apex trigger | One call at the top (before insert / update) | backup/v1.4.0-pre-change | Most critical trigger in the org; D3 SOQL-101 issue is existing |
+| 7 | 4 | `NewLeadCmp` | Aura | Entry inputs for users who cannot see Phone__c | backup/v1.4.0-pre-change | Lead **New** button (desktop + mobile) |
+| 8 | 4 | `NewRefLeadCmp` | Aura | Same, New Referral Lead | backup/v1.4.0-pre-change | Quick action |
+| 9 | 5a | `MakeCallController` | Apex class | Bodies renamed (`collectPhones`, `placeMcubeCall`), new masked wrappers | backup/v1.5.0-part5a-pre-change | "Make call" action |
+| 10 | 5a | `OfflineCallAppAPI` | Apex class | getLeadPhone / getOppPhone masked; triggerCall resolves masked number | backup/v1.5.0-part5a-pre-change | G-Talk; existing coverage 78.5% |
+| 11 | 5b | `mCubeController` | Apex class | callRecords masked; 5 `log__c` lines masked for everyone | backup/v1.5.0-part5b-pre-change | 1,969-line core MCube class (inbound, logs) |
+| 12 | 5b | `LeadHistoryandActivityController` | Apex class | GetData masks phone history + call numbers | backup/v1.5.0-part5b-pre-change | History & Activity on 4 Lead pages |
+| 13 | 5c | `LeadMergeController` | Apex class | getLeads / getSearchLeads masked | backup/v1.5.0-part5c-pre-change | Existing: no limit, no sharing keyword |
+| 14 | 5c | `updateContactDetails` | Apex class | Masked display; masked values never saved; primary locked | backup/v1.5.0-part5c-pre-change | Existing test fails (D3) |
+| 15 | 5d | `LeadBulkPushController` | Apex class | 1 line (selection list) | backup/v1.5.0-part5d-pre-change | Used by MIS Extended / admins |
+| 16 | 5d | `LeadYotelBulkPushController` | Apex class | 1 line + debug line | backup/v1.5.0-part5d-pre-change | Used by MIS Extended / admins |
+| 17 | 5e | `LeadMsgConversationController` | Apex class | Masks message / rawJson / senderName before return | backup/v1.5.0-part5e-pre-change | WhatsApp chat (Connect API) |
+
+Part 1 and Part 6 change **no** existing components.
+
+---
+
+# PART 1 – Foundations (v1.1.0)
+
+**What it does:** the engine used by every later part – masking (`9876543221` → `98XXXXXX21`), the secure server-side real-number lookup, and the audit log. **No screen changes for anyone.**
+
+### 1A. Components
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| Phone_Masking_Setting__mdt (+8 fields) + record Default | Custom metadata | New | Format 2 / 2 / X / 91, reveal 30 s, retention 365 days, on/off switches |
+| Masked_Phone_Field__mdt (+7 fields) + records Lead_Phone, Lead_Secondary_Phone | Custom metadata | New | Approved fields that may be dialed / revealed |
+| Phone_Access_Audit__c (+11 fields), list view All, tab | Custom object | New | Audit log – masked number only, Private |
+| PhoneMaskingConfig | Apex | New | Reads settings (98.2%) |
+| PhoneMaskUtil | Apex | New | Masking engine (100%) |
+| MaskedDialService | Apex | New | Real-number lookup + access check + audit (100%) |
+| MaskedDialServiceCTI | Apex | New | Softphone entry point (93.5%) |
+| PhoneTestDataFactory + 4 test classes | Apex tests | New | No SeeAllData |
+| Phone_Access_Audit_Viewer | Permission set | New | Read audit (admins) |
+
+### 1B. Existing components changed: **none**
+
+### 1C. Access
+Admins who review audits → **Phone_Access_Audit_Viewer**. Nothing else.
+
+### 1D. Sandbox test steps
+| # | Step | Expected |
+|---|---|---|
+| 1.1 | Setup → Apex Classes → search each name | PhoneMaskUtil, PhoneMaskingConfig, MaskedDialService, MaskedDialServiceCTI, the 5 test classes |
+| 1.2 | Setup → Custom Metadata Types → Phone Masking Setting → Manage Records → Default | 2 / 2 / X / 91 / 30 / 365, both checkboxes ticked |
+| 1.3 | Same → Masked Phone Field → Manage Records | Lead_Phone, Lead_Secondary_Phone – Active, Allow Dial, Allow Reveal ticked |
+| 1.4 | App Launcher → Phone Access Audits → All | Tab opens; Masked Number column only `98XXXXXX21` style |
+| 1.5 | Developer Console → Debug → Open Execute Anonymous → paste `scripts/apex/v1.1.0-1-mask-format.apex` → Open Log → Execute → Debug Only | Every line PASS; `RESULT: 11 passed, 0 failed`; the date in the free-text line is not masked |
+| 1.6 | Same with `v1.1.0-2-settings.apex` | Each value equals its "(expected …)"; `Approved active fields: 2` |
+| 1.7 | `v1.1.0-3-dial-service.apex` – put a test Lead Id on line 7 | 3a Success + matches true · 3b Success (or Not Found) · 3c Denied, number released false · 3d success true, matches true · 3e Denied |
+| 1.8 | `v1.1.0-4-audit-check.apex` | 4 newest rows: Dial; Success / Success / Denied / Success; user = you; masked only |
+| 1.9 | (optional) `v1.1.0-5-cleanup-test-audits.apex` | `Deleted 4 test audit rows` |
+| 1.10 | Setup → Apex Test Execution → PhoneMaskUtilTest, PhoneMaskingConfigTest, MaskedDialServiceTest, MaskedDialServiceCTITest | All pass; each class > 85% |
+
+### 1E. Result sheet
+| 1.1 | 1.2 | 1.3 | 1.4 | 1.5 | 1.6 | 1.7 | 1.8 | 1.10 | Status |
+|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | ✅ Tested 2026-10-12 |
+
+### 1F. Production deploy (after B1 fix)
+```bash
+sf project deploy validate --metadata-dir release/prod/part1-foundations --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingConfigTest --tests PhoneMaskUtilTest --tests MaskedDialServiceTest --tests MaskedDialServiceCTITest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| After deploy (production) | Expected |
+|---|---|
+| Assign Phone_Access_Audit_Viewer to the audit admins | – |
+| Run 1.5 and 1.6 (read-only scripts) in production | 11 passed; settings as expected |
+| Do **not** run 1.7 in production unless on a test Lead | – |
+| Users | No change for anyone |
+
+Rollback: `sf project deploy start --manifest release/prod/package-empty.xml --post-destructive-changes release/prod/part1-foundations-rollback-destructiveChanges.xml --target-org <prod>`
+
+---
+
+# PART 2 – Masked phone panel (v1.2.0)
+
+**What it does:** adds the **Phone Numbers** panel (masked) to the Lead page for users who cannot see the phone fields; creates the POC profile and POC page. **Admins and normal reps: no change.**
+
+### 2A. Components
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| MaskedPhonePanelController + test (11 tests) | Apex | New | Returns masked numbers only (100%) |
+| maskedPhonePanel | LWC | New | The panel (click-to-dial switched on in Part 3, Reveal added in Part 6) |
+| Sales_Lead_Record_Page_Masked_POC | Lightning page | New | Copy of Sales_Lead_Record_Page + panel – **pilot only** |
+| POC Masked Rep | Profile | New | Clone of Presales outbound, 25 phone fields hidden – **pilot only** |
+| POC MCube Rep, POC SlashRTC Rep | Users | New | Sandbox only |
+
+### 2B. Existing components changed
+| Component | Change | Take care |
+|---|---|---|
+| Pre_Sales app (Gsquare Housing) – page activation | +1 row: Lead / Pre Sales / Desktop / POC Masked Rep → masked page | Manual in App Builder (cannot deploy the app – duplicate Analytics Cloud profile names). Remove at go-live. |
+
+### 2C. Access
+POC Masked Rep → class access **MaskedPhonePanelController** (in the profile overlay).
+
+### 2D. Sandbox test steps
+| # | As | Step | Expected |
+|---|---|---|---|
+| 2.1 | Admin | Gsquare Housing → open Tet Mcube Rep | Page unchanged, **no** panel, full numbers |
+| 2.2 | Priya J | Open one of her Pre Sales leads | Unchanged, no panel, full numbers |
+| 2.3 | Admin | Setup → Profiles → POC Masked Rep → Object Settings → Leads | Phone__c, Secondary_Phone__c, Phone with country code, WhatsApp Number … Read ☐ Edit ☐; Phone Entry fields Read+Edit; Phone Masked Read |
+| 2.4 | Admin | Lightning App Builder → Sales Lead Record Page (Masked POC) → Edit → Activation → App, Record Type, and Profile | One row: Gsquare Housing / Pre Sales / POC Masked Rep / Desktop. Close **without saving** |
+| 2.5 ⭐ | POC MCube Rep | Open Tet Mcube Rep | **Phone Numbers** panel top-left: Primary `98XXXXXX21`, Secondary `91XXXXXX80`; phone fields not visible anywhere (details, highlights, header). Don't click yet (Part 3) |
+| 2.6 ⭐ | POC MCube Rep | F12 → Network → filter `aura` → F5 → open responses (esp. `getMaskedNumbers`) → Ctrl+F last 6 digits | Not found |
+| 2.7 | POC MCube Rep | Leads tab → their list views | Phone columns empty / not shown; list works |
+| 2.8 📝 | POC MCube Rep | Top search bar → the full test number | Record **found / not found** – decides Part 8 |
+| 2.9 | POC MCube Rep | Open a lead of another record type (Sales / Referral) | Normal page, **no panel**, phone fields still hidden (expected until Part 11) |
+| 2.10 | POC SlashRTC Rep | Open a Pre Sales lead they own | Same panel as 2.5 |
+| 2.11 | POC user | Salesforce mobile app → lead (optional) | No full numbers; no panel (desktop-only assignment) |
+| 2.12 | Admin | Apex Test Execution → MaskedPhonePanelControllerTest | 11/11 pass, 100% |
+
+### 2E. Result sheet
+| 2.1 | 2.2 | 2.3 | 2.4 | 2.5 | 2.6 | 2.7 | 2.8 (found?) | 2.9 | 2.10 | 2.11 | 2.12 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | | |
+
+### 2F. Production deploy (after B2 fix)
+```bash
+sf project deploy validate --metadata-dir release/prod/part2-panel --target-org <prod> \
+  --test-level RunSpecifiedTests --tests MaskedPhonePanelControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+**Pilot only (when you start the production pilot):**
+1. Setup → Profiles → **Presales outbound → Clone** → name **POC Masked Rep** (clone from the *current production* profile).
+2. `sf project deploy start --metadata-dir release/prod/part2-pilot --target-org <prod> --test-level NoTestRun`
+3. App Builder → activate *Sales Lead Record Page (Masked POC)* for Gsquare Housing / Pre Sales / POC Masked Rep / Desktop.
+4. Move the 2–3 pilot users to POC Masked Rep (keep role and call center).
+
+| Production check | Expected |
+|---|---|
+| Any normal user opens a Lead | No change |
+| Pilot user (if set up) opens a Pre Sales Lead | Masked panel |
+
+Rollback: remove the panel from pages → `…/part2-panel-rollback-destructiveChanges.xml`; pilot: deactivate the page, move pilot users back, delete page and profile.
+
+---
+
+# PART 3 – Dialers: MCube + SlashRTC masked click-to-call (v1.3.0)
+
+**What it does:** clicking the masked number sends only record Id + field + masked value; the dialer gets the real number on the server, dials, and an audit row is written. **Normal clicks unchanged.**
+
+### 3A. Components (new / ours)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| McubeMaskedClickToCallTest | Apex test | New | MCube mocked |
+| MaskedDialService | Apex | Update (ours) | Deferred audit after callout; field from masked value |
+| MaskedDialServiceCTI | Apex | Update (ours) | `resolveMaskedClick` for SlashRTC |
+| MaskedDialServiceTest / CTITest | Apex tests | Update | +5 / +3 tests |
+| POC Masked Rep | Profile | Update (ours) | Class access MaskedDialServiceCTI |
+| Sales_Lead_Record_Page_Masked_POC | Page | Update (ours) | Panel property Enable click-to-dial = on |
+
+### 3B. Existing components changed ⚠️
+| Component | Type | Change | Take care |
+|---|---|---|---|
+| `mcubeSoftphoneCTIAddOn` | Visualforce | In `onClickToDial`: masked click → new server method; else existing flow | All MCube users' softphone – compare prod version first (0.5) |
+| `McubeSoftphoneAddOnController` | Apex | + `clickToCallMasked(recordId, fieldKey, maskedNumber)` → resolves, then calls existing `clickToCallRemote` | Existing test `McubeSoftphoneAddOnControllerTest` must still pass |
+| `slashPhone` (`slashPhoneHelper.js`) | Aura | Masked click → `runApex MaskedDialServiceCTI` → existing dial flow | All SlashRTC users' softphone; number briefly visible inside the SlashRTC softphone (vendor) |
+| SlashRTC Call Center Adapter URL | Call center | Sandbox only | **Never change in production** |
+
+### 3C. Access
+POC Masked Rep: class access MaskedPhonePanelController + MaskedDialServiceCTI. Users need a call center assigned. MCube users need **User.MobilePhone** = MCube agent number.
+
+### 3D. Sandbox test steps (needs P2, P3)
+If the 📞 icon is crossed out: open the **Phone** utility, wait until ready, F5.
+
+| # | As | Step | Expected |
+|---|---|---|---|
+| 3.1 ⭐ | POC MCube Rep | Phone utility ready → Tet Mcube Rep → click **Primary 98XXXXXX21** | Agent phone rings, then customer phone, connected |
+| 3.2 ⭐ | POC MCube Rep | F12 → Network → Preserve log → click → request `clickToCallMasked` | Payload: Lead Id, `Lead.Phone__c`, `98XXXXXX21` only; response success; last 6 digits not found |
+| 3.3 | POC MCube Rep | Click **Secondary** | Same, secondary dummy phone rings |
+| 3.4 ⭐ | POC SlashRTC Rep | Log in to SlashRTC → their Pre Sales lead → click Primary | Call connects through SlashRTC |
+| 3.5 | Admin | Phone Access Audits → All → newest | Dial / Success / POC user / Channel MCube or SlashRTC Call Center Adapter / masked only; MCube message "MCube: Call initiated…" |
+| 3.6 📝 | "Customer" phone | Call the MCube / SlashRTC virtual number while the POC user is ready | Screen pop opens the right Lead (POC question 3) |
+| 3.7 ⭐ | Normal MCube / SlashRTC / 360CTI reps | Click the normal Phone field | Calls exactly as before; no audit row |
+| 3.8 | Admin | Phone Masking Setting → Default → untick *Real Number Lookup Enabled* → POC clicks | No call, "Real number lookup is switched off.", audit Denied → **tick it again** |
+| 3.9 | Admin | Apex tests: McubeMaskedClickToCallTest, MaskedDialServiceTest, MaskedDialServiceCTITest, McubeSoftphoneAddOnControllerTest | All pass; coverage not lower than before |
+
+**Gate:** 3.1–3.4 pass → Option B confirmed. If the masked click does not reach the dialer → Option A fallback (message channel) must be built first.
+
+### 3E. Result sheet
+| 3.1 | 3.2 | 3.3 | 3.4 | 3.5 | 3.6 | 3.7 | 3.8 | 3.9 | Option B confirmed? |
+|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | |
+
+### 3F. Production deploy
+Before: compare `mcubeSoftphoneCTIAddOn`, `McubeSoftphoneAddOnController`, `slashPhone` with production (0.5).
+```bash
+sf project deploy validate --metadata-dir release/prod/part3-dialers --target-org <prod> \
+  --test-level RunSpecifiedTests --tests McubeMaskedClickToCallTest --tests McubeSoftphoneAddOnControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| Production check | Expected |
+|---|---|
+| One normal MCube rep and one SlashRTC rep click a number | Call as before |
+| Pilot users (if set up) click the masked number | Call connects; audit row |
+| Production CTI Adapter URL | Unchanged (`…/apex/index`) |
+
+Rollback: redeploy the 3 originals from `backup/v1.3.0-pre-change` (see `release/prod/part3-dialers-rollback-README.md`).
+
+---
+
+# PART 4 – Lead creation with entry fields (v1.4.0)
+
+**What it does:** masked users type numbers into entry fields; before save they are copied into the real fields and cleared. Primary locked after creation; secondary can be added / changed. **Users who can see Phone__c: unchanged.**
+
+### 4A. Components (new / ours)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| Lead.Phone_Entry__c, Lead.Secondary_Phone_Entry__c | Fields | New | Always empty after save |
+| LeadPhoneEntryHandler + test | Apex | New | Copy + primary lock, no SOQL/DML, 200-record bulk tested (100%) |
+| POC Masked Rep | Profile | Update (ours) | Edit on both entry fields |
+| Sales_Lead_Record_Page_Masked_POC | Page | Update (ours) | + Secondary Phone (entry) in details |
+
+### 4B. Existing components changed ⚠️
+| Component | Type | Change | Take care |
+|---|---|---|---|
+| `LeadTrigger` | Apex trigger | **One call at the very top** (before insert / update) → LeadPhoneEntryHandler; existing logic untouched | Core trigger – compare with production first; run its existing tests |
+| `NewLeadCmp` | Aura | If the form did not receive Phone__c → show entry inputs; else original inputs | Lead **New** button, desktop + mobile |
+| `NewRefLeadCmp` | Aura | Same | New Referral Lead quick action |
+| LeadTriggerHandler, RelatedSourceHandler | Apex | **No change** (backed up, tests re-run) | – |
+
+### 4C. Access
+POC Masked Rep: Read + Edit both entry fields. At go-live every rep profile gets the same. ⚠️ System Administrator has **no** access to the entry fields (plain SOQL as admin fails) – use the Apex scripts below; fix at Part 11.
+
+### 4D. Sandbox test steps (dummy numbers 9000011111 / 9000022222 / 9000033333 / 9000044444)
+| # | As | Step | Expected |
+|---|---|---|---|
+| 4.1 ⭐ | Priya J | Leads → New; any lead → New Referral Lead → Cancel | Same forms as today (normal Phone inputs) |
+| 4.2 ⭐ | POC MCube Rep | Leads → New → Last name `POC Test 4A`, Phone 9000011111, Secondary 9000022222, other required fields → Save | Saved, no "Phone required" error |
+| 4.3 | POC MCube Rep | Open POC Test 4A | Panel `90XXXXXX11` / `90XXXXXX22`; Secondary Phone (entry) empty. Copy the Id |
+| 4.4 | POC MCube Rep | Any lead → New Referral Lead → `POC Test 4B`, Phone 9000044444 → Save | Saved; panel `90XXXXXX44` |
+| 4.5 ⭐ | Admin | Execute Anonymous – script A below | `90XXXXXX11 / 90XXXXXX22 / entry fields empty: true` and `90XXXXXX44 / null / true` |
+| 4.6 | POC MCube Rep | POC Test 4A → Secondary Phone (entry) → 9000033333 → Save | Panel secondary `90XXXXXX33`; entry field empty |
+| 4.7 ⭐ | Admin | Script B (try to change the primary through the entry field) | `Saved: false` + "The primary number cannot be changed once it is set…" |
+| 4.8 | POC MCube Rep | Leads → New with Phone 9000011111 (duplicate) | Same duplicate behaviour as a normal rep |
+| 4.9 | Admin | Script C (integration-style insert, rolled back) | `Saved: true`, `Phone__c 90XXXXXX66 | entry empty: true`, rolled back. A required-field / validation error = existing org rule, tell me the field |
+| 4.10 | POC user | Mobile app → Leads → New (optional) | Entry fields, save works |
+| 4.11 | Admin | Apex tests: LeadPhoneEntryHandlerTest + existing LeadTrigger / LeadTriggerHandler tests (**not** updateContactDetailsTest) | All pass; LeadPhoneEntryHandler > 85% |
+
+Script A (prints masked values only):
+```apex
+for (Lead l : [SELECT Name, Phone__c, Secondary_Phone__c, Phone_Entry__c, Secondary_Phone_Entry__c
+               FROM Lead WHERE LastName LIKE 'POC Test 4%' ORDER BY CreatedDate DESC]) {
+    System.debug(l.Name + ' | Phone__c ' + PhoneMaskUtil.mask(l.Phone__c)
+        + ' | Secondary__c ' + PhoneMaskUtil.mask(l.Secondary_Phone__c)
+        + ' | entry fields empty: ' + (l.Phone_Entry__c == null && l.Secondary_Phone_Entry__c == null));
+}
+```
+Script B:
+```apex
+Database.SaveResult r = Database.update(new Lead(Id = '00Q_ID_OF_4A', Phone_Entry__c = '9000055555'), false);
+System.debug('Saved: ' + r.isSuccess());
+for (Database.Error e : r.getErrors()) { System.debug('Error: ' + e.getMessage()); }
+```
+Script C:
+```apex
+Savepoint sp = Database.setSavepoint();
+Lead l = new Lead(LastName = 'POC Test 4C', Company = 'Test', Phone__c = '9000066666');
+Database.SaveResult r = Database.insert(l, false);
+System.debug('Saved: ' + r.isSuccess() + ' ' + r.getErrors());
+if (r.isSuccess()) {
+    Lead s = [SELECT Phone__c, Phone_Entry__c FROM Lead WHERE Id = :l.Id];
+    System.debug('Phone__c ' + PhoneMaskUtil.mask(s.Phone__c) + ' | entry empty: ' + (s.Phone_Entry__c == null));
+}
+Database.rollback(sp);
+System.debug('Rolled back - nothing saved');
+```
+Round robin may reassign a new lead – if the POC user cannot open it, set the owner back as admin.
+
+### 4E. Result sheet
+| 4.1 | 4.2 | 4.3 | 4.4 | 4.5 | 4.6 | 4.7 | 4.8 | 4.9 | 4.10 | 4.11 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | |
+
+### 4F. Production deploy
+Before: compare `LeadTrigger`, `NewLeadCmp`, `NewRefLeadCmp` with production (0.5). Deploy outside working hours (trigger).
+```bash
+sf project deploy validate --metadata-dir release/prod/part4-lead-entry --target-org <prod> \
+  --test-level RunSpecifiedTests --tests LeadPhoneEntryHandlerTest --tests LeadTriggerTest --tests LeadTriggerHandlerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| Production check | Expected |
+|---|---|
+| A normal rep creates a lead (dummy number) and a referral lead | As before |
+| Website / portal / API lead arrives | Saved as before (Phone__c filled) |
+| Entry fields | Nobody sees them yet (FLS granted at go-live) |
+
+Rollback: redeploy the 3 originals from `backup/v1.4.0-pre-change`, then `manifest/v1.4.0/destructiveChanges.xml`.
+
+---
+
+# PART 5a – Calling screens: MakeCall + G-Talk (v1.5.0)
+
+**What it does:** MakeCall list and G-Talk show masked numbers to masked users; pressing Call sends the masked value back, the server resolves the real number and calls as today; every call audited. **Normal users unchanged.** Call panels are **not** included (D1).
+
+### 5aA. Components (new / ours)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| PhoneDisplayService + test | Apex | New | "Can this user read Phone__c?" – mask for display / resolve back (100%) |
+| PhoneMaskingCallScreensTest | Apex test | New | MakeCall / G-Talk masked paths, callouts mocked |
+| MaskedDialService | Apex | Update (ours) | + `logAccess` |
+| Lead.Phone_Masked__c | Formula field | New | Masked primary |
+| POC Masked Rep | Profile | Update (ours) | Read Phone_Masked__c |
+
+### 5aB. Existing components changed ⚠️
+| Component | Type | Change | Take care |
+|---|---|---|---|
+| `MakeCallController` | Apex | Original bodies unchanged, renamed `collectPhones` / `placeMcubeCall`; new `readContacts` / `callCustomer` wrappers | "Make call" action; existing MakeCallControllerTest must pass |
+| `OfflineCallAppAPI` | Apex | getLeadPhone / getOppPhone masked; triggerCall resolves a masked number (+33 lines, 0 removed) | G-Talk (AWS); existing coverage 78.5% |
+| MakeCall, utilityCallComponent, offlineCallQuickActionCmp | Aura / LWC | **No change** | – |
+| CallPanel, CallPanel_Outbound | Aura | **Not changed – D1** | Still show the full number to masked users → must be fixed before go-live |
+
+### 5aC. Access
+Existing class access unchanged. POC Masked Rep: Read Phone_Masked__c. MCube: **Mcube Phone** on the user.
+
+### 5aD. Sandbox test steps (needs P2)
+Make call = Lead action button (or ▼). G-Talk = bottom utility bar.
+
+| # | As | Step | Expected |
+|---|---|---|---|
+| 5a.1 ⭐ | Priya J | Make call → number list; G-Talk | Full numbers as today; calls as before; **no** audit row |
+| 5a.2 ⭐ | POC MCube Rep | Tet Mcube Rep / POC Test 4A → F12 → Make call → Select Number | `+91 90XXXXXX11` style; `readContacts` response has no full number |
+| 5a.3 ⭐ | POC MCube Rep | Pick masked number → Call | Agent (Mcube Phone) rings, then customer; connected; no full number in `callCustomer` |
+| 5a.4 | POC MCube Rep | G-Talk utility → Call | Masked numbers; no error; G-Talk rings if registered |
+| 5a.5 | Admin | Phone Access Audits | Dial / Success / **MCube (MakeCall)** and **G-Talk**; masked only |
+| 5a.6 | Admin | Execute Anonymous: `System.debug(MakeCallController.callCustomer('00Q_ID', '+91 11XXXXXX00'));` | "The selected number could not be identified…"; no call; audit **Not Found** |
+| 5a.7 📝 | POC user | Opportunity → Call Customer / G-Talk (if available) | Note behaviour (Opportunity hiding = Decision 1 / Part 9) |
+| 5a.8 | Admin | Apex tests: PhoneDisplayServiceTest, PhoneMaskingCallScreensTest, MakeCallControllerTest, OfflineCallAppAPITest, MaskedDialServiceTest | All pass |
+
+### 5aE. Result sheet
+| 5a.1 | 5a.2 | 5a.3 | 5a.4 | 5a.5 | 5a.6 | 5a.7 | 5a.8 |
+|---|---|---|---|---|---|---|---|
+| | | | | | | | |
+
+### 5aF. Production deploy
+Before: compare `MakeCallController`, `OfflineCallAppAPI` with production (0.5). Note: `release/prod/README.md` lists CallPanel in this bundle – it is **not** in it (D1); the bundle has the 2 classes + PhoneDisplayService + field only.
+```bash
+sf project deploy validate --metadata-dir release/prod/part5a-calling --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneDisplayServiceTest --tests PhoneMaskingCallScreensTest \
+  --tests MakeCallControllerTest --tests OfflineCallAppAPITest --tests MaskedDialServiceTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| Production check | Expected |
+|---|---|
+| Normal rep: Make call + G-Talk | Full numbers, calls as before, no audit rows |
+
+Rollback: redeploy originals from `backup/v1.5.0-part5a-pre-change`, then `manifest/v1.5.0-5a/destructiveChanges.xml`.
+
+---
+
+# PART 5b – Call history and MCube logs (v1.5.0)
+
+**What it does:** History & Activity (field history + calls) masked for masked users; numbers in **new** MCube `log__c` rows masked for **everyone**. Stored data unchanged.
+
+### 5bA. Components (new / ours)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| Call_Detail__c.Call_To_Masked__c | Formula field | New | Masked call number |
+| PhoneMaskingHistoryTest | Apex test | New | Callouts mocked |
+| PhoneDisplayService | Apex | Update (ours) | + forDisplay, historyValueForDisplay |
+
+### 5bB. Existing components changed ⚠️
+| Component | Type | Change | Take care |
+|---|---|---|---|
+| `mCubeController` | Apex | `callRecords` masked for masked users (+7 lines, memory only); 5 `log__c` Request / Response lines wrapped in `maskInText` → **logs masked for everyone** | Core MCube class (inbound + logs) – compare with production; tell the MCube log readers that new logs show `98XXXXXX21` |
+| `LeadHistoryandActivityController` | Apex | `GetData`: +3 lines (history values), 2 lines changed (call numbers) – masked users only | History & Activity on 4 Lead pages |
+| LeadHistoryandActivityCmp, mCubeLightningPage | Aura | **No change** | mCubeLightningPage is on no page – not testable on screen |
+
+### 5bC. Access
+No change. `Call_To_Masked__c` read for reps at go-live.
+
+### 5bD. Sandbox test steps
+Prep (admin, POC Test 4A): edit Phone → 9000077777, Save; Secondary → 9000088888, Save (creates history). Then:
+```apex
+Id leadId = '00Q_ID_OF_4A';
+insert new Call_Detail__c(Lead__c = leadId, Parent_ID__c = leadId, Parent_URL__c = '/' + leadId + '/view',
+    Status__c = 'Call Complete', Call_From__c = '9000099999', Call_To__c = '9000077777',
+    Start_Time__c = System.now().addMinutes(-10));
+```
+| # | As | Step | Expected |
+|---|---|---|---|
+| 5b.1 ⭐ | Priya J | Her lead → History & Activity → Field Updates / Calls | Full values as before |
+| 5b.2 ⭐ | POC MCube Rep | POC Test 4A → History & Activity → Field Updates | `90XXXXXX11 → 90XXXXXX77`, `90XXXXXX33 → 90XXXXXX88`; other fields normal |
+| 5b.3 ⭐ | POC MCube Rep | F12 → filter Calls / All | From `90XXXXXX99` To `90XXXXXX77`; `GetData` response has no `77777` |
+| 5b.4 | Admin | Script D | `Real Call_To stored: true | Call_To_Masked__c = 90XXXXXX77` |
+| 5b.5 | Admin | One MCube test call, then Script E | Newest row: `full number in Request: false | Response: false` |
+| 5b.6 | – | mCubeLightningPage | Not testable (on no page) |
+| 5b.7 | Admin | Apex tests: PhoneMaskingHistoryTest, PhoneDisplayServiceTest, mCubeController_Test, mCubeControllerTestExtended, LeadHistoryandActivityControllerTest | All pass |
+
+Script D:
+```apex
+Id leadId = '00Q_ID_OF_4A';
+for (Call_Detail__c c : [SELECT Call_To__c, Call_To_Masked__c FROM Call_Detail__c WHERE Parent_ID__c = :leadId ORDER BY CreatedDate DESC LIMIT 3]) {
+    System.debug('Real Call_To stored: ' + (c.Call_To__c == '9000077777') + ' | Call_To_Masked__c = ' + c.Call_To_Masked__c);
+}
+```
+Script E:
+```apex
+for (log__c lg : [SELECT CreatedDate, Request__c, Response__c FROM log__c ORDER BY CreatedDate DESC LIMIT 3]) {
+    System.debug(lg.CreatedDate + ' | full number in Request: ' + PhoneMaskUtil.containsPhoneNumber(lg.Request__c)
+        + ' | full number in Response: ' + PhoneMaskUtil.containsPhoneNumber(lg.Response__c));
+}
+```
+Cleanup (optional): `delete [SELECT Id FROM Call_Detail__c WHERE Parent_ID__c = '00Q_ID_OF_4A' AND Call_From__c = '9000099999'];`
+
+### 5bE. Result sheet
+| Prep | 5b.1 | 5b.2 | 5b.3 | 5b.4 | 5b.5 | 5b.7 |
+|---|---|---|---|---|---|---|
+| | | | | | | |
+
+### 5bF. Production deploy
+Before: compare `mCubeController`, `LeadHistoryandActivityController` with production (0.5).
+```bash
+sf project deploy validate --metadata-dir release/prod/part5b-history --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingHistoryTest --tests PhoneDisplayServiceTest \
+  --tests mCubeController_Test --tests mCubeControllerTestExtended --tests LeadHistoryandActivityControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| Production check | Expected |
+|---|---|
+| Normal rep: History & Activity | As before |
+| After one MCube call: Script E | Newest log has no full number |
+| Inbound MCube call | Screen pop / lead creation as before |
+
+Rollback: redeploy originals from `backup/v1.5.0-part5b-pre-change`, then `manifest/v1.5.0-5b/destructiveChanges.xml`.
+
+---
+
+# PART 5c – Lead Merge + Update Contact Details (v1.5.0)
+
+**What it does:** both actions show masked numbers to masked users; Update Contact **never saves a masked value** (replaces it with the stored number) and locks the primary for masked users. Merge itself unchanged.
+
+### 5cA. Components (new / ours)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| PhoneMaskingLeadToolsTest | Apex test | New | 13 tests incl. existing save branches |
+| PhoneDisplayService | Apex | Update (ours) | + maskRecords, prepareContactInput |
+
+### 5cB. Existing components changed ⚠️
+| Component | Type | Change | Take care |
+|---|---|---|---|
+| `LeadMergeController` | Apex | getLeads / getSearchLeads: assign → mask → return; `mergeLead` unchanged | Existing: no LIMIT, no sharing keyword (not changed) |
+| `updateContactDetails` | Apex | getcontactdetails +1 line; savecontactdetails +7 lines at the top | Existing `updateContactDetailsTest` **fails before this project** (D3) – never include it |
+| LeadMergeCmp, UpdateContactDetails | Aura | **No change** | – |
+
+### 5cC. Access
+No change.
+
+### 5cD. Sandbox test steps (POC Test 4A = 9000077777 / 9000088888, 4B = 9000044444)
+| # | As | Step | Expected |
+|---|---|---|---|
+| 5c.1 ⭐ | Priya J | Update Contact Details | Full numbers; save works as before |
+| 5c.2 | Priya J | Merge Lead → close without merging | Full numbers as before |
+| 5c.3 ⭐ | POC MCube Rep | POC Test 4A → F12 → Update Contact Details | `90XXXXXX77` / `90XXXXXX88`; `getcontactdetails` response has no `77777` |
+| 5c.4 ⭐ | POC MCube Rep | Change **only Email** → test4a@example.com → Save | "Success" (numbers must not be overwritten – see 5c.8) |
+| 5c.5 | POC MCube Rep | Secondary → 9000012345 → Save | Success; reopen `90XXXXXX45` |
+| 5c.6 | POC MCube Rep | Phone → 9000000001 → Save | "The primary number cannot be changed once it is set…"; nothing saved |
+| 5c.7 | POC MCube Rep | Merge Lead → list + search "POC Test" | Masked numbers; (optional, irreversible) merge 4B into 4A works |
+| 5c.8 ⭐ | Admin | Script F | `Phone 90XXXXXX77 | Secondary 90XXXXXX45 | Email test4a@example.com | X saved in a phone field: false` |
+| 5c.9 | Admin | Apex tests: PhoneMaskingLeadToolsTest, PhoneDisplayServiceTest, LeadMergeControllerTest | All pass |
+
+Script F:
+```apex
+for (Lead l : [SELECT Name, Phone__c, Secondary_Phone__c, Email FROM Lead WHERE Id IN ('00Q_ID_OF_4A', '00Q_ID_OF_4B')]) {
+    System.debug(l.Name + ' | Phone ' + PhoneMaskUtil.mask(l.Phone__c) + ' | Secondary ' + PhoneMaskUtil.mask(l.Secondary_Phone__c)
+        + ' | Email ' + l.Email + ' | X saved in a phone field: '
+        + ((l.Phone__c != null && l.Phone__c.containsIgnoreCase('X')) || (l.Secondary_Phone__c != null && l.Secondary_Phone__c.containsIgnoreCase('X'))));
+}
+```
+
+### 5cE. Result sheet
+| 5c.1 | 5c.2 | 5c.3 | 5c.4 | 5c.5 | 5c.6 | 5c.7 | 5c.8 | 5c.9 |
+|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | |
+
+### 5cF. Production deploy
+Before: compare `LeadMergeController`, `updateContactDetails` with production (0.5).
+```bash
+sf project deploy validate --metadata-dir release/prod/part5c-lead-tools --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingLeadToolsTest --tests PhoneDisplayServiceTest --tests LeadMergeControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+(Do **not** add updateContactDetailsTest – D3. The 5c deploy line in CHANGELOG.md wrongly lists it.)
+
+| Production check | Expected |
+|---|---|
+| Normal rep: Update Contact Details save, Merge list | As before |
+
+Rollback: redeploy originals from `backup/v1.5.0-part5c-pre-change`, then `manifest/v1.5.0-5c/destructiveChanges.xml`.
+
+---
+
+# PART 5d – Bulk push + Yotel push (v1.5.0)
+
+**What it does:** the selection table of **Add Leads to Call List** (MCube) and **Create Lead List For Yotel** shows masked numbers to masked users. Push unchanged (server reads real numbers). Yotel eligibility unchanged.
+
+**Found:** only **System Administrator, MIS Extended (8 users), Zetta Profile** have access to these buttons – reps and POC users do not ("Insufficient privileges"). Go-live decision: mask MIS Extended or not.
+
+### 5dA. Components (new)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| PhoneMaskingPushTest | Apex test | New | Lists masked, eligibility unchanged |
+
+### 5dB. Existing components changed ⚠️
+| Component | Type | Change | Take care |
+|---|---|---|---|
+| `LeadBulkPushController` | Apex | 1 line: `w.mobileNumber = PhoneDisplayService.forDisplay(l.MobilePhone)`; push unchanged | MIS team uses it |
+| `LeadYotelBulkPushController` | Apex | 1 line (masked list) + debug line masked; eligibility + push unchanged | MIS team uses it |
+| leadBulkPush, leadYotelPush, BulkLeadPUSHpage, BulkLeadPushYotel, list buttons | LWC / VF | **No change** | – |
+
+### 5dC. Access
+No new access. For the masked test: **temporary** access for POC Masked Rep (Option A below).
+
+### 5dD. Sandbox test steps
+⚠️ Pushing is real – use only the **POC Push Test** list view (P6) and ask the MCube / Yotel admins before pressing Push. Steps 5d.1–5d.4 do not push.
+
+Option A setup (recommended, you do it): Profiles → POC Masked Rep → Apex Class Access + `LeadBulkPushController`, `LeadYotelBulkPushController`; Visualforce Page Access + `BulkLeadPUSHpage`, `BulkLeadPushYotel`. **Remove after testing (5d.7).** Option B: test only 5d.1–5d.2 with an MIS Extended user and rely on the Apex tests.
+
+| # | As | Step | Expected |
+|---|---|---|---|
+| 5d.1 ⭐ | MIS Extended user / admin | POC Push Test → tick 2 leads → Create Lead List For Yotel → Cancel | Full numbers + eligibility as before |
+| 5d.2 | MIS Extended user / admin | Add Leads to Call List → Cancel | Same screen as before |
+| 5d.3 ⭐ | POC MCube Rep (A) | Tick 4A + 4B → F12 → Yotel button | `90XXXXXX77` / `90XXXXXX44`; eligibility same as 5d.1; `getSelectedLeads` has no `77777` |
+| 5d.4 | POC MCube Rep (A) | Bulk button | Same screen; no full number in Network |
+| 5d.5 | POC MCube Rep (A) | Yotel Push (test campaign, admin OK) – optional | Success; Yotel receives the numbers |
+| 5d.6 | POC MCube Rep (A) | Bulk push to MCube (admin OK) – optional | Success |
+| 5d.7 ⭐ | Admin (A) | Remove the 4 temporary accesses | POC user gets "Insufficient privileges" again |
+| 5d.8 | Admin | Apex tests: PhoneMaskingPushTest, LeadBulkPushControllerTest, LeadYotelBulkPushControllerTest | All pass |
+
+### 5dE. Result sheet
+| Option | 5d.1 | 5d.2 | 5d.3 | 5d.4 | 5d.5 | 5d.6 | 5d.7 | 5d.8 |
+|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | |
+
+### 5dF. Production deploy
+Before: compare both controllers with production (0.5).
+```bash
+sf project deploy validate --metadata-dir release/prod/part5d-push --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingPushTest --tests LeadBulkPushControllerTest --tests LeadYotelBulkPushControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| Production check | Expected |
+|---|---|
+| MIS user opens both buttons (Cancel) | As before |
+
+Rollback: redeploy originals from `backup/v1.5.0-part5d-pre-change`, then `manifest/v1.5.0-5d/destructiveChanges.xml`.
+
+---
+
+# PART 5e – WhatsApp chat (v1.5.0)
+
+**What it does:** the chat component on the Lead (`leadMsgConversationLWC`) – message text, raw Messaging data (`rawJson`) and sender name are masked for masked users. Sending / transfer / attachments unchanged.
+
+**Sandbox limit:** 0 WhatsApp customers, 0 sessions, WhatsApp channel **inactive** → on-screen masking can only be checked in the **production pilot**.
+
+### 5eA. Components (new)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| PhoneMaskingWhatsAppTest | Apex test | New | 3 tests (helper tested directly – Connect API not callable in tests) |
+
+### 5eB. Existing components changed ⚠️
+| Component | Type | Change | Take care |
+|---|---|---|---|
+| `LeadMsgConversationController` | Apex | Final `return wrappersList;` → `maskConversationForUser(wrappersList)` first; new helper (+15 lines) | WhatsApp chat for all users (masked users only affected) |
+| leadMsgConversationLWC, WhatsAppMediaQueue, WhatsAppLeadChecker, WhatsAppLeadVerifier | LWC / Apex | **No change** | – |
+
+### 5eC. Access
+No change. Decision **D4**: reps have View All on MessagingEndUser / MessagingSession (records named by the number).
+
+### 5eD. Test steps
+| # | Where / As | Step | Expected |
+|---|---|---|---|
+| 5e.1 ⭐ | Sandbox, admin | Apex tests: PhoneMaskingWhatsAppTest, LeadMsgConversationControllerTest | All pass |
+| 5e.2 | Sandbox, Priya J | A lead whose page has the WhatsApp chat (New_Lead_Page / New_Lead_Page1_sales) | Chat loads, no error ("no conversation") |
+| 5e.3 | Sandbox, POC MCube Rep | Same record type lead | Chat loads, no error |
+| 5e.4 | **Prod pilot**, normal rep | Lead with a chat | Messages exactly as before |
+| 5e.5 | **Prod pilot**, masked user | Same lead | Same messages; typed numbers and number sender names show `98XXXXXX21` |
+| 5e.6 | **Prod pilot**, masked user | F12 → chat response → Ctrl+F customer's last 6 digits | Not found |
+| 5e.7 | **Prod pilot**, masked user | Reply, transfer, attachment / audio | Work as before |
+
+### 5eE. Result sheet
+| 5e.1 | 5e.2 | 5e.3 | 5e.4–5e.7 (pilot) |
+|---|---|---|---|
+| | | | |
+
+### 5eF. Production deploy
+Before: compare `LeadMsgConversationController` with production (0.5).
+```bash
+sf project deploy validate --metadata-dir release/prod/part5e-whatsapp --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneMaskingWhatsAppTest --tests LeadMsgConversationControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| Production check | Expected |
+|---|---|
+| Normal rep opens a WhatsApp chat, replies | As before |
+
+Rollback: redeploy the original from `backup/v1.5.0-part5e-pre-change`, then `manifest/v1.5.0-5e/destructiveChanges.xml`.
+
+---
+
+# PART 6 – Reveal + nightly audit cleanup (v1.6.0)
+
+**What it does:** users with **Phone_Reveal** get an 👁 next to each masked number → pick 1 of 7 reasons (Other needs a comment) → number shown 30 s → audit row. A nightly job deletes audit rows older than 365 days.
+
+### 6A. Components (new / ours)
+| Component | Type | New/Update | What it is |
+|---|---|---|---|
+| PhoneRevealService + test | Apex | New | Permission checked on the server; 7 reasons; comment for Other (100%) |
+| PhoneAuditPurgeBatch + test | Apex | New | Batch + schedulable, 02:00 nightly (100%) |
+| Phone_Access_Audit__c.Comment__c | Field | New | Reveal comment |
+| Reveal_Phone_Number | Custom permission | New | Who may reveal |
+| Phone_Reveal | Permission set | New | Grants the permission + PhoneRevealService access |
+| Phone_Access_Audit_Viewer | Permission set | Update (ours) | + Comment__c |
+| Phone_Access_Audit__c.All | List view | Update (ours) | + Reason, Comment |
+| maskedPhonePanel | LWC | Update (ours) | 👁 button, reason window, 30 s display |
+| POC TL | User | New | Sandbox only |
+
+### 6B. Existing components changed: **none**
+
+### 6C. Access
+**Phone_Reveal** → Team Leads, Heads, Admins (in the sandbox only POC TL). Audit admins → Phone_Access_Audit_Viewer.
+
+### 6D. Sandbox test steps
+| # | As | Step | Expected |
+|---|---|---|---|
+| 6.1 ⭐ | POC MCube Rep | Open the test lead | **No** 👁 icon |
+| 6.2 | POC TL | Same lead (has read access) | 👁 next to Primary (and Secondary) |
+| 6.3 | POC TL | Click 👁 | 7 reasons (Site visit coordination; Booking / documentation follow-up; Customer escalation / complaint; Dialer down, manual call needed; Number verification / correction; Management review; Other); Reveal disabled until a reason is picked |
+| 6.4 | POC TL | Other + empty comment → then Cancel | Reveal disabled / "Comment is required"; Cancel = no audit row |
+| 6.5 ⭐ | POC TL | Management review → Reveal | Correct real number + "Hides after 30 seconds"; disappears after 30 s; F5 → masked only |
+| 6.6 | POC TL | Other + comment `test reveal` → Reveal | Shown 30 s |
+| 6.7 ⭐ | Admin | Phone Access Audits → All | 2 rows: Reveal / Success / POC TL / Reveal (Phone Numbers panel) / reasons + comment / masked only |
+| 6.8 | Admin, Priya J | Open a lead | No change |
+| 6.9 | Admin | Execute Anonymous **once**: `System.debug(PhoneAuditPurgeBatch.scheduleNightly());` | Setup → Scheduled Jobs → "Phone Access Audit purge (nightly)" at 02:00 (creates a job – only if you want it) |
+| 6.10 | Admin | `System.debug(Database.executeBatch(new PhoneAuditPurgeBatch()));` → Setup → Apex Jobs | Completed, 0 errors; no rows deleted (none older than 365 days) |
+| 6.11 | Admin | Apex tests: PhoneRevealServiceTest, PhoneAuditPurgeBatchTest, MaskedDialServiceTest, MaskedPhonePanelControllerTest | All pass; 100% |
+
+### 6E. Result sheet
+| 6.1 | 6.2 | 6.3 | 6.4 | 6.5 | 6.6 | 6.7 | 6.8 | 6.9 | 6.10 | 6.11 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | |
+
+### 6F. Production deploy
+```bash
+sf project deploy validate --metadata-dir release/prod/part6-reveal --target-org <prod> \
+  --test-level RunSpecifiedTests --tests PhoneRevealServiceTest --tests PhoneAuditPurgeBatchTest \
+  --tests MaskedDialServiceTest --tests MaskedPhonePanelControllerTest
+sf project deploy quick --job-id <validation id> --target-org <prod>
+```
+| After deploy (production) | Expected |
+|---|---|
+| Execute Anonymous once: `PhoneAuditPurgeBatch.scheduleNightly();` | Scheduled Jobs shows the nightly job |
+| Assign **Phone_Reveal** to Team Leads / Heads / Admins (list from the business) | – |
+| Pilot TL reveals once | Audit row with reason |
+
+Rollback: delete the scheduled job (Setup → Scheduled Jobs), then `manifest/v1.6.0/destructiveChanges.xml`; redeploy `maskedPhonePanel` / `MaskedDialService` from the v1.5.0 branch.
+
+---
+
+## NOT ready for production yet (must be done before masking is switched on)
+| Item | What | Status |
+|---|---|---|
+| Part 7 | Free-text auto-masking (notes, call logs, Opportunity / feedback, Chatter) | Not built |
+| D1 | CallPanel / CallPanel_Outbound still show the full number | Not built (approach proposed) |
+| Part 11 | Go-live: remove phone FLS from ~40 rep profiles, Phone Number Full Access for integration users, panel on all 5 Lead pages, entry fields on New Lead pages, remove POC page, admin access to entry fields | Not built |
+| Part 8 / 9 | Find by number (if 2.8 = not found) / Contact & Opportunity numbers (Decision 1) | Depends on results / decisions |
+| Decisions | Decision 1, D4, MIS Extended masked?, integration user list, Export Reports / API Enabled | Open |
+| Vendors | 360CTI adapter (masked click), caller-ID masking, mobile start-call APIs | Open |
+
+Deploying Parts 1–6 to production changes **nothing** for real users (except: new MCube logs are masked for everyone – 5b). Masking for real users starts only with Part 11 + pilot.
+
+---
+
+## Overall result sheet
+| Part | Sandbox Pass / Fail | Tester | Date | Existing components compared with prod (0.5) | Prod deploy ID | Prod check |
+|---|---|---|---|---|---|---|
+| 1 Foundations | ✅ | Owner | 2026-10-12 | n/a (none) | | |
+| 2 Masked panel | | | | Pre_Sales app (manual) | | |
+| 3 Dialers | | | | 3 components | | |
+| 4 Lead creation | | | | 3 components | | |
+| 5a Calling | | | | 2 components | | |
+| 5b History + logs | | | | 2 components | | |
+| 5c Merge + Update Contact | | | | 2 components | | |
+| 5d Bulk + Yotel push | | | | 2 components | | |
+| 5e WhatsApp chat | | | | 1 component | | |
+| 6 Reveal + purge | | | | n/a (none) | | |
