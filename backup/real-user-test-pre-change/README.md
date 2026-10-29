@@ -31,3 +31,8 @@ Manual parts of the restore (not in metadata):
 - Permission Sets → Phone Reveal → remove Swapna.
 - Users Ananthi R / Swapna / Deepika G → Mobile / Mcube Phone back to the values you noted before R0.10.
 - Delete the Real Test leads.
+
+## New_Lead_Page backup – 2026-10-29
+`flexipages/New_Lead_Page.flexipage-meta.xml` – the sandbox version before R0.9 (read-only retrieve). It differs from the project baseline copy (changed in the sandbox since the baseline), so this file – not force-app – is the one to restore.
+Page facts: Dynamic Forms (71 fields, incl. Phone__c, MobilePhone, Secondary_Phone__c), 360 CTI `tdc_360CTI:ClickToDial` component, WhatsApp chat, no masked panel.
+Restore on "revoke": deploy this file (FlexiPage:New_Lead_Page, NoTestRun, dry-run first) – removes the panel and any field added in R0.9.
