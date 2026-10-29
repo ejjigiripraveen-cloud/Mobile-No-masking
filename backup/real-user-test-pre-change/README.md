@@ -18,9 +18,14 @@ Deploys the original field and class access of the 2 profiles back. Only the per
 
 Steps (Claude does them on request):
 1. Check `SHA256SUMS` (backup unchanged).
-2. Copy `profiles/` into a temporary SFDX project (`force-app/main/default/profiles/`).
-3. `sf project deploy start --manifest restore-package.xml --target-org Sandbox --test-level NoTestRun`
-4. Confirm: View Summary of a test user → Lead → Phone__c = Read again.
+2. Copy `restore-profiles/` (the original values, trimmed to the 29 field settings + 2 class settings only – no user permissions or IP ranges) into a temporary SFDX project (`force-app/main/default/profiles/`).
+3. `sf project deploy start -d force-app --target-org Sandbox --test-level NoTestRun` (dry-run first).
+4. Confirm: FieldPermissions query / View Summary of a test user → Lead → Phone__c = Read again; classes off.
+
+## Applied (R0.2–R0.7) – 2026-10-29, approved by the owner
+- Dry-run 0Afft000000PQvNCAW (2/2, 0 errors), deploy **0Afft000000PQwzCAG** (2/2, Succeeded).
+- Applied files: `sandbox-only/real-user-test/profiles/` (29 field settings + 2 class accesses per profile, nothing else).
+- Verified: both profiles – 25 phone fields no access; Phone_Entry__c / Secondary_Phone_Entry__c Read+Edit; Phone_Masked__c / Call_To_Masked__c Read; MaskedPhonePanelController + MaskedDialServiceCTI enabled.
 Manual parts of the restore (not in metadata):
 - App Builder → Sales Lead Record Page (Masked POC) → Activation → remove the rows for Presales outbound / Presales TL.
 - Permission Sets → Phone Reveal → remove Swapna.

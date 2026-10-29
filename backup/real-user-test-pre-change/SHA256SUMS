@@ -1,6 +1,8 @@
-55222610b210358c3c9b7c9bd442629c41b809849d2529b3edb3a42d389bcc26 *./README.md
+5ddb364de4afe472242451be0428446b3508e2e1a74b48fce8b46dc9491c1fcc *./README.md
 18f7a23582db66b1b37f5ef585c09a4784bcde0e5f69d4b2ab5b60b73f8d4aaf *./applications/Pre_Sales.app-meta.xml
 3adb863404ebbf0adc7e827a8a2ba257b6327682960551094f73342d58988c48 *./profiles/Presales TL.profile-meta.xml
 dbbf9b6cca3af06502adcdf7f053e7643901cc04c3c8d15683a0ccc9968d3da8 *./profiles/Presales outbound.profile-meta.xml
 b6f7e5befb734b03cd5ce4f1f1b24c867642c3a767919ab4c64d31ad362b3754 *./restore-package.xml
+5985f15faa92f898cd36a52dcfc356117376e237b90243c77be01a64983028f0 *./restore-profiles/Presales TL.profile-meta.xml
+de44bae45df06c8db3d3b7a9c534a90ef23e605ff6a01e908fffd9c0819d6dce *./restore-profiles/Presales outbound.profile-meta.xml
 99caf1f4a1a9f529c6ac39713586559d6a47553112f3de473dfb2cb2e391d830 *./retrieve-package.xml
