@@ -27,7 +27,7 @@ Steps (Claude does them on request):
 - Applied files: `sandbox-only/real-user-test/profiles/` (29 field settings + 2 class accesses per profile, nothing else).
 - Verified: both profiles – 25 phone fields no access; Phone_Entry__c / Secondary_Phone_Entry__c Read+Edit; Phone_Masked__c / Call_To_Masked__c Read; MaskedPhonePanelController + MaskedDialServiceCTI enabled.
 Manual parts of the restore (not in metadata):
-- App Builder → Sales Lead Record Page (Masked POC) → Activation → remove the rows for Presales outbound / Presales TL.
+- New_Lead_Page: restored by deploying `flexipages/New_Lead_Page.flexipage-meta.xml` (see below) – R0.9 uses this page, not the POC page.
 - Permission Sets → Phone Reveal → remove Swapna.
 - Users Ananthi R / Swapna / Deepika G → Mobile / Mcube Phone back to the values you noted before R0.10.
 - Delete the Real Test leads.
