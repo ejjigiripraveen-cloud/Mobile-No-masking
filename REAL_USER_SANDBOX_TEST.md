@@ -1,219 +1,229 @@
 # Mobile Number Masking – Real-User Sandbox Test (go-live rehearsal, Parts 1–6)
 
-Written for the project owner. Run this **after** the POC tests in `PART_BY_PART_TEST_AND_DEPLOY.md` (Stage 1) and **before** anything goes to production.
+Written for the project owner. Run this **after** the POC tests (`PART_BY_PART_TEST_AND_DEPLOY.md`) and **before** anything goes to production.
 
-Last updated: 2026-10-26 · Sandbox: gsquaregroup--prodreplic
-
----
-
-## How the two test stages fit together
-| Stage | Who is masked | Purpose | Guide |
-|---|---|---|---|
-| **Stage 1 – POC test** | 3 POC users (profile *POC Masked Rep*) | Prove each part works, safely | `PART_BY_PART_TEST_AND_DEPLOY.md` |
-| **Stage 2 – Real-user test (this guide)** | **Real profiles** *Presales outbound* and *Presales TL* in the sandbox | Prove it works for real users **without** the POC profile – exactly what go-live will do | This file |
-
-Masking rule (same code for everyone): **a user who cannot read `Lead.Phone__c` is masked.** Field access = profile **plus** permission sets.
+Last updated: 2026-10-29 · Sandbox: gsquaregroup--prodreplic · Login: https://gsquaregroup--prodreplic.sandbox.my.salesforce.com
 
 ---
 
-## R0. Set-up in the sandbox (sandbox change – needs your approval)
+## What this test proves
+The POC test used a **copy** of the profile. This test switches masking on for **real profiles** (*Presales outbound*, *Presales TL*) in the sandbox – exactly what go-live (Part 11) does in production – and checks every part as real users.
 
-Nothing below is done yet. Either you do it in Setup, or reply **"approve real-user test setup"** and I will (1) back up the current sandbox profiles first (retrieve, read-only), (2) make the changes, (3) record them, (4) restore them after the test if you want.
+Masking rule (same code for everyone): **a user who cannot read `Lead.Phone__c` is masked.** Access = **profile + all permission sets**.
 
-### R0.1 Real test users (sandbox copies – no production impact)
-| Role | User | Profile | Dialer | Permission sets |
+⚠️ **Finding (2026-10-29):** 146 of the 246 Presales outbound users have a permission set that grants the phone fields (mostly *Messaging_Permission_Set* and *sfdc_chatbot_service_permset*, also *Sales_All_Access*). They **stay unmasked** even after the profile change. Step R8 shows this; the fix belongs to go-live (Part 11).
+
+---
+
+## Test users (sandbox copies of real employees)
+| Role | User | Profile | Dialer | Phone-granting permission sets |
 |---|---|---|---|---|
-| Real rep (SlashRTC) | **Priya J** | Presales outbound | SlashRTC | none (clean test) |
-| Real rep (MCube) | **Sharmili** (or Lalitha B / Muralidharan) | Presales outbound | MCube | check – see R0.4 |
-| Real rep (360CTI) | one of the 3 Presales outbound 360CTI users | Presales outbound | 360CTI | check |
-| Real Team Lead | **Swapna** | Presales TL | MCube | + Phone_Reveal (R0.5) |
-| Unchanged user | any **Sales** / CRM profile user | not changed | – | – |
+| Real rep – SlashRTC | **Priya J** | Presales outbound | SlashRTC | none ✅ |
+| Real rep – MCube | **Ananthi R** (backup: Janani M) | Presales outbound | MCube | none ✅ |
+| Real rep – 360CTI | **Deepika G** (or Akila K N / Thameem Ansari M) | Presales outbound | 360CTI | check in R0.9 |
+| Real Team Lead | **Swapna** | Presales TL | MCube | none for Phone__c ✅ |
+| Leak example | **Sharmili** | Presales outbound | MCube | Messaging_Permission_Set + Chatbot ❌ |
+| Unchanged user | any **Sales** or **CRM Team** user | not changed | – | – |
 | Admin | you | System Administrator | – | Phone Access Audit Viewer |
 
-⚠️ These are copies of **real employees**: their Mobile / Mcube Phone hold the employee's real phone. Before any test call, set the test user's **Mobile** and **Mcube Phone** to **your own** agent number (MCube rings the agent first), and use dummy customer numbers only.
+---
 
-### R0.2 Profiles *Presales outbound* and *Presales TL* – field access
-Setup → Profiles → profile → **Object Settings** → object → Edit:
+## R0. Set-up (sandbox change)
+Do it yourself with these steps, or reply **"approve real-user test setup"** and I will back up the two profiles first (retrieve), make R0.2–R0.6, and restore them in R9.
 
-| Object | Field | Set to |
-|---|---|---|
-| Lead | Phone__c, Secondary_Phone__c, Phone (standard), MobilePhone, Full_phone_number__c, Phone_with_country_code__c, Secondary_phone_with_country_code__c, Secondary_Phones__c, Secondary_Mobile_No__c, Office_Phone_No__c, Spouse_Number__c, WhatsApp_Number__c, Register_your_WhatsApp_Number__c, Merge_Lead_Phone_No__c | Read ☐ Edit ☐ |
-| Related_Source__c | Phone__c, Secondary_Phone__c, Register_your_WhatsApp_Number__c | Read ☐ Edit ☐ |
-| Call_Detail__c | Call_To__c, Customer_Contact__c | Read ☐ Edit ☐ |
-| Task | Call_From__c, Call_To__c, Caller_number__c | Read ☐ Edit ☐ |
-| Event | Call_From__c, Call_To__c, Caller_number__c | Read ☐ Edit ☐ |
-| Lead | Phone_Entry__c, Secondary_Phone_Entry__c | Read ☑ Edit ☑ |
-| Lead | Phone_Masked__c | Read ☑ |
-| Call_Detail__c | Call_To_Masked__c | Read ☑ |
+### R0.1 Back up first (if you do it yourself)
+Setup → Profiles → **Presales outbound** → take screenshots of *Field-Level Security* for Lead, Related Source, Call Detail, Task, Event, and *Apex Class Access*. Same for **Presales TL**. (Our repo also has the original profiles from the baseline.)
 
-(These are the same 25 fields hidden on the POC profile.)
+### R0.2 Remove phone-field access – profile **Presales outbound**
+1. Setup → Quick Find **Profiles** → **Presales outbound**.
+2. **Object Settings** → **Leads** → **Edit**.
+3. Untick **Read** (Edit clears too) for: Phone__c, Secondary_Phone__c, Phone, MobilePhone, Full_phone_number__c, Phone_with_country_code__c, Secondary_phone_with_country_code__c, Secondary_Phones__c, Secondary_Mobile_No__c, Office_Phone_No__c, Spouse_Number__c, WhatsApp_Number__c, Register_your_WhatsApp_Number__c, Merge_Lead_Phone_No__c.
+4. In the same screen tick **Read + Edit** on **Phone_Entry__c** and **Secondary_Phone_Entry__c**, and **Read** on **Phone_Masked__c** → **Save**.
+5. **Object Settings** → **Related Sources** → Edit → untick Read: Phone__c, Secondary_Phone__c, Register_your_WhatsApp_Number__c → Save.
+6. **Call Details** → Edit → untick Read: Call_To__c, Customer_Contact__c; tick Read: **Call_To_Masked__c** → Save.
+7. **Tasks** → Edit → untick Read: Call_From__c, Call_To__c, Caller_number__c → Save.
+8. **Events** → Edit → untick Read: Call_From__c, Call_To__c, Caller_number__c → Save.
 
-### R0.3 Profiles – Apex class access
-Both profiles → **Apex Class Access** → add **MaskedPhonePanelController**, **MaskedDialServiceCTI**.
+### R0.3 Same for profile **Presales TL**
+Repeat R0.2 steps 1–8 on **Presales TL**.
 
-### R0.4 Permission sets that would keep users unmasked
-These grant Read on `Lead.Phone__c` (sandbox check 2026-10-26): **Sales_All_Access** (112 users), **Messaging_Permission_Set** (154), **sfdc_chatbot_service_permset** (155), **Extended_Access_on_Project_object** (3), Extended_as_to_CP_TL (0). Also check the 19 permission set groups.
-- For this test: **use test users who have none of them** (Priya J has none). Check Sharmili / Swapna / the 360CTI user: Setup → Users → user → **Permission Set Assignments**.
-- Do **not** change these permission sets now – R8 proves the issue; the fix is part of Part 11.
+### R0.4 Apex class access (both profiles)
+Profile → **Apex Class Access** → Edit → add **MaskedPhonePanelController** and **MaskedDialServiceCTI** → Save.
 
-### R0.5 Reveal
-Assign **Phone_Reveal** to **Swapna** (Setup → Permission Sets → Phone Reveal → Manage Assignments).
+### R0.5 Reveal for the Team Lead
+Setup → **Permission Sets** → **Phone Reveal** → Manage Assignments → Add Assignment → **Swapna** → Assign.
 
-### R0.6 Lead page with the masked panel
-Lightning App Builder → **Sales Lead Record Page (Masked POC)** → Edit → **Activation** → App, Record Type, and Profile → **Assign to Apps, Record Types, and Profiles** → Gsquare Housing / Desktop / **Pre Sales** / profiles **Presales outbound** and **Presales TL** → Save.
-(At go-live the panel is added to the real pages instead – this is the rehearsal shortcut.)
+### R0.6 Masked panel on the lead page
+1. Setup → **Lightning App Builder** → **Sales Lead Record Page (Masked POC)** → **Edit**.
+2. **Activation…** → tab **App, Record Type, and Profile** → **Assign to Apps, Record Types, and Profiles**.
+3. App **Gsquare Housing** → Next → Form factor **Desktop** → Next → Record type **Pre Sales** → Next → Profiles **Presales outbound** and **Presales TL** → Next → **Save**.
+(At go-live the panel goes onto the real pages instead – this is the rehearsal shortcut.)
 
-### R0.7 Test leads (dummy numbers)
-As admin create, owner = each test user, record type Pre Sales:
-| Lead | Owner | Phone | Secondary |
+### R0.7 Point the test users' phones to YOUR phone ⚠️
+These are copies of real employees – their phone fields hold the employee's real number. For **Ananthi R**, **Swapna**, **Deepika G**: Setup → Users → user → Edit → **Mobile** = your MCube agent number, **Mcube Phone** = same → Save. (SlashRTC: Priya J's SlashRTC login must work from the sandbox – check with the SlashRTC admin.)
+
+### R0.8 Test leads (dummy numbers only)
+As admin: Leads → New, record type **Pre Sales**, then change the owner:
+| Lead (Last Name) | Owner | Phone | Secondary |
 |---|---|---|---|
 | **Real Test P** | Priya J | 9000100001 | 9000100002 |
-| **Real Test M** | Sharmili | 9000200001 | 9000200002 |
-| **Real Test C** | 360CTI user | 9000300001 | – |
-| **Real Test T** | Swapna | 9000400001 | 9000400002 |
+| **Real Test M** | Ananthi R | 9000200001 | 9000200002 |
+| **Real Test C** | Deepika G | 9000300001 | – |
+| **Real Test T** | Swapna (or a lead Swapna can see) | 9000400001 | 9000400002 |
+| **Real Test S** | Sharmili | 9000500001 | – |
 
-### R0.8 Confirm the switch worked ⭐
-Setup → Users → **Priya J** → **View Summary** → Field Permissions → Lead → **Phone__c = no Read**. Same for Sharmili, the 360CTI user and Swapna. If any shows Read → a permission set or group still grants it → fix before testing.
+Note each lead's Id (address bar, starts with `00Q`).
+
+### R0.9 Confirm the switch worked ⭐ (do not skip)
+For **Priya J, Ananthi R, Deepika G, Swapna, Sharmili**: Setup → Users → user → **View Summary** → section *Object Settings / Field Permissions* → **Lead** → **Phone__c**.
+
+| User | Expected |
+|---|---|
+| Priya J, Ananthi R, Swapna | **No Read** → masked ✅ |
+| Deepika G | No Read (if Read → pick another 360CTI user) |
+| **Sharmili** | **Read** – because of her permission sets → stays unmasked (used in R8) |
 
 ---
 
-## R1. Foundations (Part 1) – no change expected
+## R1. Foundations – unchanged
 | # | As | Step | Expected |
 |---|---|---|---|
-| R1.1 | Admin | Execute Anonymous `scripts/apex/v1.1.0-1-mask-format.apex` | `RESULT: 11 passed, 0 failed` |
-| R1.2 | Admin | `scripts/apex/v1.1.0-2-settings.apex` | All values as expected, 2 approved fields |
-| R1.3 | Admin | R0.8 done for all 4 test users | Phone__c not readable |
+| R1.1 | Admin | Developer Console → Execute Anonymous → `scripts/apex/v1.1.0-1-mask-format.apex` | `RESULT: 11 passed, 0 failed` |
+| R1.2 | Admin | `scripts/apex/v1.1.0-2-settings.apex` | All values as expected; 2 approved fields |
 
 ---
 
 ## R2. Masked panel and hidden fields (Part 2)
 | # | As | Step | Expected |
 |---|---|---|---|
-| R2.1 ⭐ | Priya J | Gsquare Housing → **Real Test P** | Phone Numbers panel `90XXXXXX01` / `90XXXXXX02`; no phone field visible anywhere (details, highlights, header, compact layout) |
-| R2.2 ⭐ | Priya J | F12 → Network → F5 → Ctrl+F `100001` in the `aura` responses | Not found |
-| R2.3 | Priya J | Leads tab → her usual list views | Phone columns empty / gone; lists work |
-| R2.4 | Priya J | Reports she normally uses (Leads / Calls) | Phone columns empty; report runs |
-| R2.5 | Priya J | Lead → related lists: Related Sources, Activities (Tasks / Events), Call Details | Phone / Call To / Caller number columns hidden |
-| R2.6 📝 | Priya J | Global search `9000100001` | Found / not found → decides Part 8 |
-| R2.7 | Priya J | Open a lead of another record type she can see | Normal page, no panel, phone fields hidden (panel on all pages only at go-live) |
-| R2.8 | Sharmili, 360CTI user, Swapna | Their Real Test lead | Same masked panel |
-| R2.9 ⭐ | Sales / CRM user (unchanged profile) | Any lead | Exactly as before, full numbers, no panel |
-| R2.10 | Priya J | Salesforce mobile app → Real Test P | No full numbers anywhere |
+| R2.1 ⭐ | Priya J | Setup → Users → Priya J → Login → App Launcher → **Gsquare Housing** → Leads → **Real Test P** | **Phone Numbers** panel top-left: Primary `90XXXXXX01`, Secondary `90XXXXXX02`. No phone field anywhere on the page (details, highlights panel, header) |
+| R2.2 ⭐ | Priya J | F12 → **Network** → filter `aura` → F5 → open responses → Ctrl+F `100001` | Not found |
+| R2.3 | Priya J | Leads tab → each list view she normally uses | Phone columns empty / not shown; list works |
+| R2.4 | Priya J | Reports tab → a Lead report and a Call report she uses → Run | Report runs; phone columns empty |
+| R2.5 | Priya J | Real Test P → related lists **Related Sources**, **Activity** (calls), **Call Details** | Phone / Call To / Caller number not visible |
+| R2.6 📝 | Priya J | Top search bar → `9000100001` → Enter | Write down: **found / not found** (decides Part 8) |
+| R2.7 | Priya J | Open a lead of another record type (if she has one) | Normal page, no panel, phone fields still hidden |
+| R2.8 | Priya J | Salesforce mobile app → Real Test P (optional) | No full numbers |
+| R2.9 | Ananthi R, Deepika G, Swapna | Log in → their Real Test lead | Same masked panel |
+| R2.10 ⭐ | Sales / CRM Team user | Log in → any lead | **Exactly as before** – full numbers, no panel |
 
 ---
 
 ## R3. Click-to-call (Part 3)
-Phone utility must be ready (📞 not crossed out); test users' Mobile = your agent phone (R0.1).
+If the 📞 icon is crossed out: bottom bar → **Phone** → wait until ready → F5.
 
 | # | As | Step | Expected |
 |---|---|---|---|
-| R3.1 ⭐ | Priya J (SlashRTC) | Log in to SlashRTC → Real Test P → click Primary | Call connects |
-| R3.2 ⭐ | Sharmili (MCube) | Real Test M → click Primary, then Secondary | Agent phone, then customer phone; connected |
-| R3.3 | Priya J / Sharmili | F12 → Network during the click | Only Id, field, masked value sent; no full number |
-| R3.4 📝 | 360CTI user | Real Test C → click Primary | **Expected NOT to dial** until 360 Degree Cloud updates their adapter – record what happens (error / nothing) |
-| R3.5 ⭐ | Customer phone | Call the SlashRTC and MCube virtual numbers (lead number = your phone) | Screen pop opens the right lead for Priya J / Sharmili; call log record created |
-| R3.6 | Admin | Phone Access Audits | Dial / Success rows for Priya J and Sharmili, masked only |
-| R3.7 ⭐ | Sales / CRM user (unchanged) | Click a normal phone field | Calls exactly as before, no audit row |
+| R3.1 ⭐ | Priya J (SlashRTC) | Phone utility → log in to SlashRTC → Real Test P → click **Primary `90XXXXXX01`** | Call connects through SlashRTC |
+| R3.2 ⭐ | Ananthi R (MCube) | Phone utility ready → Real Test M → click **Primary** | **Your** phone rings first (R0.7), then the customer phone; connected |
+| R3.3 | Ananthi R | Click **Secondary** | Same |
+| R3.4 | Priya J / Ananthi R | F12 → Network → Preserve log → click again | Request has only Id, field, masked value; no full number in the response |
+| R3.5 📝 | Deepika G (360CTI) | Real Test C → click Primary | **Expected NOT to dial** until 360 Degree Cloud updates their adapter – write down what happens |
+| R3.6 ⭐ | "Customer" phone | Put your own phone on a Real Test lead (as admin), then call the SlashRTC / MCube virtual number while Priya J / Ananthi R is ready | Screen pop opens the right lead; the call record is created |
+| R3.7 | Admin | App Launcher → **Phone Access Audits** → All → newest first | Dial / Success rows for Priya J and Ananthi R; masked number only |
+| R3.8 ⭐ | Sales / CRM user | Click a normal phone field (with their dialer) | Calls exactly as before; no audit row |
 
 ---
 
 ## R4. Lead creation (Part 4)
 | # | As | Step | Expected |
 |---|---|---|---|
-| R4.1 ⭐ | Priya J | Leads → New → `Real Test P2`, Phone 9000100011, Secondary 9000100012 → Save | Saved; panel masked; entry fields empty |
-| R4.2 | Priya J | Lead → New Referral Lead → Phone 9000100021 → Save | Saved |
-| R4.3 | Priya J | Real Test P2 → Secondary Phone (entry) → 9000100013 → Save | Panel `90XXXXXX13`; entry empty |
-| R4.4 | Priya J | Leads → New with Phone 9000100011 (duplicate) | Same duplicate behaviour as today |
-| R4.5 | Admin | Script A from the main guide with `LastName LIKE 'Real Test%'` | Real fields filled, entry fields empty |
-| R4.6 | Admin | Script B (change primary via entry field) on Real Test P2 | Rejected with the primary-lock message |
-| R4.7 | Admin | Round robin: check owner of the new leads | Same assignment behaviour as today |
-| R4.8 ⭐ | Integration | A website / portal / API lead arrives (or Script C) | Saved as before, Phone__c filled |
+| R4.1 ⭐ | Priya J | Leads → **New** → Last name `Real Test P2`, Phone 9000100011, Secondary 9000100012, other required fields → Save | Saved without "Phone required"; panel `90XXXXXX11` / `90XXXXXX12` |
+| R4.2 | Priya J | Any lead → **New Referral Lead** → `Real Test P3`, Phone 9000100021 → Save | Saved |
+| R4.3 | Priya J | Real Test P2 → details → **Secondary Phone (entry)** → 9000100013 → Save | Panel secondary `90XXXXXX13`; entry field empty |
+| R4.4 | Priya J | Leads → New with Phone 9000100011 again | Same duplicate behaviour as today |
+| R4.5 | Admin | Execute Anonymous – Script A (main guide) with `LIKE 'Real Test%'` | Real fields filled, entry fields empty |
+| R4.6 | Admin | Script B on Real Test P2 (Phone_Entry__c = 9000100099) | `Saved: false` + primary-lock message |
+| R4.7 | Admin | Check owners of the new leads | Round robin works as today |
+| R4.8 ⭐ | Admin | Script C (integration-style insert, rolled back) – or a website test lead if available | `Saved: true`, entry empty |
 | R4.9 | Sales / CRM user | Leads → New | Old form, unchanged |
 
 ---
 
-## R5a. MakeCall and G-Talk
+## R5a. MakeCall and G-Talk ("Offline Call")
 | # | As | Step | Expected |
 |---|---|---|---|
-| R5a.1 ⭐ | Sharmili | Real Test M → Make call → Select Number → Call (Mcube Phone = your phone) | Masked list; call connects |
-| R5a.2 | Priya J | G-Talk utility on Real Test P → Call | Masked numbers; no error |
-| R5a.3 | Admin | Audit | MCube (MakeCall) and G-Talk rows |
-| R5a.4 | Priya J / Sharmili | **CallPanel / CallPanel_Outbound** (if on their pages) | ⚠️ Still shows the full number – **D1, known gap**, record where it appears |
+| R5a.1 ⭐ | Ananthi R | Real Test M → **Make call** (action button / ▼) → Select Number | `+91 90XXXXXX01` style |
+| R5a.2 | Ananthi R | Pick it → Call | Your phone rings, then the customer; connected |
+| R5a.3 | Priya J | Bottom bar → **Offline Call** (G-Talk) on Real Test P → Call | Masked numbers; no error |
+| R5a.4 | Admin | Phone Access Audits | **MCube (MakeCall)** and **G-Talk** rows, masked only |
+| R5a.5 📝 | Priya J / Ananthi R | Bottom bar → **CallPanel** / **CallPanel_Outbound** | ⚠️ **Shows the full number – known gap D1**; write down where |
+| R5a.6 📝 | Priya J | Bottom bar → **Call Log Update Issue** (G-Talk page) | Write down if a customer number is shown (external G-Talk app) |
 
-## R5b. History and logs
+## R5b. History and call logs
 | # | As | Step | Expected |
 |---|---|---|---|
-| R5b.1 | Admin | Edit Real Test P Phone → 9000100003 (creates history) + insert a Call_Detail__c (prep script in main guide, numbers 9000100099 → 9000100003) | – |
-| R5b.2 ⭐ | Priya J | History & Activity → Field Updates / Calls | Masked old → new values and call numbers |
-| R5b.3 | Admin | After R3.2 call: Script E (log__c) | Newest MCube log: no full number |
+| R5b.1 | Admin | Real Test P → Edit Phone → 9000100003 → Save (creates history) | – |
+| R5b.2 ⭐ | Priya J | Real Test P → **History & Activity** → Field Updates | `90XXXXXX01 → 90XXXXXX03`; other fields normal |
+| R5b.3 | Priya J | History & Activity → Calls (after R3.1) | Call numbers masked |
+| R5b.4 | Admin | After R3.2, Script E (log__c) | Newest MCube log: no full number |
 
 ## R5c. Update Contact Details and Merge
 | # | As | Step | Expected |
 |---|---|---|---|
-| R5c.1 ⭐ | Priya J | Real Test P → Update Contact Details → change only Email → Save | Success; numbers unchanged (Script F: no X saved) |
-| R5c.2 | Priya J | Secondary → 9000100004 → Save; then Phone → 9000100005 → Save | Secondary saved; Phone rejected (locked) |
-| R5c.3 | Priya J | Merge Lead → list / search | Masked numbers |
+| R5c.1 | Priya J | Real Test P → **Update Contact Details** | Numbers masked |
+| R5c.2 ⭐ | Priya J | Change only **Email** → Save | Success; Script F on Real Test P → `X saved: false` |
+| R5c.3 | Priya J | Secondary → 9000100004 → Save | Saved |
+| R5c.4 | Priya J | Phone → 9000100005 → Save | Rejected – primary locked |
+| R5c.5 | Priya J | **Merge Lead** → list / search "Real Test" | Masked numbers (close without merging) |
 
-## R5d. Bulk / Yotel push
+## R5d. Push buttons
 | # | As | Step | Expected |
 |---|---|---|---|
-| R5d.1 | Priya J | Leads list → Add Leads to Call List / Create Lead List For Yotel | "Insufficient privileges" – **same as today** (reps never had these) |
-| R5d.2 | MIS Extended user | Same buttons → Cancel | Full numbers – MIS profile not changed (go-live decision) |
+| R5d.1 | Priya J | Leads list → tick a lead → **Add Leads to Call List** | "Insufficient privileges" – same as today (reps never had it) |
+| R5d.2 | MIS Extended user | Same button → Cancel | Full numbers (MIS not changed – go-live decision) |
 
-## R5e. WhatsApp chat
+## R5e. WhatsApp
 | # | As | Step | Expected |
 |---|---|---|---|
-| R5e.1 | Priya J | A lead whose page has the WhatsApp chat | Loads without error (no WhatsApp data in the sandbox) |
-| R5e.2 ⭐ | Priya J | Anything WhatsApp-related she uses daily (send template, chat list) | Still works – confirms hiding WhatsApp_Number__c does not break messaging |
+| R5e.1 | Priya J | A lead whose page shows the WhatsApp chat | Loads without error |
+| R5e.2 ⭐ | Priya J | WhatsApp actions she uses daily (send template, open chat) | Still work after WhatsApp_Number__c is hidden – write down any error |
 
 ## R6. Reveal (Part 6)
 | # | As | Step | Expected |
 |---|---|---|---|
-| R6.1 | Priya J | Real Test P | No 👁 icon |
-| R6.2 ⭐ | Swapna | Real Test T → 👁 → Management review → Reveal | Real number 30 s, then hidden |
-| R6.3 | Swapna | 👁 → Other + comment → Reveal | Shown; audit has the comment |
-| R6.4 | Admin | Audit | Reveal rows for Swapna with reasons |
+| R6.1 | Priya J | Real Test P | **No** 👁 icon |
+| R6.2 ⭐ | Swapna | Real Test T → 👁 next to Primary → Reason **Dialer down, manual call needed** → Reveal | Real number shown, "Hides after 30 seconds", then hidden |
+| R6.3 | Swapna | 👁 → **Other** + empty comment | Reveal disabled; then type `real user test` → Reveal → shown |
+| R6.4 | Admin | Phone Access Audits | 2 Reveal rows for Swapna with reason / comment, masked only |
 
 ---
 
 ## R7. Nothing else broke ⭐
 | # | As | Step | Expected |
 |---|---|---|---|
-| R7.1 | Integration (vendor) | SlashRTC call log push (`slashCallLogAPI`) after R3.1 | Call record created on the lead as before |
-| R7.2 | Integration | MCube callback after R3.2 | Call_Detail__c created as before |
-| R7.3 | Admin | Reports / dashboards used by management | Run as before (admins keep full access) |
-| R7.4 | Sales / CRM / other unchanged profiles | Daily work | No change |
-| R7.5 | Priya J | Her normal day: status updates, follow-ups, site visit booking, qualify / push to sales | All work; only numbers are masked |
-| R7.6 📝 | Priya J | Anything that shows an error mentioning a phone field | Record screen + error → a component that needs the field (add to go-live list) |
+| R7.1 | Admin | After R3.1: Real Test P → call record from SlashRTC (`slashCallLogAPI`) | Created as before |
+| R7.2 | Admin | After R3.2: Real Test M → Call Details | MCube call record created as before |
+| R7.3 | Priya J | Her normal day: change status, follow-up task, site visit, qualify / push to sales | All work – only numbers masked. Write down any error naming a phone field |
+| R7.4 | Swapna | Team views / dashboards she uses | Work; phone columns empty |
+| R7.5 | Admin | Management reports / dashboards | Unchanged (full numbers) |
+| R7.6 | Sales / CRM user | Daily work | Unchanged |
 
-## R8. Permission-set leak check ⭐
+## R8. Permission-set leak ⭐
 | # | As | Step | Expected |
 |---|---|---|---|
-| R8.1 | Admin | Setup → Permission Sets → **Sales_All_Access** → Manage Assignments → pick a **Presales outbound** user | – |
-| R8.2 | That user | Open any lead | **Full numbers visible** – proves permission sets must also be cleaned at go-live (Part 11 step) |
-| R8.3 | Same for **Messaging_Permission_Set** | – | Same result expected |
+| R8.1 | Sharmili | Log in → Real Test S | **Full number visible, no masking** – her permission sets (Messaging_Permission_Set, Chatbot) grant the phone fields |
+| R8.2 | Admin | Note the result | Proves that at go-live the phone fields must also be removed from those permission sets (146 Presales outbound users affected) |
 
 ---
 
-## R9. After the test – restore or keep
+## R9. After the test
 | Option | What |
 |---|---|
-| Restore | Put both profiles back (Read on the 25 fields, remove the new access), remove the page activation rows (R0.6), remove Phone_Reveal from Swapna, delete the Real Test leads |
-| Keep | Leave as the go-live rehearsal state for UAT |
-
-If I make the set-up, I restore it from the backup I take in R0 (one deploy, sandbox only).
+| **Restore** | Re-tick Read on the phone fields for both profiles (R0.2 / R0.3 reversed), remove the 2 class accesses and the new field accesses, remove the page activation for both profiles (App Builder), remove Phone Reveal from Swapna, set the test users' Mobile / Mcube Phone back, delete the Real Test leads |
+| Keep | Leave it as the go-live rehearsal for UAT |
 
 ---
 
 ## Result sheet
 | Section | Pass / Fail | Notes |
 |---|---|---|
-| R0 Set-up + R0.8 switch confirmed | | |
+| R0 Set-up + R0.9 switch confirmed | | |
 | R1 Foundations | | |
 | R2 Panel + hidden fields (R2.6 search found?) | | |
-| R3 Click-to-call (R3.4 360CTI result) | | |
+| R3 Click-to-call (R3.5 360CTI result, R3.6 screen pop) | | |
 | R4 Lead creation | | |
-| R5a MakeCall / G-Talk (R5a.4 CallPanel = D1) | | |
+| R5a MakeCall / G-Talk (R5a.5 CallPanel = D1, R5a.6 G-Talk page) | | |
 | R5b History / logs | | |
 | R5c Update Contact / Merge | | |
 | R5d Push buttons | | |
@@ -223,4 +233,4 @@ If I make the set-up, I restore it from the backup I take in R0 (one deploy, san
 | R8 Permission-set leak confirmed | | |
 | R9 Restored / kept | | |
 
-**Expected gaps until built:** CallPanel full number (D1), numbers typed in notes / Chatter (Part 7), 360CTI click (vendor), phone-granting permission sets (Part 11).
+**Expected gaps until built:** CallPanel full number (D1) · numbers typed in notes / Chatter (Part 7) · 360CTI click (vendor) · users with phone-granting permission sets (Part 11) · G-Talk / Yotel external screens (vendors).
