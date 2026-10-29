@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Lead.Phone__c</members>
+        <members>Lead.Secondary_Phone__c</members>
+        <members>Lead.Phone</members>
+        <members>Lead.MobilePhone</members>
+        <members>Lead.Full_phone_number__c</members>
+        <members>Lead.Phone_with_country_code__c</members>
+        <members>Lead.Secondary_phone_with_country_code__c</members>
+        <members>Lead.Secondary_Phones__c</members>
+        <members>Lead.Secondary_Mobile_No__c</members>
+        <members>Lead.Office_Phone_No__c</members>
+        <members>Lead.Spouse_Number__c</members>
+        <members>Lead.WhatsApp_Number__c</members>
+        <members>Lead.Register_your_WhatsApp_Number__c</members>
+        <members>Lead.Merge_Lead_Phone_No__c</members>
+        <members>Lead.Phone_Entry__c</members>
+        <members>Lead.Secondary_Phone_Entry__c</members>
+        <members>Lead.Phone_Masked__c</members>
+        <members>Related_Source__c.Phone__c</members>
+        <members>Related_Source__c.Secondary_Phone__c</members>
+        <members>Related_Source__c.Register_your_WhatsApp_Number__c</members>
+        <members>Call_Detail__c.Call_To__c</members>
+        <members>Call_Detail__c.Customer_Contact__c</members>
+        <members>Call_Detail__c.Call_To_Masked__c</members>
+        <members>Activity.Call_From__c</members>
+        <members>Activity.Call_To__c</members>
+        <members>Activity.Caller_number__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>MaskedPhonePanelController</members>
+        <members>MaskedDialServiceCTI</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Presales outbound</members>
+        <members>Presales TL</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>Pre_Sales</members>
+        <name>CustomApplication</name>
+    </types>
+    <version>62.0</version>
+</Package>
