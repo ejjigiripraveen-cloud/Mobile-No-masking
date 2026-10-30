@@ -171,8 +171,9 @@ Every build part follows the same 5 checkpoints:
 |---|---|
 | Needed? (Part 3 Q4 / R2.6 result) | ⏸️ owner asked to build it anyway (2026-10-30) |
 | Build locally | ✅ 2026-10-30 (`FindByNumberController` + test, LWC `findByNumber`) |
-| Owner review → Approval | ⬜ |
-| Deploy to sandbox → Test → Tag | ⬜ |
+| Owner review → Approval | ✅ 2026-10-30 |
+| Deploy to sandbox | ✅ 2026-10-30 0Afft000000PcWjCAK (11 tests, 95.4%) |
+| Test → Tag | ⬜ |
 
 ## Part 9 – Opportunity, Contact & documents (v1.9.0) ⏸️ depends on Decision 1
 

@@ -64,7 +64,7 @@ private class FindByNumberControllerTest {
         Assert.areEqual(1, result.leads.size());
         Assert.areEqual(lead.Id, result.leads[0].recordId);
         Assert.areEqual('Find Primary', result.leads[0].name);
-        Assert.areEqual(Lead.Phone__c.getDescribe().getLabel(), result.leads[0].matchedOn);
+        Assert.areEqual(Schema.SObjectType.Lead.fields.Phone__c.getLabel(), result.leads[0].matchedOn);
         Assert.areEqual(PhoneMaskUtil.mask(lead.Phone__c), result.leads[0].maskedNumber);
         Assert.areEqual(PhoneMaskUtil.mask(lead.Phone__c), result.maskedNumber);
         Assert.isFalse(result.hasMore);
@@ -89,7 +89,7 @@ private class FindByNumberControllerTest {
         FindByNumberController.SearchResult result = searchAsRep('0' + lead.Secondary_Phone__c);
 
         Assert.areEqual(1, result.leads.size());
-        Assert.areEqual(Lead.Secondary_Phone__c.getDescribe().getLabel(), result.leads[0].matchedOn);
+        Assert.areEqual(Schema.SObjectType.Lead.fields.Secondary_Phone__c.getLabel(), result.leads[0].matchedOn);
         Assert.areEqual(PhoneMaskUtil.mask(lead.Secondary_Phone__c), result.leads[0].maskedNumber);
     }
 

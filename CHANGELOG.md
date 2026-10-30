@@ -5,11 +5,12 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
-## v1.8.0 – Find by number (built locally 2026-10-30, NOT deployed – waiting for owner review and approval)
+## v1.8.0 – Find by number (deployed to sandbox 2026-10-30)
 
 - **Commit Version:** v1.8.0 (Part 7 skipped for now – owner decision 2026-10-30: Part 7 after go-live)
 - **Type:** feat
 - **Branch:** `ejjigiripraveen/v1.8.0-find-by-number` (from v1.6.0-reveal)
+- **Sandbox deploy (approved by owner 2026-10-30):** 0Afft000000PcWjCAK (3/3, **11 tests passed**). Coverage: FindByNumberController 95.4%. First attempt 0Afft000000PcV7CAK failed to compile (test variable `lead` hid the Lead type) – nothing saved; fixed in the test only.
 - **Why:** masked users cannot read the phone fields, so global search may no longer find a Lead by number (R2.6 / POC Q4). This gives them the same lookup with masked numbers only.
 - **Modified Assets (no existing org component changed):**
   - New: `FindByNumberController` – full number only (10–15 digits after normalising; partial numbers rejected), one SOSL `IN PHONE FIELDS` (Lead + Related Source) with sharing, exact match after normalising (Lead Primary / Secondary / Mobile / Mobile Phone, Related Source Phone / Secondary), max 50 Leads newest first, masked numbers only, one `Phone_Access_Audit__c` row per search (Action Search; Success / Not Found / Denied); rejected searches return a message instead of throwing so the audit row is kept. `FindByNumberControllerTest` (11 tests, incl. 200-lead bulk and no-real-number check).
