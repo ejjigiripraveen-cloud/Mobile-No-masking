@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Find by Number</masterLabel>
+    <description>Finds the Leads with a phone number for users who cannot search by number (masked users). Shows masked numbers only; every search is audited.</description>
+    <targets>
+        <target>lightning__UtilityBar</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__Tab</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__UtilityBar,lightning__AppPage,lightning__HomePage">
+            <property name="title" type="String" label="Title" default="Find by number" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -5,6 +5,27 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.8.0 – Find by number (built locally 2026-10-30, NOT deployed – waiting for owner review and approval)
+
+- **Commit Version:** v1.8.0 (Part 7 skipped for now – owner decision 2026-10-30: Part 7 after go-live)
+- **Type:** feat
+- **Branch:** `ejjigiripraveen/v1.8.0-find-by-number` (from v1.6.0-reveal)
+- **Why:** masked users cannot read the phone fields, so global search may no longer find a Lead by number (R2.6 / POC Q4). This gives them the same lookup with masked numbers only.
+- **Modified Assets (no existing org component changed):**
+  - New: `FindByNumberController` – full number only (10–15 digits after normalising; partial numbers rejected), one SOSL `IN PHONE FIELDS` (Lead + Related Source) with sharing, exact match after normalising (Lead Primary / Secondary / Mobile / Mobile Phone, Related Source Phone / Secondary), max 50 Leads newest first, masked numbers only, one `Phone_Access_Audit__c` row per search (Action Search; Success / Not Found / Denied); rejected searches return a message instead of throwing so the audit row is kept. `FindByNumberControllerTest` (11 tests, incl. 200-lead bulk and no-real-number check).
+  - New: LWC `findByNumber` ("Find by Number") – utility bar / app / home / tab; number box, Search, Clear, results with link to the Lead. Jest: `findByNumber.test.js`.
+  - Uses (unchanged): PhoneMaskUtil, PhoneMaskingConfig, MaskedDialService constants, `Phone_Access_Audit__c` (picklist value Search already exists).
+- **Deploy (after approval):** `sf project deploy start --manifest manifest/v1.8.0/package.xml --target-org Sandbox --test-level RunSpecifiedTests --tests FindByNumberControllerTest`
+- **Rollback:** remove the utility item / page component, then `sf project deploy start --manifest manifest/v1.8.0/package-empty.xml --post-destructive-changes manifest/v1.8.0/destructiveChanges.xml --target-org Sandbox`
+
+### Access sheet – v1.8.0
+
+| Item | Who | Action |
+|---|---|---|
+| `FindByNumberController` class access | Masked profiles (sandbox: POC Masked Rep, Presales outbound, Presales TL; go-live: every masked rep profile in Part 11) | Profile → Apex Class Access |
+| "Find by Number" utility item | Gsquare Housing (Pre_Sales) app utility bar | App Manager → Utility Items → Add (manual) |
+| Lead / Related Source / audit object access | – | None: same Lead access as today; audit written in system mode |
+
 ## v1.6.0 – Reveal for Team Leads, Heads, Admins + nightly audit cleanup (deployed to sandbox 2026-10-07)
 
 - **Commit Version:** v1.6.0

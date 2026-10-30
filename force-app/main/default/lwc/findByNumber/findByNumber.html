@@ -1,0 +1,75 @@
+<template>
+    <lightning-card title={title} icon-name="standard:search">
+        <div class="slds-p-horizontal_medium">
+            <div class="slds-grid slds-grid_vertical-align-end slds-gutters_x-small">
+                <div class="slds-col slds-grow">
+                    <lightning-input
+                        type="tel"
+                        label="Mobile number"
+                        placeholder="Full 10-digit number"
+                        value={phoneNumber}
+                        onchange={handleNumberChange}
+                        onkeyup={handleKeyUp}
+                        data-id="number"
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button
+                        variant="brand"
+                        label="Search"
+                        onclick={handleSearch}
+                        disabled={isSearchDisabled}
+                        data-id="search"
+                    ></lightning-button>
+                </div>
+                <div class="slds-col slds-grow-none">
+                    <lightning-button label="Clear" onclick={handleClear} data-id="clear"></lightning-button>
+                </div>
+            </div>
+
+            <template lwc:if={isSearching}>
+                <div class="spinner-holder">
+                    <lightning-spinner size="small" alternative-text="Searching"></lightning-spinner>
+                </div>
+            </template>
+            <template lwc:elseif={errorMessage}>
+                <p class="slds-text-color_error slds-m-top_small" role="alert" data-id="error">{errorMessage}</p>
+            </template>
+            <template lwc:elseif={showNotFound}>
+                <p class="slds-text-color_weak slds-m-top_small" data-id="not-found">{notFoundText}</p>
+            </template>
+            <template lwc:elseif={hasLeads}>
+                <p class="slds-text-color_weak slds-m-top_small" data-id="summary">{summary}</p>
+                <ul class="slds-has-dividers_bottom-space">
+                    <template for:each={leads} for:item="lead">
+                        <li key={lead.recordId} class="slds-item" data-id="result">
+                            <a href="#" data-id={lead.recordId} onclick={handleOpen} class="slds-text-heading_small">{lead.name}</a>
+                            <span class="slds-text-color_weak slds-m-left_x-small">{lead.leadNumber}</span>
+                            <dl class="slds-list_horizontal slds-wrap slds-m-top_xx-small">
+                                <dt class="slds-item_label slds-text-color_weak">Number</dt>
+                                <dd class="slds-item_detail masked-number">{lead.maskedNumber} ({lead.matchedOn})</dd>
+                                <dt class="slds-item_label slds-text-color_weak">Stage</dt>
+                                <dd class="slds-item_detail">{lead.status}</dd>
+                                <dt class="slds-item_label slds-text-color_weak">Project</dt>
+                                <dd class="slds-item_detail">{lead.project}</dd>
+                                <dt class="slds-item_label slds-text-color_weak">Owner</dt>
+                                <dd class="slds-item_detail">{lead.ownerName}</dd>
+                                <dt class="slds-item_label slds-text-color_weak">Department</dt>
+                                <dd class="slds-item_detail">{lead.recordTypeName}</dd>
+                                <dt class="slds-item_label slds-text-color_weak">Created</dt>
+                                <dd class="slds-item_detail">
+                                    <lightning-formatted-date-time
+                                        value={lead.createdDate}
+                                        year="numeric"
+                                        month="short"
+                                        day="2-digit"
+                                    ></lightning-formatted-date-time>
+                                </dd>
+                            </dl>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+        </div>
+    </lightning-card>
+</template>
