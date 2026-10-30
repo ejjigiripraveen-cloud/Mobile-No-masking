@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Existing PRODUCTION components that the masking change sets overwrite (Parts 3, 4, 5a-5e)
+     plus the app / pages changed by hand at go-live. Retrieve from production BEFORE Part 1 (read-only):
+     sf project retrieve start -x manifest/prod-backup/package.xml -o <prod alias> -r backup/prod-before-masking -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <!-- Part 3 -->
+        <members>McubeSoftphoneAddOnController</members>
+        <!-- Part 5a -->
+        <members>MakeCallController</members>
+        <members>OfflineCallAppAPI</members>
+        <!-- Part 5b -->
+        <members>mCubeController</members>
+        <members>LeadHistoryandActivityController</members>
+        <!-- Part 5c -->
+        <members>LeadMergeController</members>
+        <members>updateContactDetails</members>
+        <!-- Part 5d -->
+        <members>LeadBulkPushController</members>
+        <members>LeadYotelBulkPushController</members>
+        <!-- Part 5e -->
+        <members>LeadMsgConversationController</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <!-- Part 3 -->
+        <members>mcubeSoftphoneCTIAddOn</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <!-- Part 4 -->
+        <members>LeadTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <!-- Part 3 -->
+        <members>slashPhone</members>
+        <!-- Part 4 -->
+        <members>NewLeadCmp</members>
+        <members>NewRefLeadCmp</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <!-- Go-live (manual): Gsquare Housing app -->
+        <members>Pre_Sales</members>
+        <name>CustomApplication</name>
+    </types>
+    <types>
+        <!-- Go-live (manual): Lead page and utility bar -->
+        <members>New_Lead_Page</members>
+        <members>Pre_Sales_UtilityBar</members>
+        <name>FlexiPage</name>
+    </types>
+    <version>66.0</version>
+</Package>
