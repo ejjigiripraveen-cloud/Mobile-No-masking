@@ -46,3 +46,6 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
+
+# Production backup - contains a hard-coded vendor token, keep local only
+backup/prod-before-masking/
