@@ -106,6 +106,113 @@ private class PhoneDisplayServiceTest {
     }
 
     @IsTest
+    static void forDisplayMasksOnlyForMaskedUsers() {
+        PhoneMaskingConfig.settingOverride = PhoneMaskingConfig.defaultSetting();
+
+        PhoneDisplayService.maskedUserOverride = false;
+        Assert.areEqual('9876543221', PhoneDisplayService.forDisplay('9876543221'), 'Unmasked user: unchanged');
+
+        PhoneDisplayService.maskedUserOverride = true;
+        Assert.areEqual('98XXXXXX21', PhoneDisplayService.forDisplay('9876543221'));
+        Assert.isNull(PhoneDisplayService.forDisplay(null));
+    }
+
+    @IsTest
+    static void masksHistoryValuesOfPhoneFieldsOnly() {
+        PhoneTestDataFactory.useTestConfig(true, true);
+        PhoneMaskingConfig.fieldsOverride.add(
+            PhoneTestDataFactory.approvedField('Lead_Custom_Phone', 'Lead', 'Custom_Phone__c', 'Custom', 3, true, true, true)
+        );
+
+        PhoneDisplayService.maskedUserOverride = false;
+        Assert.areEqual('9876543221', PhoneDisplayService.historyValueForDisplay('Phone__c', '9876543221'), 'Unmasked user: unchanged');
+
+        PhoneDisplayService.maskedUserOverride = true;
+        Assert.areEqual('98XXXXXX21', PhoneDisplayService.historyValueForDisplay('Phone__c', '9876543221'));
+        Assert.areEqual('Old: 98XXXXXX21', PhoneDisplayService.historyValueForDisplay('MobilePhone', 'Old: 9876543221'));
+        Assert.areEqual('98XXXXXX21', PhoneDisplayService.historyValueForDisplay('Custom_Phone__c', '9876543221'), 'Approved field from metadata');
+        Assert.areEqual('Ref 9876543221', PhoneDisplayService.historyValueForDisplay('Status', 'Ref 9876543221'), 'Not a phone field');
+        Assert.isNull(PhoneDisplayService.historyValueForDisplay('Phone__c', null));
+        Assert.areEqual('9876543221', PhoneDisplayService.historyValueForDisplay(' ', '9876543221'), 'No field name');
+    }
+
+    @IsTest
+    static void masksQueriedRecordFieldsInMemoryForMaskedUsers() {
+        PhoneMaskingConfig.settingOverride = PhoneMaskingConfig.defaultSetting();
+        List<Lead> records = new List<Lead>{
+            new Lead(LastName = 'A', Phone__c = '9876543221', Secondary_Phone__c = null),
+            new Lead(LastName = 'B', Phone__c = '+91 9123456780')
+        };
+        List<String> fields = new List<String>{ 'Phone__c', 'Secondary_Phone__c', 'MobilePhone' };
+
+        PhoneDisplayService.maskedUserOverride = false;
+        PhoneDisplayService.maskRecords(records, fields);
+        Assert.areEqual('9876543221', records[0].Phone__c, 'Unmasked user: unchanged');
+
+        PhoneDisplayService.maskedUserOverride = true;
+        PhoneDisplayService.maskRecords(records, fields);
+        Assert.areEqual('98XXXXXX21', records[0].Phone__c);
+        Assert.isNull(records[0].Secondary_Phone__c);
+        Assert.areEqual('+91 91XXXXXX80', records[1].Phone__c);
+        Assert.isNull(records[1].MobilePhone, 'Field not queried: skipped');
+        PhoneDisplayService.maskRecords(null, fields);
+        PhoneDisplayService.maskRecords(records, null);
+    }
+
+    @IsTest
+    static void contactInputUnchangedForUnmaskedUserWithRealValues() {
+        PhoneDisplayService.maskedUserOverride = false;
+
+        PhoneDisplayService.ContactInput input = PhoneDisplayService.prepareContactInput(testLead().Id, '9000000001', '9000000002');
+
+        Assert.areEqual('9000000001', input.phone);
+        Assert.areEqual('9000000002', input.secondaryPhone);
+        Assert.isNull(input.error);
+    }
+
+    @IsTest
+    static void contactInputNeverSavesMaskedValues() {
+        PhoneMaskingConfig.settingOverride = PhoneMaskingConfig.defaultSetting();
+        Lead stored = testLead();
+        PhoneDisplayService.maskedUserOverride = false;
+
+        PhoneDisplayService.ContactInput input = PhoneDisplayService.prepareContactInput(
+            stored.Id, PhoneMaskUtil.mask(stored.Phone__c), PhoneMaskUtil.mask(stored.Secondary_Phone__c)
+        );
+
+        Assert.areEqual(stored.Phone__c, input.phone, 'Masked primary replaced by the stored number');
+        Assert.areEqual(stored.Secondary_Phone__c, input.secondaryPhone, 'Masked secondary replaced by the stored number');
+        Assert.isNull(input.error);
+    }
+
+    @IsTest
+    static void contactInputLocksPrimaryForMaskedUsers() {
+        PhoneMaskingConfig.settingOverride = PhoneMaskingConfig.defaultSetting();
+        Lead stored = testLead();
+        PhoneDisplayService.maskedUserOverride = true;
+
+        PhoneDisplayService.ContactInput changed = PhoneDisplayService.prepareContactInput(stored.Id, '9000000001', '9000000002');
+        PhoneDisplayService.ContactInput sameNumber = PhoneDisplayService.prepareContactInput(stored.Id, '+91 ' + stored.Phone__c, '9000000002');
+
+        Assert.areEqual(LeadPhoneEntryHandler.PRIMARY_LOCKED_MESSAGE, changed.error);
+        Assert.isNull(sameNumber.error, 'Same primary in another format is not a change');
+        Assert.areEqual('9000000002', sameNumber.secondaryPhone, 'Secondary can still be changed');
+    }
+
+    @IsTest
+    static void contactInputUnchangedForInvalidOrMissingLead() {
+        PhoneDisplayService.maskedUserOverride = true;
+
+        PhoneDisplayService.ContactInput invalidId = PhoneDisplayService.prepareContactInput('not-an-id', '98XXXXXX21', null);
+        PhoneDisplayService.ContactInput missingLead = PhoneDisplayService.prepareContactInput('00Q000000000000AAA', '98XXXXXX21', null);
+
+        Assert.areEqual('98XXXXXX21', invalidId.phone);
+        Assert.isNull(invalidId.error);
+        Assert.areEqual('98XXXXXX21', missingLead.phone);
+        Assert.isNull(missingLead.error);
+    }
+
+    @IsTest
     static void deniesWithoutRecordAccess() {
         PhoneTestDataFactory.useTestConfig(true, true);
         Lead lead = testLead();

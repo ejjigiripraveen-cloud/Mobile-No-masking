@@ -5,6 +5,13 @@ Versioning follows Semantic Versioning. Every version is a git tag in this folde
 Commands: `Revoke to original` (back to v1.0.0) · `Create checkpoint <name>` · `Revert to <version>`.
 Reverting local files is immediate. Reverting the sandbox means redeploying the older metadata and removing newly added components, and happens only after explicit approval.
 
+## v1.5.1 – PhoneDisplayServiceTest coverage for the production change sets (deployed to sandbox 2026-10-31)
+
+- **Type:** test (no production code changed)
+- **Why:** owner skips Part 5a in production (Make Call / G-Talk stay unmasked – accepted) and adds `PhoneDisplayService` + `PhoneDisplayServiceTest` to the Part 5b change set. With only the 5b tests, `PhoneDisplayService` was at 71% (the rest was covered by the 5a / 5c tests).
+- **Modified Assets:** `PhoneDisplayServiceTest` (+7 tests: forDisplay, historyValueForDisplay, maskRecords, prepareContactInput – unmasked, masked values replaced, primary lock, invalid / missing Lead).
+- **Sandbox deploy:** 0Afft000000Pli5CAC (68 tests passed). Coverage with the Part 5b test set: **PhoneDisplayService 99%** (112/113, also 99% from PhoneDisplayServiceTest alone) · LeadHistoryandActivityController 86% · mCubeController 81%.
+
 ## v1.8.0 – Find by number (deployed to sandbox 2026-10-30)
 
 - **Commit Version:** v1.8.0 (Part 7 skipped for now – owner decision 2026-10-30: Part 7 after go-live)
